@@ -129,8 +129,12 @@
       <FileType>Document</FileType>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Setup solution packages...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Setup solution packages...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">python %(FullPath) $(SolutionDir)..\</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">python %(FullPath) $(SolutionDir)..\</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pushd $(SolutionDir)..\
+python %(FullPath)
+popd</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pushd $(SolutionDir)..\
+python %(FullPath)
+popd</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)packages.txt</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)packages.txt</Outputs>
     </CustomBuild>

@@ -1,10 +1,9 @@
 ﻿import sys, os.path
 
-repodir = os.path.abspath(sys.argv[1])
-print(repodir)
-sys.path.append(repodir)
+repodir = os.getcwd()
+pkgsysdir = os.path.join(repodir, "pkgsys")
 
-import pkgsys.packages
+sys.path.append(pkgsysdir)
+import packages
 
-#if sys.argv[2] == "env":
-#    pkg.packages.setup()
+packages.setup("install", ["cpplint"])
