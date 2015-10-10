@@ -1,0 +1,3 @@
+[submodule "pkgsys"]
+	path = pkgsys
+	url = https://bitbucket.org/hozin/pkgsys.git
