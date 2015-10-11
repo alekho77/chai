@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3BA1763C-A235-49D6-ADD3-7DDEACBB5073}</ProjectGuid>
-    <RootNamespace>Packages</RootNamespace>
+    <ProjectGuid>{BC808389-7A1B-4FBA-A303-06FE3A10248C}</ProjectGuid>
+    <RootNamespace>StaticTest</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -93,6 +93,17 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Message>Are checking the Google C++ Style...</Message>
+      <Command>set "cpplint=$(OutDir)..\..\..\..\pkg\cpplint\cpplint.py"
+for %%p in ($(ProjectName) version) do (
+    pushd "$(ProjectDir)..\..\%%p"
+    for %%f in (*.cpp *.h) do (
+        %cpplint% --linelength=150 --filter=-build/include_what_you_use %%f
+    )
+    popd
+)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -103,6 +114,17 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Message>Are checking the Google C++ Style...</Message>
+      <Command>set "cpplint=$(OutDir)..\..\..\..\pkg\cpplint\cpplint.py"
+for %%p in ($(ProjectName) version) do (
+    pushd "$(ProjectDir)..\..\%%p"
+    for %%f in (*.cpp *.h) do (
+        %cpplint% --linelength=150 --filter=-build/include_what_you_use %%f
+    )
+    popd
+)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -117,6 +139,17 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Message>Are checking the Google C++ Style...</Message>
+      <Command>set "cpplint=$(OutDir)..\..\..\..\pkg\cpplint\cpplint.py"
+for %%p in ($(ProjectName) version) do (
+    pushd "$(ProjectDir)..\..\%%p"
+    for %%f in (*.cpp *.h) do (
+        %cpplint% --linelength=150 --filter=-build/include_what_you_use %%f
+    )
+    popd
+)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -131,31 +164,19 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Message>Are checking the Google C++ Style...</Message>
+      <Command>set "cpplint=$(OutDir)..\..\..\..\pkg\cpplint\cpplint.py"
+for %%p in ($(ProjectName) version) do (
+    pushd "$(ProjectDir)..\..\%%p"
+    for %%f in (*.cpp *.h) do (
+        %cpplint% --linelength=150 --filter=-build/include_what_you_use %%f
+    )
+    popd
+)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="pkginstall.py">
-      <FileType>Document</FileType>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Setup solution packages...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Setup solution packages...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)packages.txt</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)packages.txt</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Setup solution packages...</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Setup solution packages...</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)packages.txt</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)packages.txt</Outputs>
-    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
