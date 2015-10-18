@@ -10,3 +10,10 @@ chess::~chess()
 {
 
 }
+
+void chess::resizeEvent(QResizeEvent * event)
+{
+  ui.plainTextEditLog->appendPlainText(QString::number(ui.centralWidget->height()));
+  ui.widgetChessboard->setMaximumWidth(ui.centralWidget->height());
+  QMainWindow::resizeEvent(event);
+}

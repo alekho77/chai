@@ -16,12 +16,10 @@ Chessboard::~Chessboard()
 
 void Chessboard::resizeEvent(QResizeEvent * event)
 {
-  QWidget::resizeEvent(event);
   int size = qMin(event->size().width(), event->size().height());
+  QWidget::resizeEvent(event);
   imgBoard = QImage(size, size, QImage::Format_RGB32);
   imgBoard.fill(Qt::red);
-  //ui.widgetChessboard->resize(100, 100);
-  //ui.horizontalLayout->invalidate();
 }
 
 void Chessboard::paintEvent(QPaintEvent * event)

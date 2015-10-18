@@ -13,6 +13,7 @@ public:
   ~chess();
 
 protected:
+  void resizeEvent(QResizeEvent * event) override;
 
 private:
   Ui::chessClass ui;
