@@ -2,6 +2,7 @@
 #define CHESSBOARD_H
 
 #include <QWidget>
+#include <QSharedPointer>
 #include "ui_chessboard.h"
 
 class Chessboard : public QWidget
@@ -17,8 +18,11 @@ protected:
   void paintEvent(QPaintEvent * event) override;
 
 private:
+  void createChessboard(int size);
+
   Ui::chessboardClass ui;
-  QImage imgBoard;
+  QSharedPointer<QImage> imgBoard;
+  QRect rectStartCell;
 };
 
 #endif // CHESSBOARD_H
