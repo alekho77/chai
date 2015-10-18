@@ -137,20 +137,12 @@
       <FileType>Document</FileType>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Setup solution packages...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Setup solution packages...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">python %(FullPath) $(OutDir)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">python %(FullPath) $(OutDir)</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)packages.txt</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)packages.txt</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pushd $(SolutionDir)..\
-python %(FullPath)
-popd</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">python %(FullPath) $(OutDir)</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">python %(FullPath) $(OutDir)</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Setup solution packages...</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Setup solution packages...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)packages.txt</Outputs>

@@ -1,9 +1,4 @@
 ﻿import sys, os.path
 
-repodir = os.getcwd()
-pkgsysdir = os.path.join(repodir, "pkgsys")
-
-sys.path.append(pkgsysdir)
-import packages
-
-packages.setup()
+outdir = os.path.abspath(sys.argv[1])
+print (outdir)
