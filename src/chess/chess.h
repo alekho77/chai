@@ -6,14 +6,17 @@
 
 class chess : public QMainWindow
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	chess(QWidget *parent = 0);
-	~chess();
+  chess(QWidget *parent = 0);
+  ~chess();
+
+protected:
+  void resizeEvent(QResizeEvent * event) override;
 
 private:
-	Ui::chessClass ui;
+  Ui::chessClass ui;
 };
 
 #endif // CHESS_H
