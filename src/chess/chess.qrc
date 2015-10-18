@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="chess">
-    </qresource>
+  <qresource prefix="chess">
+    <file alias="chai_symbol">../Version/myappico.png</file>
+  </qresource>
 </RCC>

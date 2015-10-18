@@ -25,4 +25,6 @@ Only used by version.rc
 
 #define VER_PRIVATEBUILD_STR "Demo version\0"
 
+#define IDI_MAIN_ICON 91
+
 #endif  // CHAI_SRC_VERSION_VERSION_H_
