@@ -53,9 +53,8 @@ void Chessboard::createChessboard(int size)
     const QSet<QString> names({"pawn", "knight", "bishop", "rook", "queen", "king"});
     for (auto iter = names.begin(); iter != names.end(); ++iter)
     {
-      const qreal scale = 0.6;
-      whitePieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-w.svg", scale);
-      blackPieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-b.svg", scale);
+      whitePieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-w.svg", 0.75);
+      blackPieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-b.svg", 0.75);
     }
   }
 }
@@ -91,6 +90,7 @@ QSharedPointer<QImage> Chessboard::createPieceImage(const QString& filename, qre
 {
   QSvgRenderer renderer(filename);
   QSharedPointer<QImage> img(new QImage(startCell.size(), QImage::Format_ARGB32));
+  img->fill(Qt::transparent);
   QPainter painter(&*img);
   renderer.render(&painter, QRectF(startCell.width() * (1 - scale) / 2, startCell.height() * (1 - scale) / 2, startCell.width() * scale, startCell.height() * scale));
   return img;
