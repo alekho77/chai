@@ -1,5 +1,17 @@
 <RCC>
   <qresource prefix="chess">
+    <file alias="bishop-b-svg">Resources/chess-pieces/bishop-b.svg</file>
+    <file alias="bishop-w-svg">Resources/chess-pieces/bishop-w.svg</file>
+    <file>Resources/chess-pieces/king-b.svg</file>
+    <file>Resources/chess-pieces/king-w.svg</file>
+    <file>Resources/chess-pieces/knight-b.svg</file>
+    <file>Resources/chess-pieces/knight-w.svg</file>
+    <file alias="pawn-b-svg">Resources/chess-pieces/pawn-b.svg</file>
+    <file alias="pawn-w-svg">Resources/chess-pieces/pawn-w.svg</file>
+    <file>Resources/chess-pieces/queen-b.svg</file>
+    <file>Resources/chess-pieces/queen-w.svg</file>
+    <file>Resources/chess-pieces/rook-b.svg</file>
+    <file>Resources/chess-pieces/rook-w.svg</file>
     <file alias="chai_symbol">../Version/myappico.png</file>
   </qresource>
 </RCC>
