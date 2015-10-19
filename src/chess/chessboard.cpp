@@ -13,6 +13,11 @@ Chessboard::Chessboard(QWidget *parent)
   , hotFile(QChar::Null), hotRank(QChar::Null)
 {
   ui.setupUi(this);
+  
+  position.append(QVector<PieceState>({ { true, "pawn",'a','2' },{ true, "pawn",'b','2' },{ true, "pawn",'c','2' },{ true, "pawn",'d','2' },{ true, "pawn",'e','2' },{ true, "pawn",'f','2' },{ true, "pawn",'g','2' },{ true, "pawn",'h','2' } }));
+  position.append(QVector<PieceState>({ { true, "rook",'a','1' },{ true, "knight",'b','1' },{ true, "bishop",'c','1' },{ true, "queen",'d','1' },{ true, "king",'e','1' },{ true, "bishop",'f','1' },{ true, "knight",'g','1' },{ true, "rook",'h','1' } }));
+  position.append(QVector<PieceState>({ { false, "pawn",'a','7' },{ false, "pawn",'b','7' },{ false, "pawn",'c','7' },{ false, "pawn",'d','7' },{ false, "pawn",'e','7' },{ false, "pawn",'f','7' },{ false, "pawn",'g','7' },{ false, "pawn",'h','7' } }));
+  position.append(QVector<PieceState>({ { false, "rook",'a','8' },{ false, "knight",'b','8' },{ false, "bishop",'c','8' },{ false, "queen",'d','8' },{ false, "king",'e','8' },{ false, "bishop",'f','8' },{ false, "knight",'g','8' },{ false, "rook",'h','8' } }));
 }
 
 Chessboard::~Chessboard()
@@ -91,6 +96,17 @@ QSharedPointer<QImage> Chessboard::createPieceImage(const QString& filename, qre
   return img;
 }
 
+void Chessboard::drawChesspieces(QPainter& painter)
+{
+  for (auto p = position.begin(); p != position.end(); ++p)
+  {
+    const QImage& img = p->white ? *(whitePieces[p->name]) : *(blackPieces[p->name]);
+    int x = startCell.left() + startCell.width() * (p->file.toLatin1() - 'a');
+    int y = startCell.top() + startCell.height() * (8 - (p->rank.toLatin1() - '0'));
+    painter.drawImage(x, y, img);
+  }
+}
+
 void Chessboard::resizeEvent(QResizeEvent * event)
 {
   QWidget::resizeEvent(event);
@@ -102,6 +118,7 @@ void Chessboard::paintEvent(QPaintEvent * event)
   QPainter painter(this);
   painter.drawImage(0, 0, *imgBoard);
   drawChessboardLabels(painter);
+  drawChesspieces(painter);
 }
 
 void Chessboard::leaveEvent(QEvent * event)

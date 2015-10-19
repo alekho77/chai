@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QSharedPointer>
 #include <QMap>
+#include <QVector>
 #include "ui_chessboard.h"
 
 class Chessboard : public QWidget
@@ -26,6 +27,7 @@ private:
   void createChessboard(int size);
   void drawChessboardLabels(QPainter& painter);
   QSharedPointer<QImage> createPieceImage(const QString& filename, qreal scale);
+  void drawChesspieces(QPainter& painter);
 
   Ui::chessboardClass ui;
   
@@ -39,6 +41,13 @@ private:
   typedef QMap< QString, QSharedPointer<QImage> > ChessPiecesMap;
   ChessPiecesMap whitePieces;
   ChessPiecesMap blackPieces;
+  struct PieceState
+  {
+    bool white;
+    QString name;
+    QChar file, rank;
+  };
+  QVector<PieceState> position;
 };
 
 #endif // CHESSBOARD_H
