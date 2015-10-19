@@ -3,6 +3,8 @@
 #include <QPaintEvent>
 #include <QResizeEvent>
 #include <QMouseEvent>
+#include <QSvgRenderer>
+#include <QSet>
 
 Chessboard::Chessboard(QWidget *parent)
   : QWidget(parent)
@@ -29,15 +31,28 @@ void Chessboard::createChessboard(int size)
   imgBoard.reset();
   imgBoard.reset(new QImage(size, size, QImage::Format_RGB32));
   imgBoard->fill(cellDark);
-  QPainter painter(&*imgBoard);
-  painter.fillRect((size - centersize) / 2, (size - centersize) / 2, centersize, centersize, cellLight);
-  QRect cellrect = startCell;
-  for (int i = 0; i < 8; i++)
-    for (int j = (i % 2 + 1) % 2; j < 8; j += 2)
+  {
+    QPainter painter(&*imgBoard);
+    painter.fillRect((size - centersize) / 2, (size - centersize) / 2, centersize, centersize, cellLight);
+    QRect cellrect = startCell;
+    for (int i = 0; i < 8; i++)
+      for (int j = (i % 2 + 1) % 2; j < 8; j += 2)
+      {
+        cellrect.moveTo(startcorner + j * cellsize, startcorner + i * cellsize);
+        painter.fillRect(cellrect, cellDark);
+      }
+  }
+  whitePieces.clear();
+  blackPieces.clear();
+  {
+    const QSet<QString> names({"pawn", "knight", "bishop", "rook", "queen", "king"});
+    for (auto iter = names.begin(); iter != names.end(); ++iter)
     {
-      cellrect.moveTo(startcorner + j * cellsize, startcorner + i * cellsize);
-      painter.fillRect(cellrect, cellDark);
+      const qreal scale = 0.6;
+      whitePieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-w.svg", scale);
+      blackPieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-b.svg", scale);
     }
+  }
 }
 
 void Chessboard::drawChessboardLabels(QPainter& painter)
@@ -65,6 +80,15 @@ void Chessboard::drawChessboardLabels(QPainter& painter)
       painter.setPen(cellLight);
     painter.drawText(startCell.left() + i * startCell.width() + (startCell.width() - frect.width()) / 2 - frect.left(), imgBoard->height() - (bandsize - frect.height()) / 2, f);
   }
+}
+
+QSharedPointer<QImage> Chessboard::createPieceImage(const QString& filename, qreal scale)
+{
+  QSvgRenderer renderer(filename);
+  QSharedPointer<QImage> img(new QImage(startCell.size(), QImage::Format_ARGB32));
+  QPainter painter(&*img);
+  renderer.render(&painter, QRectF(startCell.width() * (1 - scale) / 2, startCell.height() * (1 - scale) / 2, startCell.width() * scale, startCell.height() * scale));
+  return img;
 }
 
 void Chessboard::resizeEvent(QResizeEvent * event)
