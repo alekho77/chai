@@ -83,6 +83,7 @@ void Chessboard::paintEvent(QPaintEvent * event)
 void Chessboard::leaveEvent(QEvent * event)
 {
   hotFile = hotRank = QChar::Null;
+  setCursor(Qt::ArrowCursor);
   repaint();
   QWidget::leaveEvent(event);
 }
@@ -100,10 +101,34 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
       int y = (event->y() - startCell.top()) / startCell.height();
       Q_ASSERT(y >= 0 && y < 8);
       hotRank = QChar('0' + 8 - y);
+      setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
     }
     else
+    {
       hotFile = hotRank = QChar::Null;
+      setCursor(Qt::ArrowCursor);
+    }
     repaint();
   }
   QWidget::mouseMoveEvent(event);
+}
+
+void Chessboard::mousePressEvent(QMouseEvent * event)
+{
+  if (event->x() >= startCell.left() && event->x() < (startCell.left() + 8 * startCell.width())
+    && event->y() >= startCell.top() && event->y() < (startCell.top() + 8 * startCell.height()))
+  {
+    setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
+  }
+  QWidget::mousePressEvent(event);
+}
+
+void Chessboard::mouseReleaseEvent(QMouseEvent * event)
+{
+  if (event->x() >= startCell.left() && event->x() < (startCell.left() + 8 * startCell.width())
+    && event->y() >= startCell.top() && event->y() < (startCell.top() + 8 * startCell.height()))
+  {
+    setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
+  }
+  QWidget::mouseReleaseEvent(event);
 }
