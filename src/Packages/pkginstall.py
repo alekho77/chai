@@ -5,7 +5,7 @@ variant = sys.argv[2]
 print ("Install packages into %s with %s variant" % (outdir, variant))
 
 qtdir = "C:\Qt"
-qtmudules = ["Core", "Gui", "Widgets"]
+qtmudules = ["Core", "Gui", "Widgets", "Svg"]
 for m in qtmudules:
     name = "Qt5" + m + ("d" if variant.lower()=="debug" else "")
     for ext in ("dll", "pdb"):
