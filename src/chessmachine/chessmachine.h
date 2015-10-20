@@ -39,7 +39,7 @@ namespace Chai {
     class IChessMachine {
     public:
       virtual void Start() = 0;
-      virtual void GetSnapshot(Snapshot& snapshot) const = 0;
+      virtual bool GetSnapshot(Snapshot& snapshot) const = 0;
       virtual ~IChessMachine() {}
     };
 
