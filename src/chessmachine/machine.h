@@ -1,5 +1,7 @@
 #pragma once
 #include "chessmachine.h"
+#include "state.h"
+#include <list>
 
 namespace Chai {
   namespace Chess {
@@ -10,6 +12,8 @@ namespace Chai {
       //~ChessMachine();
       void Start() override;
       bool GetSnapshot(Snapshot& snapshot) const override;
+    private:
+      std::list<ChessState> states;
     };
   }
 }

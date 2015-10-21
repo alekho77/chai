@@ -5,12 +5,16 @@
 #include "chessmachine.h"
 #include "machine.h"
 
-CHESSMACHINE_API Chai::Chess::IChessMachine* Chai::Chess::CreateChessMachine()
-{
-  return new ChessMachine();
-}
+namespace Chai {
+  namespace Chess {
+    IChessMachine* CreateChessMachine()
+    {
+      return /*new ChessMachine()*/ nullptr;
+    }
 
-CHESSMACHINE_API void Chai::Chess::DeleteChessMachine(Chai::Chess::IChessMachine* ptr)
-{
-  delete ptr;
+    void DeleteChessMachine(IChessMachine* ptr)
+    {
+      delete ptr;
+    }
+  }
 }

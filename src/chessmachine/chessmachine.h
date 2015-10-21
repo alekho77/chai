@@ -11,29 +11,27 @@ namespace Chai {
     //enum class Set : int { white, black };
     enum class Type : int { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 1000 };
 
-    struct Postion
-    {
-      char file; // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
-      char rank; // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
-    };
-
-    struct Field
-    {
-      bool threat;
-      Postion postion;
-    };
-
-    struct PieceState
-    {
-      Type type;
-      Postion position;
-      Field moves[27];
-    };
-    
     struct Snapshot
     {
-      const PieceState whitePieces[16];
-      const PieceState blackPieces[16];
+      struct Postion
+      {
+        char file; // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
+        char rank; // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
+      };
+      struct Field
+      {
+        bool threat;
+        Postion postion;
+      };
+      struct Piece
+      {
+        Type type;
+        Postion position;
+        Field moves[27];
+      };
+
+      Piece whitePieces[16];
+      Piece blackPieces[16];
     };
 
     class IChessMachine {
@@ -43,9 +41,7 @@ namespace Chai {
       virtual ~IChessMachine() {}
     };
 
-    extern "C" {
-      CHESSMACHINE_API IChessMachine* CreateChessMachine();
-      CHESSMACHINE_API void DeleteChessMachine(IChessMachine* ptr);
-    }
+    CHESSMACHINE_API IChessMachine* CreateChessMachine();
+    CHESSMACHINE_API void DeleteChessMachine(IChessMachine* ptr);
   }
 }
