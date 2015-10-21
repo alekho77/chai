@@ -29,7 +29,7 @@
     <ClCompile Include="BoostUnitTestSample.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoostUnitTest.cpp">
+    <ClCompile Include="BoostUnitTestChessMachine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
