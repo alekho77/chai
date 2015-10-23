@@ -2,25 +2,26 @@
 #include "chessmachine.h"
 #include <vector>
 
+#define PAWN(p)   {false, Type::pawn,   p}
+#define KNIGHT(p) {false, Type::knight, p}
+#define BISHOP(p) {false, Type::bishop, p}
+#define ROOK(p)   {false, Type::rook,   p}
+#define QUEEN(p)  {false, Type::queen,  p}
+#define KING(p)   {false, Type::king,   p}
+
 namespace Chai {
   namespace Chess {
-    inline Postion h2p(int hex) { return Postion({ ((hex >> 4) & 7) + 'a', (hex & 7) + '1' }); }
-    
+
     struct PieceState
     {
-      PieceState(Type t, Postion p) : moved(false), type(t), position(p) {}
-      PieceState(Type t, int p) : moved(false), type(t), position(h2p(p)) {}
       bool moved;
       Type type;
       Postion position;
     };
 
-    class ChessState
+    struct ChessState
     {
-    public:
       ChessState();
-      //~ChessState();
-    private:
       std::vector<PieceState> whitePieces;
       std::vector<PieceState> blackPieces;
     };

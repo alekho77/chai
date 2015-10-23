@@ -20,6 +20,7 @@ namespace Chai {
       if (!states.empty())
       {
         const ChessState& laststate = states.back();
+        return true;
       }
       return false;
     }

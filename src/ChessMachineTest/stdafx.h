@@ -11,6 +11,8 @@
 
 #include <stdlib.h>
 #include <memory>
+#include <vector>
+#include <algorithm>
 
 #include <boost/shared_ptr.hpp>
 #define BOOST_TEST_DYN_LINK
