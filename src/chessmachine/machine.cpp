@@ -16,10 +16,18 @@ namespace Chai {
 
     bool ChessMachine::GetSnapshot(Snapshot& snapshot) const
     {
-      snapshot = Snapshot({ { Type::bad, {0, 0}, { false, {0, 0} } }, { Type::bad, {0, 0}, { false, {0, 0} } } });
+      snapshot = Snapshot({ { Set::unknown, Type::bad, BADPOS, { false, BADPOS } } });
       if (!states.empty())
       {
         const ChessState& laststate = states.back();
+        Snapshot::Piece* s = snapshot.pieces;
+        for (const auto& p : laststate.pieces)
+        {
+          s->set = p.set;
+          s->type = p.type;
+          s->position = p.position;
+          ++s;
+        }
         return true;
       }
       return false;

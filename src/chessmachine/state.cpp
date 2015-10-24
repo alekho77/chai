@@ -7,10 +7,10 @@ namespace Chai {
     CHESSBOARD;
 
     ChessState::ChessState()
-      : whitePieces({ PAWN(a2),   PAWN(b2),   PAWN(c2),  PAWN(d2), PAWN(e2),   PAWN(f2),   PAWN(g2), PAWN(h2),
-                      ROOK(a1), KNIGHT(b1), BISHOP(c1), QUEEN(d1), KING(e1), BISHOP(f1), KNIGHT(g1), ROOK(h1) })
-      , blackPieces({ PAWN(a7),   PAWN(b7),   PAWN(c7),  PAWN(d7), PAWN(e7),   PAWN(f7),   PAWN(g7), PAWN(h7),
-                      ROOK(a8), KNIGHT(b8), BISHOP(c8), QUEEN(d8), KING(e8), BISHOP(f8), KNIGHT(g8), ROOK(h8) })
+      : pieces({  WPAWN(a2),   WPAWN(b2),   WPAWN(c2),  WPAWN(d2), WPAWN(e2),   WPAWN(f2),   WPAWN(g2), WPAWN(h2),
+                  WROOK(a1), WKNIGHT(b1), WBISHOP(c1), WQUEEN(d1), WKING(e1), WBISHOP(f1), WKNIGHT(g1), WROOK(h1),
+                  BPAWN(a7),   BPAWN(b7),   BPAWN(c7),  BPAWN(d7), BPAWN(e7),   BPAWN(f7),   BPAWN(g7), BPAWN(h7),
+                  BROOK(a8), BKNIGHT(b8), BBISHOP(c8), BQUEEN(d8), BKING(e8), BBISHOP(f8), BKNIGHT(g8), BROOK(h8) })
     {
     }
 

@@ -14,7 +14,7 @@
 
 namespace Chai {
   namespace Chess {
-    enum class Set : int { white, black };
+    enum class Set : int { unknown, white, black };
     enum class Type : int { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 1000 };
 
     struct Postion
@@ -33,13 +33,13 @@ namespace Chai {
       };
       struct Piece
       {
+        Set set;
         Type type;
         Postion position;
         Field moves[27];
       };
 
-      Piece whitePieces[16];
-      Piece blackPieces[16];
+      Piece pieces[2*16];
     };
 
     class IChessMachine {
