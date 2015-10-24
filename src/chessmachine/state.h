@@ -16,12 +16,12 @@
 #define WQUEEN(p)  {Set::white, Type::queen,  false, p}
 #define WKING(p)   {Set::white, Type::king,   false, p}
 
-#define BPAWN(s,p)   {Set::black, Type::pawn,   false, p}
-#define BKNIGHT(s,p) {Set::black, Type::knight, false, p}
-#define BBISHOP(s,p) {Set::black, Type::bishop, false, p}
-#define BROOK(s,p)   {Set::black, Type::rook,   false, p}
-#define BQUEEN(s,p)  {Set::black, Type::queen,  false, p}
-#define BKING(s,p)   {Set::black, Type::king,   false, p}
+#define BPAWN(p)   {Set::black, Type::pawn,   false, p}
+#define BKNIGHT(p) {Set::black, Type::knight, false, p}
+#define BBISHOP(p) {Set::black, Type::bishop, false, p}
+#define BROOK(p)   {Set::black, Type::rook,   false, p}
+#define BQUEEN(p)  {Set::black, Type::queen,  false, p}
+#define BKING(p)   {Set::black, Type::king,   false, p}
 
 namespace Chai {
   namespace Chess {

@@ -21,22 +21,19 @@ namespace Chai {
     {
       char file; // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
       char rank; // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
-      bool operator == (const Postion& other) const { return this->file == other.file && this->rank == other.rank; }
+      bool operator == (const Postion& other) const { return file == other.file && rank == other.rank; }
+      bool operator != (const Postion& other) const { return file != other.file || rank != other.rank; }
+      bool operator < (const Postion& other) const { return file < other.file || (file == other.file && rank < other.rank); }
     };
 
     struct Snapshot
     {
-      struct Field
-      {
-        bool threat;
-        Postion postion;
-      };
       struct Piece
       {
         Set set;
         Type type;
         Postion position;
-        Field moves[27];
+        Postion moves[27];
       };
 
       Piece pieces[2*16];

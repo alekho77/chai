@@ -16,7 +16,7 @@ namespace Chai {
 
     bool ChessMachine::GetSnapshot(Snapshot& snapshot) const
     {
-      snapshot = Snapshot({ { Set::unknown, Type::bad, BADPOS, { false, BADPOS } } });
+      snapshot = Snapshot({ { Set::unknown, Type::bad, BADPOS, { BADPOS } } });
       if (!states.empty())
       {
         const ChessState& laststate = states.back();
