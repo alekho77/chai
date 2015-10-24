@@ -24,6 +24,7 @@ namespace Chai {
       bool operator == (const Postion& other) const { return file == other.file && rank == other.rank; }
       bool operator != (const Postion& other) const { return file != other.file || rank != other.rank; }
       bool operator < (const Postion& other) const { return file < other.file || (file == other.file && rank < other.rank); }
+      bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
     };
 
     struct Snapshot
