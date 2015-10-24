@@ -1,7 +1,6 @@
 #pragma once
 #include "chessmachine.h"
 #include "state.h"
-#include <list>
 
 namespace Chai {
   namespace Chess {
@@ -13,6 +12,8 @@ namespace Chai {
       void Start() override;
       bool GetSnapshot(Snapshot& snapshot) const override;
     private:
+      std::vector<Postion> pieceMoves(const Postion& pos, const ChessState& state) const;
+      bool addMoveIf(std::vector<Postion>& moves, const Postion& pos, const ChessState& state) const;
       std::list<ChessState> states;
     };
   }
