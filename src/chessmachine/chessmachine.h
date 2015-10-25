@@ -40,10 +40,24 @@ namespace Chai {
       Piece pieces[2*16];
     };
 
+    struct SetPieces
+    {
+      struct Piece
+      {
+        Type type;
+        Postion position;
+      };
+      int count;
+      Piece pieces[16];
+    };
+
     class IChessMachine {
     public:
       virtual void Start() = 0;
+
       virtual bool GetSnapshot(Snapshot& snapshot) const = 0;
+      virtual SetPieces GetSet(Set set) const = 0;
+
       virtual ~IChessMachine() {}
     };
 

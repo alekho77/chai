@@ -11,6 +11,7 @@ namespace Chai {
       //~ChessMachine();
       void Start() override;
       bool GetSnapshot(Snapshot& snapshot) const override;
+      SetPieces GetSet(Set set) const override;
 
     private:
       std::list<ChessState> states;

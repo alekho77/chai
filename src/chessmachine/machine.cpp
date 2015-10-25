@@ -36,5 +36,21 @@ namespace Chai {
       return false;
     }
 
+    SetPieces ChessMachine::GetSet(Set set) const
+    {
+      SetPieces pieces = { 0, { Type::bad, BADPOS } };
+      if (!states.empty()) {
+        const ChessState& laststate = states.back();
+        for (auto p : laststate.pieces) {
+          if (p.second.set == set) {
+            pieces.pieces[pieces.count].type = p.second.type;
+            pieces.pieces[pieces.count].position = p.first;
+            pieces.count++;
+          }
+        }
+      }
+      return pieces;
+    }
+
   }
 }

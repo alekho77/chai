@@ -64,21 +64,19 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
   boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   
-  Snapshot shot;
-  memset(&shot, 0xee, sizeof(shot));
-  BOOST_CHECK(!machine->GetSnapshot(shot));
+  SetPieces white = machine->GetSet(Set::white);
+  SetPieces black = machine->GetSet(Set::black);
 
-  BOOST_CHECK(_countof(shot.pieces) == 32);
-  for (const Snapshot::Piece& p: shot.pieces)
-  {
-    BOOST_CHECK(p.set == Set::unknown);
+  BOOST_CHECK(white.count == 0);
+  BOOST_CHECK(black.count == 0);
+
+  for (auto p : white.pieces) {
     BOOST_CHECK(p.type == Type::bad);
     BOOST_CHECK(p.position == BADPOS);
-
-    for (const Postion& p : p.moves)
-    {
-      BOOST_CHECK(p == BADPOS);
-    }
+  }
+  for (auto p : black.pieces) {
+    BOOST_CHECK(p.type == Type::bad);
+    BOOST_CHECK(p.position == BADPOS);
   }
 }
 

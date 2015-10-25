@@ -85,6 +85,7 @@ namespace Chai {
           addMoveIf(moves, pos + v);
         }
         // TODO: added 'capture' moves
+        // TODO: added move 'Castling'
         break;
       }
       return moves;
