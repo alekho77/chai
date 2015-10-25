@@ -31,6 +31,12 @@ namespace Chai {
 
     std::set<Postion> ChessState::pieceMoves(const Postion& pos, const boost::optional<Moves> opponent) const
     {
+      static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
+      static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
+      static const std::vector<MoveVector> straight_moves = { { 0,+1 },{ 0,-1 },{ +1,0 },{ -1,0 } };
+      auto merge = [](const std::vector<MoveVector>& a, const std::vector<MoveVector>& b) { std::vector<MoveVector> t(a); t.insert(t.end(), b.begin(), b.end()); return t; };
+      static const std::vector<MoveVector> any_moves = merge(straight_moves, diagonal_moves);
+
       std::set<Postion> moves;
       auto piece = pieces.find(pos);
       assert(piece != pieces.end());
@@ -51,26 +57,32 @@ namespace Chai {
         }
         break;
        case Type::knight:
-        for (MoveVector v : std::vector<MoveVector>({ {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} })) {
+        for (MoveVector v : Lshape_moves) {
           addMoveIf(moves, pos + v);
         }
         // TODO: added 'capture' moves
         break;
        case Type::bishop:
-        for (MoveVector v : std::vector<MoveVector>({ {+1,+1}, {+1,-1}, {-1,+1}, {-1,-1} })) {
+        for (MoveVector v : diagonal_moves) {
           for (Postion p = pos + v; addMoveIf(moves, p); p += v);
         }
         // TODO: added 'capture' moves
         break;
        case Type::rook:
-        for (MoveVector v : std::vector<MoveVector>({ {0,+1}, {0,-1}, {+1,0}, {-1,0} })) {
+        for (MoveVector v : straight_moves) {
           for (Postion p = pos + v; addMoveIf(moves, p); p += v);
         }
         // TODO: added 'capture' moves
         break;
        case Type::queen:
-        for (MoveVector v : std::vector<MoveVector>({ {+1,+1}, {+1,-1}, {-1,+1}, {-1,-1}, {0,+1}, {0,-1}, {+1,0}, {-1,0} })) {
+        for (MoveVector v : any_moves) {
           for (Postion p = pos + v; addMoveIf(moves, p); p += v);
+        }
+        // TODO: added 'capture' moves
+        break;
+       case Type::king:
+        for (MoveVector v : any_moves) {
+          addMoveIf(moves, pos + v);
         }
         // TODO: added 'capture' moves
         break;
