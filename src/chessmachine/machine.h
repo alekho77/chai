@@ -9,9 +9,11 @@ namespace Chai {
     public:
       ChessMachine();
       //~ChessMachine();
+      
       void Start() override;
-      bool GetSnapshot(Snapshot& snapshot) const override;
+
       SetPieces GetSet(Set set) const override;
+      PieceMoves CheckMoves(Postion from) const override;
 
     private:
       std::list<ChessState> states;

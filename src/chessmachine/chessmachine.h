@@ -27,19 +27,6 @@ namespace Chai {
       bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
     };
 
-    struct Snapshot
-    {
-      struct Piece
-      {
-        Set set;
-        Type type;
-        Postion position;
-        Postion moves[27];
-      };
-
-      Piece pieces[2*16];
-    };
-
     struct SetPieces
     {
       struct Piece
@@ -51,12 +38,23 @@ namespace Chai {
       Piece pieces[16];
     };
 
+    struct PieceMoves
+    {
+      struct Move
+      {
+        bool threat;
+        Postion move;
+      };
+      int count;
+      Move moves[27];
+    };
+
     class IChessMachine {
     public:
       virtual void Start() = 0;
 
-      virtual bool GetSnapshot(Snapshot& snapshot) const = 0;
       virtual SetPieces GetSet(Set set) const = 0;
+      virtual PieceMoves CheckMoves(Postion from) const = 0;
 
       virtual ~IChessMachine() {}
     };

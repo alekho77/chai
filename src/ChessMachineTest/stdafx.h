@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <memory>
 #include <vector>
+#include <set>
 #include <algorithm>
 
 #include <boost/shared_ptr.hpp>
