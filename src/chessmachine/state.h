@@ -63,6 +63,7 @@ namespace Chai {
     {
     public:
       ChessState();
+      ChessState(const ChessState& state, const Move& move);
 
       Set activeSet;
       boost::optional<Move> lastMove;

@@ -18,6 +18,23 @@ namespace Chai {
       moves.insert(opponent.begin(), opponent.end());
     }
 
+    ChessState::ChessState(const ChessState& state, const Move& move)
+      : pieces(state.pieces)
+      , lastMove(move)
+      , activeSet(state.activeSet == Set::white ? Set::black : Set ::white)
+    {
+      assert(pieces[move.from].set == state.activeSet);
+      assert(pieces[move.from].type == move.type);
+      assert(state.moves.find(move.from) != state.moves.end() && state.moves.find(move.from)->second.find(move.to) != state.moves.find(move.from)->second.end());
+      
+      pieces[move.to] = { state.activeSet, move.type, true };
+      pieces.erase(move.from);
+      
+      Moves opponent = evalMoves(boost::optional<Moves>());
+      moves = evalMoves(opponent);
+      moves.insert(opponent.begin(), opponent.end());
+    }
+
     Moves ChessState::evalMoves(const boost::optional<Moves> opponent) const
     {
       Moves moves;

@@ -14,6 +14,19 @@ namespace Chai {
 
     bool ChessMachine::Move(Type type, Postion from, Postion to)
     {
+      if (!states.empty()) {
+        const ChessState& laststate = states.back();
+        auto piece = laststate.pieces.find(from);
+        if (piece != laststate.pieces.end() && piece->second.set == laststate.activeSet && piece->second.type == type) {
+          assert(laststate.moves.find(from) != laststate.moves.end());
+          const auto& moves = laststate.moves.find(from)->second;
+          const auto& move = moves.find(to);
+          if (move != moves.end()) {
+            states.push_back(ChessState(laststate, { type, from, to }));
+            return true;
+          }
+        }
+      }
       return false;
     }
 
@@ -30,7 +43,7 @@ namespace Chai {
         piecesSet.reserve(laststate.pieces.size() + 1);
         for (auto p : laststate.pieces) {
           if (p.second.set == set) {
-            piecesSet.push_back({p.second.type, p.first});
+            piecesSet.push_back({ p.second.type, p.first });
           }
         }
         piecesSet.push_back({ Type::bad, BADPOS });

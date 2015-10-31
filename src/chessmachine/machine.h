@@ -22,7 +22,6 @@ namespace Chai {
       mutable std::vector<Piece> piecesSet; // temporary
       mutable std::vector<Postion> pieceMoves; // temporary
     };
-
   }
 }
 

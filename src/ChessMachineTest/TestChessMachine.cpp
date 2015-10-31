@@ -54,6 +54,29 @@ namespace Chai {
       }
       return vec;
     }
+
+    std::vector<std::string> split(const std::string& game) {
+      std::vector<std::string> moves;
+      //boost::regex xreg("(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+)\\s([p,N,B,R,Q,K,1-8,a-h,x]+)");
+      boost::regex xreg("(\\S+)");
+      //boost::smatch xres;
+      boost::sregex_iterator xIt(game.begin(), game.end(), xreg);
+      while (xIt != boost::sregex_iterator())
+      {
+        auto& res = *xIt;
+        for (int i = 0; i < res.size(); )
+        {
+          auto m = res[i].str();
+          i++;
+        }
+        xIt++;
+      }
+      //boost::regex_search(game.begin(), game.end(), xres, xreg);
+      //for (auto s = game.begin(); boost::regex_search(s, game.end(), xres, xreg); )
+      //{
+      //}
+      return moves;
+    }
   }
 }
 
@@ -120,6 +143,23 @@ BOOST_AUTO_TEST_CASE( StartTest )
       BOOST_CHECK(exactly(black, m.first, p.first) && equal(arr2vec(machine->CheckMoves(m.first)), m.second));
     }
   }
+}
+
+BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
+{
+  /*
+    Insidious bunch
+
+    Keres Arlamovsky
+    Szczawno Zdroj, 1950
+    Caro-Kann Defence
+  */
+  using namespace Chai::Chess;
+  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
+  machine->Start();
+
+  const std::vector<std::string> game = split("1.e4 c6 2.Nc3 d5 3.Nf3 dxe4 4.Nxe4 Nf6 5.Qe2 Nbd7 6.Nd6#");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
