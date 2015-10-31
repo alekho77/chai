@@ -12,6 +12,16 @@ namespace Chai {
       states.push_back(ChessState());
     }
 
+    bool ChessMachine::Move(Type type, Postion from, Postion to)
+    {
+      return false;
+    }
+
+    bool ChessMachine::Move(const char* notation)
+    {
+      return false;
+    }
+
     SetPieces ChessMachine::GetSet(Set set) const
     {
       SetPieces pieces = { 0, { Type::bad, BADPOS } };

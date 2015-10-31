@@ -11,6 +11,8 @@ namespace Chai {
       //~ChessMachine();
       
       void Start() override;
+      bool Move(Type type, Postion from, Postion to) override;
+      bool Move(const char* notation) override;
 
       SetPieces GetSet(Set set) const override;
       PieceMoves CheckMoves(Postion from) const override;

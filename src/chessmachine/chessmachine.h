@@ -52,6 +52,8 @@ namespace Chai {
     class IChessMachine {
     public:
       virtual void Start() = 0;
+      virtual bool Move(Type type, Postion from, Postion to) = 0;
+      virtual bool Move(const char* notation) = 0; // Standard algebraic notation (SAN) is the notation standardized by FIDE. It omits the starting file and rank of the piece, unless it is necessary to disambiguate the move.
 
       virtual SetPieces GetSet(Set set) const = 0;
       virtual PieceMoves CheckMoves(Postion from) const = 0;
