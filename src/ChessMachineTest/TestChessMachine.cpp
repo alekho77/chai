@@ -57,24 +57,18 @@ namespace Chai {
 
     std::vector<std::string> split(const std::string& game) {
       std::vector<std::string> moves;
-      //boost::regex xreg("(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+)\\s([p,N,B,R,Q,K,1-8,a-h,x]+)");
-      boost::regex xreg("(\\S+)");
-      //boost::smatch xres;
-      boost::sregex_iterator xIt(game.begin(), game.end(), xreg);
-      while (xIt != boost::sregex_iterator())
-      {
-        auto& res = *xIt;
-        for (int i = 0; i < res.size(); )
-        {
-          auto m = res[i].str();
-          i++;
+      boost::regex xreg("(?|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+)\\s+([p,N,B,R,Q,K,1-8,a-h,x]+)|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+))");
+      for (auto xit = make_regex_iterator(game, xreg); xit != boost::sregex_iterator(); ++xit) {
+        auto& res = *xit;
+        assert(res.size() == 4);
+        int nm = std::stoi(res[1].str());
+        assert(nm == (moves.size() / 2 + 1));
+        moves.push_back(res[2].str());
+        std::string bm = res[3].str();
+        if (!bm.empty()) {
+          moves.push_back(bm);
         }
-        xIt++;
       }
-      //boost::regex_search(game.begin(), game.end(), xres, xreg);
-      //for (auto s = game.begin(); boost::regex_search(s, game.end(), xres, xreg); )
-      //{
-      //}
       return moves;
     }
   }
@@ -159,7 +153,8 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
-  const std::vector<std::string> game = split("1.e4 c6 2.Nc3 d5 3.Nf3 dxe4 4.Nxe4 Nf6 5.Qe2 Nbd7 6.Nd6#");
+  const std::vector<std::string> moves = split("1.e4 c6 2.Nc3 d5 3.Nf3 dxe4 4.Nxe4 Nf6 5.Qe2 Nbd7 6.Nd6#");
+  BOOST_REQUIRE(moves.size() == 11);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
