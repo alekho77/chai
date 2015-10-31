@@ -22,37 +22,38 @@ namespace Chai {
       return false;
     }
 
-    SetPieces ChessMachine::GetSet(Set set) const
+    const Piece* ChessMachine::GetSet(Set set) const
     {
-      SetPieces pieces = { 0, { Type::bad, BADPOS } };
+      piecesSet.clear();
       if (!states.empty()) {
         const ChessState& laststate = states.back();
+        piecesSet.reserve(laststate.pieces.size() + 1);
         for (auto p : laststate.pieces) {
           if (p.second.set == set) {
-            pieces.pieces[pieces.count].type = p.second.type;
-            pieces.pieces[pieces.count].position = p.first;
-            pieces.count++;
+            piecesSet.push_back({p.second.type, p.first});
           }
         }
+        piecesSet.push_back({ Type::bad, BADPOS });
+        return &piecesSet[0];
       }
-      return pieces;
+      return nullptr;
     }
 
-    PieceMoves ChessMachine::CheckMoves(Postion from) const
+    const Postion* ChessMachine::CheckMoves(Postion from) const
     {
-      PieceMoves moves = { 0, {false, BADPOS} };
+      pieceMoves.clear();
       if (!states.empty()) {
         const ChessState& laststate = states.back();
         auto ms = laststate.moves.find(from);
         if (ms != laststate.moves.end()) {
           for (const Postion& m : ms->second) {
-            moves.moves[moves.count].threat = false; // TODO
-            moves.moves[moves.count].move = m;
-            moves.count++;
+            pieceMoves.push_back(m);
           }
+          pieceMoves.push_back(BADPOS);
+          return &pieceMoves[0];
         }
       }
-      return moves;
+      return nullptr;
     }
 
   }

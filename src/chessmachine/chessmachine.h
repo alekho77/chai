@@ -27,26 +27,10 @@ namespace Chai {
       bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
     };
 
-    struct SetPieces
+    struct Piece
     {
-      struct Piece
-      {
-        Type type;
-        Postion position;
-      };
-      int count;
-      Piece pieces[16];
-    };
-
-    struct PieceMoves
-    {
-      struct Move
-      {
-        bool threat;
-        Postion move;
-      };
-      int count;
-      Move moves[27];
+      Type type;
+      Postion position;
     };
 
     class IChessMachine {
@@ -55,8 +39,8 @@ namespace Chai {
       virtual bool Move(Type type, Postion from, Postion to) = 0;
       virtual bool Move(const char* notation) = 0; // Standard algebraic notation (SAN) is the notation standardized by FIDE. It omits the starting file and rank of the piece, unless it is necessary to disambiguate the move.
 
-      virtual SetPieces GetSet(Set set) const = 0;
-      virtual PieceMoves CheckMoves(Postion from) const = 0;
+      virtual const Piece* GetSet(Set set) const = 0; // Type::bad type terminated array or nullptr if it is not started.
+      virtual const Postion* CheckMoves(Postion from) const = 0; // BADPOS terminated array or nullptr if move is impossible.
 
       virtual ~IChessMachine() {}
     };

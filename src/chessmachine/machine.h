@@ -14,11 +14,13 @@ namespace Chai {
       bool Move(Type type, Postion from, Postion to) override;
       bool Move(const char* notation) override;
 
-      SetPieces GetSet(Set set) const override;
-      PieceMoves CheckMoves(Postion from) const override;
+      const Piece* GetSet(Set set) const override;
+      const Postion* CheckMoves(Postion from) const override;
 
     private:
       std::list<ChessState> states;
+      mutable std::vector<Piece> piecesSet; // temporary
+      mutable std::vector<Postion> pieceMoves; // temporary
     };
 
   }
