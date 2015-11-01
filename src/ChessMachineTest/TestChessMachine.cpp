@@ -158,6 +158,69 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
 
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    if (m == "dxe4") {
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{} },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { c3,{ b5, d5, a4, e4, b1, e2 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
+        { Type::bishop,{ { c1,{} },{ f1,{ e2, d3, c4, b5, a6 } } } },
+        { Type::rook,{ { a1,{ b1 } },{ h1,{ g1 } } } },
+        { Type::queen,{ { d1,{ e2 } } } },
+        { Type::king,{ { e1,{ e2 } } } }
+      };
+      std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
+      std::vector<Piece> black = arr2vec(machine->GetSet(Set::black));
+      for (const auto& p : white_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(white, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6, a5 } },{ b7,{ b6, b5 } },{ c6,{ c5 } },{ e4,{ e3, f3 } },{ e7,{ e6, e5 } },{ f7,{ f6, f5 } },{ g7,{ g6, g5 } },{ h7,{ h6, h5 } } } },
+        { Type::knight,{ { b8,{ a6, d7 } },{ g8,{ h6, f6 } } } },
+        { Type::bishop,{ { c8,{ d7, e6, f5, g4, h3 } },{ f8,{} } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{ d7, d6, d5, d4, d3, d2, c7, b6, a5 } } } },
+        { Type::king,{ { e8,{ d7 } } } }
+      };
+      for (const auto& p : black_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(black, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+    } else if (m == "Nd6" ) {
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { d6,{ c8, e8, b7, f7, b5, f5, c4, e4 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
+        { Type::bishop,{ { c1,{} },{ f1,{} } } },
+        { Type::rook,{ { a1,{ b1 } },{ h1,{ g1 } } } },
+        { Type::queen,{ { e2,{ e3, e4, e5, e6, e7, d3, c4, b5, a6, d1 } } } },
+        { Type::king,{ { e1,{ d1 } } } }
+      };
+      std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
+      std::vector<Piece> black = arr2vec(machine->GetSet(Set::black));
+      for (const auto& p : white_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(white, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{} },{ b7,{} },{ c6,{} },{ e7,{} },{ f7,{} },{ g7,{} },{ h7,{} } } },
+        { Type::knight,{ { d7,{} },{ f6,{} } } },
+        { Type::bishop,{ { c8,{} },{ f8,{} } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{} } } },
+        { Type::king,{ { e8,{} } } }
+      };
+      for (const auto& p : black_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(black, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+    }
   }
 }
 
