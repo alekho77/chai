@@ -69,8 +69,8 @@ namespace Chai {
 
     private:
       void evalMoves();
-      std::set<Postion> pieceMoves(const Postion& pos, const std::set<Postion>& opponent) const;
-      bool addMoveIf(std::set<Postion>& moves, const Postion& pos) const;
+      void pieceMoves(PieceState& piece, const Postion& pos, const std::set<Postion>& opponent);
+      bool addMoveIf(std::set<Postion>& moves, const Postion& pos, Set set = Set::unknown, bool capture = false) const;
     };
   }
 }

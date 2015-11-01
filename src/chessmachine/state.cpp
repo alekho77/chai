@@ -36,18 +36,18 @@ namespace Chai {
       std::set<Postion> opponent;
       for (auto& p : pieces) {
         if (p.second.set != activeSet) {
-          p.second.moves = pieceMoves(p.first, std::set<Postion>());
+          pieceMoves(p.second, p.first, std::set<Postion>());
           opponent.insert(p.second.moves.begin(), p.second.moves.end());
         }
       }
       for (auto& p : pieces) {
         if (p.second.set == activeSet) {
-          p.second.moves = pieceMoves(p.first, opponent);
+          pieceMoves(p.second, p.first, opponent);
         }
       }
     }
 
-    std::set<Postion> ChessState::pieceMoves(const Postion& pos, const std::set<Postion>& opponent) const
+    void ChessState::pieceMoves(PieceState& piece, const Postion& pos, const std::set<Postion>& opponent)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
@@ -55,65 +55,65 @@ namespace Chai {
       auto merge = [](const std::vector<MoveVector>& a, const std::vector<MoveVector>& b) { std::vector<MoveVector> t(a); t.insert(t.end(), b.begin(), b.end()); return t; };
       static const std::vector<MoveVector> any_moves = merge(straight_moves, diagonal_moves);
 
-      std::set<Postion> moves;
-      auto piece = pieces.find(pos);
-      assert(piece != pieces.end());
-      switch (piece->second.type) {
+      piece.moves.clear();
+      switch (piece.type) {
        case Type::pawn:
-        if (piece->second.set == Set::white) {
-          if (addMoveIf(moves, { pos.file, pos.rank + 1 }) && !piece->second.moved && pos.rank == '2') {
-            addMoveIf(moves, { pos.file, pos.rank + 2 });
+        if (piece.set == Set::white) {
+          if (addMoveIf(piece.moves, { pos.file, pos.rank + 1 }) && !piece.moved && pos.rank == '2') {
+            addMoveIf(piece.moves, { pos.file, pos.rank + 2 });
           }
-          // TODO: added 'capture' moves
+          addMoveIf(piece.moves, { pos.file - 1, pos.rank + 1 }, piece.set, true);
+          addMoveIf(piece.moves, { pos.file + 1, pos.rank + 1 }, piece.set, true);
           // TODO: added move 'En passant'
         } else {
-          if (addMoveIf(moves, { pos.file, pos.rank - 1 }) && !piece->second.moved && pos.rank == '7') {
-            addMoveIf(moves, { pos.file, pos.rank - 2 });
+          if (addMoveIf(piece.moves, { pos.file, pos.rank - 1 }) && !piece.moved && pos.rank == '7') {
+            addMoveIf(piece.moves, { pos.file, pos.rank - 2 });
           }
-          // TODO: added 'capture' moves
+          addMoveIf(piece.moves, { pos.file - 1, pos.rank - 1 }, piece.set, true);
+          addMoveIf(piece.moves, { pos.file + 1, pos.rank - 1 }, piece.set, true);
           // TODO: added move 'En passant'
         }
         break;
        case Type::knight:
         for (MoveVector v : Lshape_moves) {
-          addMoveIf(moves, pos + v);
+          addMoveIf(piece.moves, pos + v, piece.set);
         }
-        // TODO: added 'capture' moves
         break;
        case Type::bishop:
         for (MoveVector v : diagonal_moves) {
-          for (Postion p = pos + v; addMoveIf(moves, p); p += v);
+          for (Postion p = pos + v; addMoveIf(piece.moves, p, piece.set); p += v);
         }
-        // TODO: added 'capture' moves
         break;
        case Type::rook:
         for (MoveVector v : straight_moves) {
-          for (Postion p = pos + v; addMoveIf(moves, p); p += v);
+          for (Postion p = pos + v; addMoveIf(piece.moves, p, piece.set); p += v);
         }
-        // TODO: added 'capture' moves
         break;
        case Type::queen:
         for (MoveVector v : any_moves) {
-          for (Postion p = pos + v; addMoveIf(moves, p); p += v);
+          for (Postion p = pos + v; addMoveIf(piece.moves, p, piece.set); p += v);
         }
-        // TODO: added 'capture' moves
         break;
        case Type::king:
         for (MoveVector v : any_moves) {
-          addMoveIf(moves, pos + v);
+          addMoveIf(piece.moves, pos + v, piece.set);
         }
-        // TODO: added 'capture' moves
         // TODO: added move 'Castling'
         break;
       }
-      return moves;
     }
 
-    bool ChessState::addMoveIf(std::set<Postion>& moves, const Postion& pos) const
+    bool ChessState::addMoveIf(std::set<Postion>& moves, const Postion& pos, Set set, bool capture) const
     {
-      if (pos.isValid() && pieces.find(pos) == pieces.end()) {
-        moves.insert(pos);
-        return true;
+      if (pos.isValid()) {
+        if (pieces.find(pos) == pieces.end()) {
+          if (!capture) {
+            moves.insert(pos);
+            return true;
+          }
+        } else if (set != Set::unknown && set != pieces.at(pos).set) {
+          moves.insert(pos); // capture
+        }
       }
       return false;
     }
