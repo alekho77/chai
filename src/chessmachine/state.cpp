@@ -40,7 +40,6 @@ namespace Chai {
           opponent.insert(piece.second.moves.begin(), piece.second.moves.end());
         }
       }
-      Postion king = std::find_if(pieces.begin(), pieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
       for (auto& piece : pieces) {
         if (piece.second.set == activeSet) {
           std::set<Postion> probmoves = pieceMoves(pieces, piece.first, opponent);
@@ -49,6 +48,7 @@ namespace Chai {
             Pieces testpieces = pieces;
             testpieces[m] = { piece.second.set, piece.second.type, true, {} };
             testpieces.erase(piece.first);
+            Postion king = std::find_if(testpieces.begin(), testpieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
             for (auto p : testpieces) {
               if (p.second.set != activeSet) {
                 std::set<Postion> moves = pieceMoves(testpieces, p.first);

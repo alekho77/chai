@@ -57,7 +57,7 @@ namespace Chai {
 
     std::vector<std::string> split(const std::string& game) {
       std::vector<std::string> moves;
-      boost::regex xreg("(?|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+)\\s+([p,N,B,R,Q,K,1-8,a-h,x]+)|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+))");
+      boost::regex xreg("(?|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+)\\+*\\s+([p,N,B,R,Q,K,1-8,a-h,x]+)|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+))");
       for (auto xit = make_regex_iterator(game, xreg); xit != boost::sregex_iterator(); ++xit) {
         auto& res = *xit;
         assert(res.size() == 4);
@@ -221,6 +221,25 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
         }
       }
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE(HamletAmateurTest)
+{
+  /*
+    Hamlet Amateur
+    Vienna 1899
+    Defence Pirc-Ufimtsev
+  */
+  using namespace Chai::Chess;
+  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
+  machine->Start();
+
+  const std::vector<std::string> moves = split("1.e4 d6 2.d4 Nd7 3.Bc4 g6 4.Nf3 Bg7 5.Bxf7+ Kxf7 6.Ng5+ Kf6 7.Qf3#");
+  BOOST_REQUIRE(moves.size() == 13);
+  for (auto m : moves) {
+    BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
   }
 }
 
