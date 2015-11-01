@@ -155,6 +155,10 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
 
   const std::vector<std::string> moves = split("1.e4 c6 2.Nc3 d5 3.Nf3 dxe4 4.Nxe4 Nf6 5.Qe2 Nbd7 6.Nd6#");
   BOOST_REQUIRE(moves.size() == 11);
+
+  for (auto m : moves) {
+    BOOST_REQUIRE(machine->Move(m.c_str()));
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

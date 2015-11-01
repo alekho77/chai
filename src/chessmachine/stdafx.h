@@ -21,4 +21,6 @@
 #include <assert.h>
 
 #include <boost/optional.hpp>
-#include <boost/tuple/tuple.hpp>
+
+#define BOOST_REGEX_DYN_LINK
+#include <boost/regex.hpp>
