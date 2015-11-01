@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
   BOOST_REQUIRE(moves.size() == 11);
 
   for (auto m : moves) {
-    BOOST_REQUIRE(machine->Move(m.c_str()));
+    BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
   }
 }
 

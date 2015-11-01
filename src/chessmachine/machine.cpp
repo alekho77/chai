@@ -59,12 +59,28 @@ namespace Chai {
           if (!from.isValid()) {
             const ChessState& laststate = states.back();
             for (auto p : laststate.pieces) {
-              if (p.second.set == laststate.activeSet && p.second.type == type) {
-
+              if (p.second.set == laststate.activeSet && p.second.type == type && p.second.moves.find(to) != p.second.moves.end()) {
+                if (from == BADPOS) {
+                  from = p.first;
+                } else if (from.file == 0) {
+                  if (from.rank == p.first.rank) {
+                    from.file = p.first.file;
+                  }
+                } else { // from.rank == 0
+                  if (from.file == p.first.file) {
+                    from.rank = p.first.rank;
+                  }
+                }
+              }
+              if (from.isValid()) {
+                break;
               }
             }
           }
-          return true;
+          
+          if (from.isValid()) {
+            return Move(type, from, to);
+          }
         }
       }
       return false;
