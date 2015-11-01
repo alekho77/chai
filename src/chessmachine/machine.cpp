@@ -18,10 +18,9 @@ namespace Chai {
         const ChessState& laststate = states.back();
         auto piece = laststate.pieces.find(from);
         if (piece != laststate.pieces.end() && piece->second.set == laststate.activeSet && piece->second.type == type) {
-          assert(laststate.moves.find(from) != laststate.moves.end());
-          const auto& moves = laststate.moves.find(from)->second;
-          const auto& move = moves.find(to);
-          if (move != moves.end()) {
+          assert(piece->second.moves.find(to) != piece->second.moves.end());
+          const auto& move = piece->second.moves.find(to);
+          if (move != piece->second.moves.end()) {
             states.push_back(ChessState(laststate, { type, from, to }));
             return true;
           }
@@ -61,10 +60,7 @@ namespace Chai {
             const ChessState& laststate = states.back();
             for (auto p : laststate.pieces) {
               if (p.second.set == laststate.activeSet && p.second.type == type) {
-                auto moves = laststate.moves.find(p.first)->second;
-                for (auto m : moves) {
-                
-                }
+
               }
             }
           }
@@ -96,9 +92,9 @@ namespace Chai {
       pieceMoves.clear();
       if (!states.empty()) {
         const ChessState& laststate = states.back();
-        auto ms = laststate.moves.find(from);
-        if (ms != laststate.moves.end()) {
-          for (const Postion& m : ms->second) {
+        auto piece = laststate.pieces.find(from);
+        if (piece != laststate.pieces.end()) {
+          for (const Postion& m : piece->second.moves) {
             pieceMoves.push_back(m);
           }
           pieceMoves.push_back(BADPOS);

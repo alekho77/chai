@@ -13,9 +13,7 @@ namespace Chai {
                   BROOK(a8), BKNIGHT(b8), BBISHOP(c8), BQUEEN(d8), BKING(e8), BBISHOP(f8), BKNIGHT(g8), BROOK(h8) })
       , activeSet(Set::white)
     {
-      Moves opponent = evalMoves(boost::optional<Moves>());
-      moves = evalMoves(opponent);
-      moves.insert(opponent.begin(), opponent.end());
+      evalMoves();
     }
 
     ChessState::ChessState(const ChessState& state, const Move& move)
@@ -23,30 +21,33 @@ namespace Chai {
       , lastMove(move)
       , activeSet(state.activeSet == Set::white ? Set::black : Set ::white)
     {
-      assert(pieces[move.from].set == state.activeSet);
-      assert(pieces[move.from].type == move.type);
-      assert(state.moves.find(move.from) != state.moves.end() && state.moves.find(move.from)->second.find(move.to) != state.moves.find(move.from)->second.end());
+      assert(pieces.at(move.from).set == state.activeSet);
+      assert(pieces.at(move.from).type == move.type);
+      assert(pieces.at(move.from).moves.find(move.to) != pieces.at(move.from).moves.end());
       
-      pieces[move.to] = { state.activeSet, move.type, true };
+      pieces[move.to] = { state.activeSet, move.type, true, {} };
       pieces.erase(move.from);
       
-      Moves opponent = evalMoves(boost::optional<Moves>());
-      moves = evalMoves(opponent);
-      moves.insert(opponent.begin(), opponent.end());
+      evalMoves();
     }
 
-    Moves ChessState::evalMoves(const boost::optional<Moves> opponent) const
+    void ChessState::evalMoves()
     {
-      Moves moves;
-      for (const auto& p : pieces) {
-        if ((opponent && p.second.set == activeSet) || (!opponent && p.second.set != activeSet)) {
-          moves[p.first] = pieceMoves(p.first, opponent);
+      std::set<Postion> opponent;
+      for (auto& p : pieces) {
+        if (p.second.set != activeSet) {
+          p.second.moves = pieceMoves(p.first, std::set<Postion>());
+          opponent.insert(p.second.moves.begin(), p.second.moves.end());
         }
       }
-      return moves;
+      for (auto& p : pieces) {
+        if (p.second.set == activeSet) {
+          p.second.moves = pieceMoves(p.first, opponent);
+        }
+      }
     }
 
-    std::set<Postion> ChessState::pieceMoves(const Postion& pos, const boost::optional<Moves> opponent) const
+    std::set<Postion> ChessState::pieceMoves(const Postion& pos, const std::set<Postion>& opponent) const
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
