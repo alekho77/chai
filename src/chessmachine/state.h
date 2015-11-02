@@ -32,29 +32,29 @@ namespace Chai {
       Set set;
       Type type;
       bool moved;
-      std::set<Postion> moves;
+      std::set<Position> moves;
       bool operator == (const PieceState& that) const {
         return set == that.set && type == that.type && moved == that.moved;
       }
     };
 
-    typedef std::map< Postion, PieceState > Pieces;
+    typedef std::map< Position, PieceState > Pieces;
     
     struct Move
     {
       Type type;
-      Postion from;
-      Postion to;
+      Position from;
+      Position to;
     };
 
     struct MoveVector
     {
       char df, dr;
     };
-    inline Postion operator + (const Postion& pos, const MoveVector& vec) {
-      return Postion({ pos.file + vec.df, pos.rank + vec.dr });
+    inline Position operator + (const Position& pos, const MoveVector& vec) {
+      return Position({ pos.file + vec.df, pos.rank + vec.dr });
     }
-    inline Postion& operator += (Postion& pos, const MoveVector& vec) {
+    inline Position& operator += (Position& pos, const MoveVector& vec) {
       pos.file += vec.df;
       pos.rank += vec.dr;
       return pos;
@@ -72,10 +72,10 @@ namespace Chai {
 
     private:
       void evalMoves();
-      static std::set<Postion> pieceMoves(const Pieces& pieces, const Postion& pos, const std::set<Postion>& opponent = {});
-      static bool addMoveIf(const Pieces& pieces, std::set<Postion>& moves, const Postion& pos, Set set = Set::unknown, bool capture = false);
-      static bool testPath(const Pieces& pieces, const std::set<Postion>& attack, const std::vector<Postion>& path);
-      static bool testPiece(const Pieces& pieces, const std::pair<Postion, PieceState>& piece);
+      static std::set<Position> pieceMoves(const Pieces& pieces, const Position& pos, const std::set<Position>& opponent = {});
+      static bool addMoveIf(const Pieces& pieces, std::set<Position>& moves, const Position& pos, Set set = Set::unknown, bool capture = false);
+      static bool testPath(const Pieces& pieces, const std::set<Position>& attack, const std::vector<Position>& path);
+      static bool testPiece(const Pieces& pieces, const std::pair<Position, PieceState>& piece);
     };
   }
 }

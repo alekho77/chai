@@ -33,7 +33,7 @@ namespace Chai {
 
     void ChessState::evalMoves()
     {
-      std::set<Postion> opponent;
+      std::set<Position> opponent;
       for (auto& piece : pieces) {
         if (piece.second.set != activeSet) {
           piece.second.moves = pieceMoves(pieces, piece.first);
@@ -42,16 +42,16 @@ namespace Chai {
       }
       for (auto& piece : pieces) {
         if (piece.second.set == activeSet) {
-          std::set<Postion> probmoves = pieceMoves(pieces, piece.first, opponent);
+          std::set<Position> probmoves = pieceMoves(pieces, piece.first, opponent);
           piece.second.moves = probmoves;
           for (auto m : probmoves) {
             Pieces testpieces = pieces;
             testpieces[m] = { piece.second.set, piece.second.type, true, {} };
             testpieces.erase(piece.first);
-            Postion king = std::find_if(testpieces.begin(), testpieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
+            Position king = std::find_if(testpieces.begin(), testpieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
             for (auto p : testpieces) {
               if (p.second.set != activeSet) {
-                std::set<Postion> moves = pieceMoves(testpieces, p.first);
+                std::set<Position> moves = pieceMoves(testpieces, p.first);
                 if (moves.find(king) != moves.end()) {
                   piece.second.moves.erase(m);
                   break;
@@ -63,7 +63,7 @@ namespace Chai {
       }
     }
 
-    std::set<Postion> ChessState::pieceMoves(const Pieces& pieces, const Postion& pos, const std::set<Postion>& opponent)
+    std::set<Position> ChessState::pieceMoves(const Pieces& pieces, const Position& pos, const std::set<Position>& opponent)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
@@ -71,7 +71,7 @@ namespace Chai {
       auto merge = [](const std::vector<MoveVector>& a, const std::vector<MoveVector>& b) { std::vector<MoveVector> t(a); t.insert(t.end(), b.begin(), b.end()); return t; };
       static const std::vector<MoveVector> any_moves = merge(straight_moves, diagonal_moves);
 
-      std::set<Postion> moves;
+      std::set<Position> moves;
       const PieceState& piece = pieces.at(pos);
       switch (piece.type) {
        case Type::pawn:
@@ -98,17 +98,17 @@ namespace Chai {
         break;
        case Type::bishop:
         for (MoveVector v : diagonal_moves) {
-          for (Postion p = pos + v; addMoveIf(pieces, moves, p, piece.set); p += v);
+          for (Position p = pos + v; addMoveIf(pieces, moves, p, piece.set); p += v);
         }
         break;
        case Type::rook:
         for (MoveVector v : straight_moves) {
-          for (Postion p = pos + v; addMoveIf(pieces, moves, p, piece.set); p += v);
+          for (Position p = pos + v; addMoveIf(pieces, moves, p, piece.set); p += v);
         }
         break;
        case Type::queen:
         for (MoveVector v : any_moves) {
-          for (Postion p = pos + v; addMoveIf(pieces, moves, p, piece.set); p += v);
+          for (Position p = pos + v; addMoveIf(pieces, moves, p, piece.set); p += v);
         }
         break;
        case Type::king:
@@ -116,14 +116,14 @@ namespace Chai {
           addMoveIf(pieces, moves, pos + v, piece.set);
         }
         const char kingrank = piece.set == Set::white ? '1' : '8';
-        if (!piece.moved && pos == Postion({ 'e', kingrank })) {
+        if (!piece.moved && pos == Position({ 'e', kingrank })) {
           // O-O
-          if ( testPath(pieces, opponent, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Postion({ 'h',kingrank }), piece.set)) ) {
-            moves.insert(Postion({'g', kingrank}));
+          if ( testPath(pieces, opponent, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Position({ 'h',kingrank }), piece.set)) ) {
+            moves.insert(Position({'g', kingrank}));
           }
           // O-O-O
-          if ( testPath(pieces, opponent, { { 'd', kingrank },{ 'c', kingrank },{ 'b', kingrank } }) && testPiece(pieces, ROOK(Postion({ 'a', kingrank }), piece.set)) ) {
-            moves.insert(Postion({ 'c', kingrank }));
+          if ( testPath(pieces, opponent, { { 'd', kingrank },{ 'c', kingrank },{ 'b', kingrank } }) && testPiece(pieces, ROOK(Position({ 'a', kingrank }), piece.set)) ) {
+            moves.insert(Position({ 'c', kingrank }));
           }
         }
         break;
@@ -131,7 +131,7 @@ namespace Chai {
       return moves;
     }
 
-    bool ChessState::addMoveIf(const Pieces& pieces, std::set<Postion>& moves, const Postion& pos, Set set, bool capture)
+    bool ChessState::addMoveIf(const Pieces& pieces, std::set<Position>& moves, const Position& pos, Set set, bool capture)
     {
       if (pos.isValid()) {
         if (pieces.find(pos) == pieces.end()) {
@@ -146,7 +146,7 @@ namespace Chai {
       return false;
     }
 
-    bool ChessState::testPath(const Pieces& pieces, const std::set<Postion>& attack, const std::vector<Postion>& path)
+    bool ChessState::testPath(const Pieces& pieces, const std::set<Position>& attack, const std::vector<Position>& path)
     {
       for (auto p : path) {
         if (pieces.find(p) != pieces.end() || attack.find(p) != attack.end()) {
@@ -156,7 +156,7 @@ namespace Chai {
       return true;
     }
 
-    bool ChessState::testPiece(const Pieces& pieces, const std::pair<Postion, PieceState>& piece)
+    bool ChessState::testPiece(const Pieces& pieces, const std::pair<Position, PieceState>& piece)
     {
       auto p = pieces.find(piece.first);
       return p != pieces.end() && p->second == piece.second;

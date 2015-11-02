@@ -12,7 +12,7 @@ namespace Chai {
       states.push_back(ChessState());
     }
 
-    bool ChessMachine::Move(Type type, Postion from, Postion to)
+    bool ChessMachine::Move(Type type, Position from, Position to)
     {
       if (!states.empty()) {
         const ChessState& laststate = states.back();
@@ -46,13 +46,13 @@ namespace Chai {
 
           std::string file1 = xres[2].str();
           std::string rank1 = xres[3].str();
-          Postion from = { file1.empty() ? 0 : file1.front(), rank1.empty() ? 0 : rank1.front() };
+          Position from = { file1.empty() ? 0 : file1.front(), rank1.empty() ? 0 : rank1.front() };
 
           //std::string capture = xres[4].str();
 
           std::string file2 = xres[5].str();
           std::string rank2 = xres[6].str();
-          Postion to = { file2.front(), rank2.front() };
+          Position to = { file2.front(), rank2.front() };
 
           //std::string promotion = xres[7].str();
 
@@ -103,14 +103,14 @@ namespace Chai {
       return nullptr;
     }
 
-    const Postion* ChessMachine::CheckMoves(Postion from) const
+    const Position* ChessMachine::CheckMoves(Position from) const
     {
       pieceMoves.clear();
       if (!states.empty()) {
         const ChessState& laststate = states.back();
         auto piece = laststate.pieces.find(from);
         if (piece != laststate.pieces.end()) {
-          for (const Postion& m : piece->second.moves) {
+          for (const Position& m : piece->second.moves) {
             pieceMoves.push_back(m);
           }
           pieceMoves.push_back(BADPOS);
@@ -124,7 +124,7 @@ namespace Chai {
     {
       if (!states.empty()) {
         const ChessState& laststate = states.back();
-        Postion king = std::find_if(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.type == Type::king; })->first;
+        Position king = std::find_if(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.type == Type::king; })->first;
         size_t checkcount = std::count_if(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set != laststate.activeSet && p.second.moves.find(king) != p.second.moves.end(); });
         bool canmove = std::any_of(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.moves.size() > 0; });
         if (checkcount > 0) {

@@ -4,7 +4,7 @@ namespace Chai {
   namespace Chess {
     CHESSBOARD;
 
-    typedef std::map< Postion, std::set<Postion> > Moves;
+    typedef std::map< Position, std::set<Position> > Moves;
 
     template <class T>
     bool contains(const T& list, Type type) {
@@ -17,12 +17,12 @@ namespace Chai {
     }
 
     template <class T>
-    typename typename T::const_iterator at(const T& list, Postion pos) {
+    typename typename T::const_iterator at(const T& list, Position pos) {
       return std::find_if(list.begin(), list.end(), [pos](const auto& p) { return p.position == pos; });
     }
 
     template <class T>
-    bool exactly(const T& list, Postion pos, Type type) {
+    bool exactly(const T& list, Position pos, Type type) {
       auto p = at(list, pos);
       if (p != list.end()) {
         return p->type == type;
@@ -45,8 +45,8 @@ namespace Chai {
       return vec;
     }
 
-    std::set<Postion> arr2vec(const Postion* p) {
-      std::set<Postion> vec;
+    std::set<Position> arr2vec(const Position* p) {
+      std::set<Position> vec;
       if (p) {
         while (*p != BADPOS) {
           vec.insert(*(p++));
