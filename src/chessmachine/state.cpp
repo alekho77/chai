@@ -115,7 +115,17 @@ namespace Chai {
         for (MoveVector v : any_moves) {
           addMoveIf(pieces, moves, pos + v, piece.set);
         }
-        // TODO: added move 'Castling'
+        const char kingrank = piece.set == Set::white ? '1' : '8';
+        if (!piece.moved && pos == Postion({ 'e', kingrank })) {
+          // O-O
+          if ( testPath(pieces, opponent, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Postion({ 'h',kingrank }), piece.set)) ) {
+            moves.insert(Postion({'g', kingrank}));
+          }
+          // O-O-O
+          if ( testPath(pieces, opponent, { { 'd', kingrank },{ 'c', kingrank },{ 'b', kingrank } }) && testPiece(pieces, ROOK(Postion({ 'a', kingrank }), piece.set)) ) {
+            moves.insert(Postion({ 'c', kingrank }));
+          }
+        }
         break;
       }
       return moves;
@@ -134,6 +144,22 @@ namespace Chai {
         }
       }
       return false;
+    }
+
+    bool ChessState::testPath(const Pieces& pieces, const std::set<Postion>& attack, const std::vector<Postion>& path)
+    {
+      for (auto p : path) {
+        if (pieces.find(p) != pieces.end() || attack.find(p) != attack.end()) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    bool ChessState::testPiece(const Pieces& pieces, const std::pair<Postion, PieceState>& piece)
+    {
+      auto p = pieces.find(piece.first);
+      return p != pieces.end() && p->second == piece.second;
     }
 
   }

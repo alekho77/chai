@@ -33,6 +33,9 @@ namespace Chai {
       Type type;
       bool moved;
       std::set<Postion> moves;
+      bool operator == (const PieceState& that) const {
+        return set == that.set && type == that.type && moved == that.moved;
+      }
     };
 
     typedef std::map< Postion, PieceState > Pieces;
@@ -71,6 +74,8 @@ namespace Chai {
       void evalMoves();
       static std::set<Postion> pieceMoves(const Pieces& pieces, const Postion& pos, const std::set<Postion>& opponent = {});
       static bool addMoveIf(const Pieces& pieces, std::set<Postion>& moves, const Postion& pos, Set set = Set::unknown, bool capture = false);
+      static bool testPath(const Pieces& pieces, const std::set<Postion>& attack, const std::vector<Postion>& path);
+      static bool testPiece(const Pieces& pieces, const std::pair<Postion, PieceState>& piece);
     };
   }
 }

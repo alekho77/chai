@@ -240,6 +240,38 @@ BOOST_AUTO_TEST_CASE(HamletAmateurTest)
   BOOST_REQUIRE(moves.size() == 13);
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    if (m == "Bxf7") {
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, g1, d2 } } } },
+        { Type::bishop,{ { c1,{ d2, e3, f4, g5, h6 } },{ f7,{ e8, e6, d5, c4, b3, g8, g6 } } } },
+        { Type::rook,{ { a1,{} },{ h1,{ g1, f1 } } } },
+        { Type::queen,{ { d1,{ e2, d2, d3 } } } },
+        { Type::king,{ { e1,{ f1, e2, d2, g1 /*O-O*/ } } } }
+      };
+      std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
+      for (const auto& p : white_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(white, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{} },{ b7,{} },{ c7,{} },{ d6,{} },{ e7,{} },{ g6,{} },{ h7,{} } } },
+        { Type::knight,{ { d7,{} },{ g8,{} } } },
+        { Type::bishop,{ { c8,{} },{ g7,{} } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{} } } },
+        { Type::king,{ { e8,{ f8, f7 } } } }
+      };
+      std::vector<Piece> black = arr2vec(machine->GetSet(Set::black));
+      for (const auto& p : black_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(black, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+    }
   }
 }
 
