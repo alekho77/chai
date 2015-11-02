@@ -120,5 +120,25 @@ namespace Chai {
       return nullptr;
     }
 
+    Status ChessMachine::CheckStatus() const
+    {
+      if (!states.empty()) {
+        const ChessState& laststate = states.back();
+        Postion king = std::find_if(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.type == Type::king; })->first;
+        size_t checkcount = std::count_if(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set != laststate.activeSet && p.second.moves.find(king) != p.second.moves.end(); });
+        bool canmove = std::any_of(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.moves.size() > 0; });
+        if (checkcount > 0) {
+          if (!canmove) {
+            return Status::checkmate;
+          }
+          return Status::check;
+        } else if (!canmove) {
+          return Status::stalemate;
+        }
+        return Status::normal;
+      }
+      return Status::invalid;
+    }
+
   }
 }

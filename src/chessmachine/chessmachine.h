@@ -16,6 +16,7 @@ namespace Chai {
   namespace Chess {
     enum class Set : int { unknown, white, black };
     enum class Type : int { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 1000 };
+    enum class Status : int { invalid, normal, check, checkmate, stalemate };
 
     struct Postion
     {
@@ -41,6 +42,7 @@ namespace Chai {
 
       virtual const Piece* GetSet(Set set) const = 0; // Type::bad type terminated array or nullptr if it is not started.
       virtual const Postion* CheckMoves(Postion from) const = 0; // BADPOS terminated array or nullptr if move is impossible.
+      virtual Status CheckStatus() const = 0;
 
       virtual ~IChessMachine() {}
     };

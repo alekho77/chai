@@ -16,6 +16,7 @@ namespace Chai {
 
       const Piece* GetSet(Set set) const override;
       const Postion* CheckMoves(Postion from) const override;
+      Status CheckStatus() const override;
 
     private:
       std::list<ChessState> states;

@@ -190,6 +190,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
         }
       }
     } else if (m == "Nd6" ) {
+      BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { d6,{ c8, e8, b7, f7, b5, f5, c4, e4 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
@@ -241,6 +242,7 @@ BOOST_AUTO_TEST_CASE(HamletAmateurTest)
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "Bxf7") {
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, g1, d2 } } } },
@@ -271,6 +273,8 @@ BOOST_AUTO_TEST_CASE(HamletAmateurTest)
           BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
         }
       }
+    } else if (m == "Qf3") {
+      BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
     }
   }
 }
