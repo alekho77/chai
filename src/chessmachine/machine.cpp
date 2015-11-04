@@ -32,7 +32,7 @@ namespace Chai {
     bool ChessMachine::Move(const char* notation)
     {
       if (!states.empty()) {
-        boost::regex xreg("^([p,N,B,R,Q,K]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])([N,B,R,Q,K]?)");
+        boost::regex xreg("^([p,N,B,R,Q,K]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?[N,B,R,Q]?)");
         boost::smatch xres;
         std::string snotation(notation);
         if (boost::regex_match(snotation, xres, xreg)) {
@@ -81,9 +81,24 @@ namespace Chai {
           if (from.isValid()) {
             return Move(type, from, to);
           }
+        } else {
+          const ChessState& laststate = states.back();
+          const char kingrank = laststate.activeSet == Set::white ? '1' : '8';
+          if (snotation == "O-O") {
+            return Move(Type::king, { 'e', kingrank }, { 'g', kingrank });
+          } else if (snotation == "O-O-O") {
+            return Move(Type::king, { 'e', kingrank }, { 'c', kingrank });
+          }
         }
       }
       return false;
+    }
+
+    void ChessMachine::Undo()
+    {
+      if (!states.empty()) {
+        states.pop_back();
+      }
     }
 
     const Piece* ChessMachine::GetSet(Set set) const

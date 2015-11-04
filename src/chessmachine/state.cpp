@@ -25,8 +25,32 @@ namespace Chai {
       assert(pieces.at(move.from).type == move.type);
       assert(pieces.at(move.from).moves.find(move.to) != pieces.at(move.from).moves.end());
       
-      pieces[move.to] = { state.activeSet, move.type, true, {} };
       pieces.erase(move.from);
+      pieces[move.to] = { state.activeSet, move.type, true, {} };
+      if (move.type == Type::king) {
+        const char kingrank = state.activeSet == Set::white ? '1' : '8';
+        const Position kingpos1 = { 'e', kingrank };
+        if (move.from == kingpos1) {
+          const Position kingpos2 = { 'g', kingrank };
+          const Position kingpos3 = { 'c', kingrank };
+          if (move.to == kingpos2) {
+            Position rookpos1 = { 'h', kingrank };
+            Position rookpos2 = { 'f', kingrank };
+            assert(pieces.at(rookpos1).set == state.activeSet);
+            assert(pieces.at(rookpos1).type == Type::rook);
+            pieces.erase(rookpos1);
+            pieces[rookpos2] = { state.activeSet, Type::rook, true,{} };
+          }
+          else if (move.to == kingpos3) {
+            Position rookpos1 = { 'a', kingrank };
+            Position rookpos2 = { 'd', kingrank };
+            assert(pieces.at(rookpos1).set == state.activeSet);
+            assert(pieces.at(rookpos1).type == Type::rook);
+            pieces.erase(rookpos1);
+            pieces[rookpos2] = { state.activeSet, Type::rook, true,{} };
+          }
+        }
+      }
       
       evalMoves();
     }

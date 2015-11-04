@@ -13,6 +13,7 @@ namespace Chai {
       void Start() override;
       bool Move(Type type, Position from, Position to) override;
       bool Move(const char* notation) override;
+      void Undo() override;
 
       const Piece* GetSet(Set set) const override;
       const Position* CheckMoves(Position from) const override;

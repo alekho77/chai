@@ -240,6 +240,25 @@ BOOST_AUTO_TEST_CASE(HamletAmateurTest)
   const std::vector<std::string> moves = split("1.e4 d6 2.d4 Nd7 3.Bc4 g6 4.Nf3 Bg7 5.Bxf7+ Kxf7 6.Ng5+ Kf6 7.Qf3#");
   BOOST_REQUIRE(moves.size() == 13);
   for (auto m : moves) {
+    if (m == "Bxf7") {
+      BOOST_REQUIRE_MESSAGE(machine->Move("O-O"), "Can't make move O-O");
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, e1, d2 } } } },
+        { Type::bishop,{ { c1,{ d2, e3, f4, g5, h6 } },{ c4,{ b3, d5, e6, f7, b5, a6, d3, e2 } } } },
+        { Type::rook,{ { a1,{} },{ f1,{ e1 } } } },
+        { Type::queen,{ { d1,{ e1, e2, d2, d3 } } } },
+        { Type::king,{ { g1,{ h1 } } } }
+      };
+      std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
+      for (const auto& p : white_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(white, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+      machine->Undo();
+    }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "Bxf7") {
       BOOST_CHECK(machine->CheckStatus() == Status::check);
