@@ -57,7 +57,7 @@ namespace Chai {
 
     std::vector<std::string> split(const std::string& game) {
       std::vector<std::string> moves;
-      boost::regex xreg("(?|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+)\\+*\\s+([p,N,B,R,Q,K,1-8,a-h,x]+)|(\\d+)\\.([p,N,B,R,Q,K,1-8,a-h,x]+))");
+      boost::regex xreg("(?|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x]+)|(O-O-O)|(O-O))\\+*\\s+(?|([p,N,B,R,Q,K,1-8,a-h,x]+)|(O-O-O)|(O-O))|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x]+)|(O-O-O)|(O-O)))");
       for (auto xit = make_regex_iterator(game, xreg); xit != boost::sregex_iterator(); ++xit) {
         auto& res = *xit;
         assert(res.size() == 4);
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
   }
 }
 
-BOOST_AUTO_TEST_CASE(HamletAmateurTest)
+BOOST_AUTO_TEST_CASE( HamletAmateurTest )
 {
   /*
     Hamlet Amateur
@@ -296,6 +296,60 @@ BOOST_AUTO_TEST_CASE(HamletAmateurTest)
       BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
     }
   }
+}
+
+BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
+{
+  /*
+    Debut subtlety
+    Lasker MULLER
+    1934
+    Caro-Kann Defence
+  */
+  using namespace Chai::Chess;
+  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
+  machine->Start();
+
+  const std::vector<std::string> moves = split("1.e4 c6 2.Nc3 d5 3.Nf3 dxe4 4.Nxe4 Bf5 5.Ng3 Bg6 6.h4 h6 7.Ne5 Bh7 8.Qh5 g6 9.Qf3 Nf6 10.Qb3 Qd5 11.Qxb7 Qxe5+ 12.Be2 Qd6 13.Qxa8 Qc7 14.a4 Bg7 15.Ra3 O-O 16.Rb3");
+  BOOST_REQUIRE(moves.size() == 31);
+  for (auto m : moves) {
+    BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    if (m == "Qxe5") {
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ b2,{} },{ c2,{} },{ d2,{} },{ f2,{} },{ g2,{} },{ h4,{} } } },
+        { Type::knight,{ { g3,{ e2, e4 } } } },
+        { Type::bishop,{ { c1,{} },{ f1,{ e2 } } } },
+        { Type::rook,{ { a1,{} },{ h1,{} } } },
+        { Type::queen,{ { b7,{} } } },
+        { Type::king,{ { e1,{ d1 } } } }
+      };
+      std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
+      for (const auto& p : white_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(white, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{a6,a5} },{ c6,{c5} },{ e7,{e6} },{f7,{}},{ g6,{g5} },{ h6,{h5} } } },
+        { Type::knight,{ { b8,{a6,d7} },{ f6,{d7,g8,h5,g4,e4,d5} } } },
+        { Type::bishop,{ { f8,{g7} },{ h7,{g8} } } },
+        { Type::rook,{ { a8,{} },{ h8,{g8} } } },
+        { Type::queen,{ { e5,{e6,e4,e3,e2,e1,d5,c5,b5,a5,f5,g5,h5,d6,c7,f4,g3,d4,c3,b2} } } },
+        { Type::king,{ { e8,{ d8, d7 /*because White to move, so we consider only the mobility*/ } } } }
+      };
+      std::vector<Piece> black = arr2vec(machine->GetSet(Set::black));
+      for (const auto& p : black_pieces) {
+        for (const auto& m : p.second) {
+          BOOST_CHECK(exactly(black, m.first, p.first));
+          BOOST_CHECK(equal(arr2vec(machine->CheckMoves(m.first)), m.second));
+        }
+      }
+    }
+  }
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
