@@ -11,7 +11,7 @@ namespace Chai {
       //~ChessMachine();
       
       void Start() override;
-      bool Move(Type type, Position from, Position to) override;
+      bool Move(Type type, Position from, Position to, Type promotion) override;
       bool Move(const char* notation) override;
       void Undo() override;
 

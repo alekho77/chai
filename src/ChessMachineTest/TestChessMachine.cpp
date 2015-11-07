@@ -57,7 +57,7 @@ namespace Chai {
 
     std::vector<std::string> split(const std::string& game) {
       std::vector<std::string> moves;
-      boost::regex xreg("(?|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x]+)|(O-O-O)|(O-O))\\+*\\s+(?|([p,N,B,R,Q,K,1-8,a-h,x]+)|(O-O-O)|(O-O))|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x]+)|(O-O-O)|(O-O)))");
+      boost::regex xreg("(?|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x,=]+)|(O-O-O)|(O-O))\\+*\\s+(?|([p,N,B,R,Q,K,1-8,a-h,x,=]+)|(O-O-O)|(O-O))|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x,=]+)|(O-O-O)|(O-O)))");
       for (auto xit = make_regex_iterator(game, xreg); xit != boost::sregex_iterator(); ++xit) {
         auto& res = *xit;
         assert(res.size() == 4);
@@ -390,6 +390,44 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       machine->Undo();
     } else if (m == "Nxc7") {
       BOOST_CHECK(machine->CheckStatus() == Status::check);
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
+{
+  /*
+    HORSE IS BETTER THAN THE QUEEN
+  */
+  using namespace Chai::Chess;
+  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
+  machine->Start();
+
+  const std::vector<std::string> moves = split("1.d4 d5 2.c4 e5 3.dxe5 d4 4.e3 Bb4+ 5.Bd2 dxe3 6.Bxb4 exf2+ 7.Ke2 fxg1=N+ 8.Rxg1 Bg4+");
+  BOOST_REQUIRE(moves.size() == 8*2);
+  for (auto m : moves) {
+    BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    if (m == "fxg1=N") {
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6,a5 } },{ b7,{ b6,b5 } },{ c7,{ c6,c5 } },{ f7,{ f6, f5 } },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
+        { Type::knight,{ { b8,{ a6,c6,d7 } },{ g8,{ h6,f6,e7 } },{ g1, {e2,f3,h3} } } },
+        { Type::bishop,{ { c8,{ d7,e6,f5,g4,h3 } } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{ d7,d6,d5,d4,d3,d2,d1,e7,f6,g5,h4 } } } },
+        { Type::king,{ { e8,{ d7,e7,f8 /*only mobility*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ b2,{} },{ c4,{} },{ e5, {} },{ g2,{} },{ h2,{} } } },
+        { Type::knight,{ { b1,{} } } },
+        { Type::bishop,{ { b4,{} },{ f1,{} } } },
+        { Type::rook,{ { a1,{} },{ h1,{ g1 } } } },
+        { Type::queen,{ { d1,{} } } },
+        { Type::king,{ { e2,{ e1,e3,f2 } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
     }
   }
 }

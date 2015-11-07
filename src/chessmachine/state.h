@@ -45,6 +45,7 @@ namespace Chai {
       Type type;
       Position from;
       Position to;
+      Type promotion;
     };
 
     struct MoveVector

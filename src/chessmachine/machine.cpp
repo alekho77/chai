@@ -12,7 +12,7 @@ namespace Chai {
       states.push_back(ChessState());
     }
 
-    bool ChessMachine::Move(Type type, Position from, Position to)
+    bool ChessMachine::Move(Type type, Position from, Position to, Type promotion)
     {
       if (!states.empty()) {
         const ChessState& laststate = states.back();
@@ -21,7 +21,20 @@ namespace Chai {
           assert(piece->second.moves.find(to) != piece->second.moves.end());
           const auto& move = piece->second.moves.find(to);
           if (move != piece->second.moves.end()) {
-            states.push_back(ChessState(laststate, { type, from, to }));
+            const char promrank = laststate.activeSet == Set::white ? '8' : '1';
+            if (promotion == Type::bad) {
+              if (type == Type::pawn && to.rank == promrank) {
+                return false; // A pawn can not come to highest rank without promotion.
+              }
+            } else {
+              if (type != Type::pawn || to.rank != promrank) {
+                return false; // Only a pawn can be promoted at the highest rank.
+              }
+              if (promotion != Type::knight && promotion != Type::bishop && promotion != Type::rook && promotion != Type::queen) {
+                return false; // Pawn can be promoted only to one of the following pieces.
+              }
+            }
+            states.push_back(ChessState(laststate, { type, from, to, promotion }));
             return true;
           }
         }
@@ -32,7 +45,7 @@ namespace Chai {
     bool ChessMachine::Move(const char* notation)
     {
       if (!states.empty()) {
-        boost::regex xreg("^([p,N,B,R,Q,K]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])(=?[N,B,R,Q]?)");
+        boost::regex xreg("^([p,N,B,R,Q,K]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])=?([N,B,R,Q]?)");
         boost::smatch xres;
         std::string snotation(notation);
         if (boost::regex_match(snotation, xres, xreg)) {
@@ -54,7 +67,8 @@ namespace Chai {
           std::string rank2 = xres[6].str();
           Position to = { file2.front(), rank2.front() };
 
-          //std::string promotion = xres[7].str();
+          std::string promname = xres[7].str();
+          Type promotion = !promname.empty() && name2type.find(promname[0]) != name2type.end() ? name2type.at(promname[0]) : Type::bad;
 
           if (!from.isValid()) {
             const ChessState& laststate = states.back();
@@ -79,15 +93,15 @@ namespace Chai {
           }
           
           if (from.isValid()) {
-            return Move(type, from, to);
+            return Move(type, from, to, promotion);
           }
         } else {
           const ChessState& laststate = states.back();
           const char kingrank = laststate.activeSet == Set::white ? '1' : '8';
           if (snotation == "O-O") {
-            return Move(Type::king, { 'e', kingrank }, { 'g', kingrank });
+            return Move(Type::king, { 'e', kingrank }, { 'g', kingrank }, Type::bad);
           } else if (snotation == "O-O-O") {
-            return Move(Type::king, { 'e', kingrank }, { 'c', kingrank });
+            return Move(Type::king, { 'e', kingrank }, { 'c', kingrank }, Type::bad);
           }
         }
       }

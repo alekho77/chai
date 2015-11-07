@@ -26,7 +26,7 @@ namespace Chai {
       assert(pieces.at(move.from).moves.find(move.to) != pieces.at(move.from).moves.end());
       
       pieces.erase(move.from);
-      pieces[move.to] = { state.activeSet, move.type, true, {} };
+      pieces[move.to] = { state.activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, {} };
       if (move.type == Type::king) {
         const char kingrank = state.activeSet == Set::white ? '1' : '8';
         const Position kingpos1 = { 'e', kingrank };
