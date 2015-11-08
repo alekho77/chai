@@ -5,24 +5,30 @@
 #include <QMouseEvent>
 #include <QSvgRenderer>
 #include <QSet>
+#include <QPair>
 
 Chessboard::Chessboard(QWidget *parent)
   : QWidget(parent)
   , cellLight(255, 206, 158)
   , cellDark(209, 139, 71)
-  , hotFile(QChar::Null), hotRank(QChar::Null)
+  , hotPos(BADPOS)
 {
   ui.setupUi(this);
   
-  position.append(QVector<PieceState>({ { true, "pawn",'a','2' },{ true, "pawn",'b','2' },{ true, "pawn",'c','2' },{ true, "pawn",'d','2' },{ true, "pawn",'e','2' },{ true, "pawn",'f','2' },{ true, "pawn",'g','2' },{ true, "pawn",'h','2' } }));
-  position.append(QVector<PieceState>({ { true, "rook",'a','1' },{ true, "knight",'b','1' },{ true, "bishop",'c','1' },{ true, "queen",'d','1' },{ true, "king",'e','1' },{ true, "bishop",'f','1' },{ true, "knight",'g','1' },{ true, "rook",'h','1' } }));
-  position.append(QVector<PieceState>({ { false, "pawn",'a','7' },{ false, "pawn",'b','7' },{ false, "pawn",'c','7' },{ false, "pawn",'d','7' },{ false, "pawn",'e','7' },{ false, "pawn",'f','7' },{ false, "pawn",'g','7' },{ false, "pawn",'h','7' } }));
-  position.append(QVector<PieceState>({ { false, "rook",'a','8' },{ false, "knight",'b','8' },{ false, "bishop",'c','8' },{ false, "queen",'d','8' },{ false, "king",'e','8' },{ false, "bishop",'f','8' },{ false, "knight",'g','8' },{ false, "rook",'h','8' } }));
+  using namespace Chai::Chess;
+  chessMachine.reset(CreateChessMachine(), DeleteChessMachine);
 }
 
 Chessboard::~Chessboard()
 {
+}
 
+void Chessboard::newGame()
+{
+  chessMachine->Start();
+  whitePieces = arrToVec(chessMachine->GetSet(Chai::Chess::Set::white));
+  blackPieces = arrToVec(chessMachine->GetSet(Chai::Chess::Set::black));
+  repaint();
 }
 
 void Chessboard::createChessboard(int size)
@@ -47,42 +53,20 @@ void Chessboard::createChessboard(int size)
         painter.fillRect(cellrect, cellDark);
       }
   }
-  whitePieces.clear();
-  blackPieces.clear();
+  whiteImages.clear();
+  hotWhiteImages.clear();
+  blackImages.clear();
+  hotBlackImages.clear();
   {
-    const QSet<QString> names({"pawn", "knight", "bishop", "rook", "queen", "king"});
+    using namespace Chai::Chess;
+    const QMap<Type,QString> names({{Type::pawn,"pawn"}, {Type::knight,"knight"}, {Type::bishop,"bishop"}, {Type::rook,"rook"}, {Type::queen,"queen"}, {Type::king,"king"}});
     for (auto iter = names.begin(); iter != names.end(); ++iter)
     {
-      whitePieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-w.svg", 0.75);
-      blackPieces[*iter] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-b.svg", 0.75);
+      whiteImages[iter.key()] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-w.svg", 0.8);
+      hotWhiteImages[iter.key()] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-w.svg", 0.95);
+      blackImages[iter.key()] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-b.svg", 0.8);
+      hotBlackImages[iter.key()] = createPieceImage(QString(":/chess/Resources/chess-pieces/") + (*iter) + "-b.svg", 0.95);
     }
-  }
-}
-
-void Chessboard::drawChessboardLabels(QPainter& painter)
-{
-  const int bandsize = (imgBoard->width() - 8 * startCell.width()) / 3;
-  painter.setPen(cellLight);
-  QFont font("Arial Black");
-  font.setPixelSize(2 * startCell.width() / 3);
-  painter.setFont(font);
-  QFontMetrics fm = painter.fontMetrics();
-  for (int i = 0; i < 8; i++)
-  {
-    const QChar r('0' + 8 - i);
-    const QChar f('a' + i);
-    const QRect rrect = fm.tightBoundingRect(r);
-    const QRect frect = fm.tightBoundingRect(f);
-    if (hotRank == r)
-      painter.setPen(Qt::white);
-    else
-      painter.setPen(cellLight);
-    painter.drawText((bandsize - rrect.width()) / 2 - rrect.left(), startCell.top() + (i + 1) * startCell.height() - (startCell.height() - rrect.height()) / 2, r);
-    if (hotFile == f)
-      painter.setPen(Qt::white);
-    else
-      painter.setPen(cellLight);
-    painter.drawText(startCell.left() + i * startCell.width() + (startCell.width() - frect.width()) / 2 - frect.left(), imgBoard->height() - (bandsize - frect.height()) / 2, f);
   }
 }
 
@@ -96,15 +80,52 @@ QSharedPointer<QImage> Chessboard::createPieceImage(const QString& filename, qre
   return img;
 }
 
+void Chessboard::drawChessboardLabels(QPainter& painter)
+{
+  const int bandsize = (imgBoard->width() - 8 * startCell.width()) / 3;
+  painter.setPen(cellLight);
+  QFont font("Arial Black");
+  font.setPixelSize(2 * startCell.width() / 3);
+  painter.setFont(font);
+  QFontMetrics fm = painter.fontMetrics();
+  for (char i = 0; i < 8; i++)
+  {
+    const Chai::Chess::Position pos = {'a' + i, '0' + 8 - i};
+    const QRect rrect = fm.tightBoundingRect(QString(pos.rank));
+    const QRect frect = fm.tightBoundingRect(QString(pos.file));
+    painter.setPen(hotPos.rank == pos.rank ? Qt::white : cellLight);
+    painter.drawText((bandsize - rrect.width()) / 2 - rrect.left(), startCell.top() + (i + 1) * startCell.height() - (startCell.height() - rrect.height()) / 2, QString(pos.rank));
+    painter.setPen(hotPos.file == pos.file ? Qt::white : cellLight);
+    painter.drawText(startCell.left() + i * startCell.width() + (startCell.width() - frect.width()) / 2 - frect.left(), imgBoard->height() - (bandsize - frect.height()) / 2, QString(pos.file));
+  }
+}
+
 void Chessboard::drawChesspieces(QPainter& painter)
 {
-  for (auto p = position.begin(); p != position.end(); ++p)
-  {
-    const QImage& img = p->white ? *(whitePieces[p->name]) : *(blackPieces[p->name]);
-    int x = startCell.left() + startCell.width() * (p->file.toLatin1() - 'a');
-    int y = startCell.top() + startCell.height() * (8 - (p->rank.toLatin1() - '0'));
+  for (auto p = whitePieces.begin(); p != whitePieces.end(); ++p) {
+    const QImage& img = p.key() == hotPos ? *(hotWhiteImages[p.value()]) : *(whiteImages[p.value()]);
+    int x = startCell.left() + startCell.width() * (p.key().file - 'a');
+    int y = startCell.top() + startCell.height() * (8 - (p.key().rank - '0'));
     painter.drawImage(x, y, img);
   }
+  for (auto p = blackPieces.begin(); p != blackPieces.end(); ++p) {
+    const QImage& img = p.key() == hotPos ? *(hotBlackImages[p.value()]) : *(blackImages[p.value()]);
+    int x = startCell.left() + startCell.width() * (p.key().file - 'a');
+    int y = startCell.top() + startCell.height() * (8 - (p.key().rank - '0'));
+    painter.drawImage(x, y, img);
+  }
+}
+
+Chessboard::ChessPieces Chessboard::arrToVec(const Chai::Chess::Piece* p) const
+{
+  using namespace Chai::Chess;
+  ChessPieces map;
+  if (p) {
+    for (; p->type != Type::bad; ++p) {
+      map[p->position] = p->type;
+    }
+  }
+  return map;
 }
 
 void Chessboard::resizeEvent(QResizeEvent * event)
@@ -123,7 +144,7 @@ void Chessboard::paintEvent(QPaintEvent * event)
 
 void Chessboard::leaveEvent(QEvent * event)
 {
-  hotFile = hotRank = QChar::Null;
+  hotPos = BADPOS;
   setCursor(Qt::ArrowCursor);
   repaint();
   QWidget::leaveEvent(event);
@@ -136,17 +157,15 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
     if (event->x() >= startCell.left() && event->x() < (startCell.left() + 8 * startCell.width())
       && event->y() >= startCell.top() && event->y() < (startCell.top() + 8 * startCell.height()))
     {
-      int x = (event->x() - startCell.left()) / startCell.width();
-      Q_ASSERT(x >= 0 && x < 8);
-      hotFile = QChar('a' + x);
-      int y = (event->y() - startCell.top()) / startCell.height();
-      Q_ASSERT(y >= 0 && y < 8);
-      hotRank = QChar('0' + 8 - y);
+      char x = (event->x() - startCell.left()) / startCell.width();
+      char y = (event->y() - startCell.top()) / startCell.height();
+      Q_ASSERT(x >= 0 && x < 8 && y >= 0 && y < 8);
+      hotPos = {'a' + x, '0' + 8 - y};
       setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
     }
     else
     {
-      hotFile = hotRank = QChar::Null;
+      hotPos = BADPOS;
       setCursor(Qt::ArrowCursor);
     }
     repaint();

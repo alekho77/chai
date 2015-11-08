@@ -6,6 +6,7 @@
 #include <QMap>
 #include <QVector>
 #include "ui_chessboard.h"
+#include "../chessmachine/chessmachine.h"
 
 class Chessboard : public QWidget
 {
@@ -14,6 +15,9 @@ class Chessboard : public QWidget
 public:
   Chessboard(QWidget *parent = 0);
   ~Chessboard();
+
+public slots:
+  void newGame();
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -25,9 +29,11 @@ protected:
 
 private:
   void createChessboard(int size);
-  void drawChessboardLabels(QPainter& painter);
   QSharedPointer<QImage> createPieceImage(const QString& filename, qreal scale);
+  void drawChessboardLabels(QPainter& painter);
   void drawChesspieces(QPainter& painter);
+  typedef QMap<Chai::Chess::Position, Chai::Chess::Type> ChessPieces;
+  ChessPieces arrToVec(const Chai::Chess::Piece* p) const;
 
   Ui::chessboardClass ui;
   
@@ -36,18 +42,14 @@ private:
 
   QSharedPointer<QImage> imgBoard;
   QRect startCell;
-  QChar hotRank; // Rank - A row of the chessboard.In algebraic notation, ranks are numbered 1–8 starting from White's side of the board
-  QChar hotFile; // File - a column of the chessboard. A specific file are named using its position in a–h.
-  typedef QMap< QString, QSharedPointer<QImage> > ChessPiecesMap;
-  ChessPiecesMap whitePieces;
-  ChessPiecesMap blackPieces;
-  struct PieceState
-  {
-    bool white;
-    QString name;
-    QChar file, rank;
-  };
-  QVector<PieceState> position;
+  Chai::Chess::Position hotPos;
+  typedef QMap< Chai::Chess::Type, QSharedPointer<QImage> > ChessPieceImages;
+  ChessPieceImages whiteImages, hotWhiteImages;
+  ChessPieceImages blackImages, hotBlackImages;
+  ChessPieces whitePieces;
+  ChessPieces blackPieces;
+
+  QSharedPointer<Chai::Chess::IChessMachine> chessMachine;
 };
 
 #endif // CHESSBOARD_H

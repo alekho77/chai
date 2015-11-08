@@ -81,6 +81,19 @@
         <property name="title">
          <string>Options</string>
         </property>
+        <widget class="QPushButton" name="pushButtonNewGame">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>30</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>New game</string>
+         </property>
+        </widget>
        </widget>
       </item>
       <item>
@@ -90,6 +103,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -123,10 +139,46 @@
    <extends>QWidget</extends>
    <header>chessboard.h</header>
    <container>1</container>
+   <slots>
+    <slot>newGame()</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources>
   <include location="chess.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButtonNewGame</sender>
+   <signal>clicked()</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>newGame()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>406</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonNewGame</sender>
+   <signal>clicked()</signal>
+   <receiver>plainTextEditLog</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>424</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
