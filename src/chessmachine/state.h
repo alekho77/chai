@@ -72,8 +72,8 @@ namespace Chai {
       Pieces pieces;
 
     private:
-      void evalMoves();
-      static std::set<Position> pieceMoves(const Pieces& pieces, const Position& pos, const std::set<Position>& opponent = {});
+      void evalMoves(boost::optional<Move> oppmove);
+      static std::set<Position> pieceMoves(const Pieces& pieces, const Position& pos, boost::optional<Move> oppmove, const std::set<Position>& opponent = {});
       static bool addMoveIf(const Pieces& pieces, std::set<Position>& moves, const Position& pos, Set set = Set::unknown, bool capture = false);
       static bool testPath(const Pieces& pieces, const std::set<Position>& attack, const std::vector<Position>& path);
       static bool testPiece(const Pieces& pieces, const std::pair<Position, PieceState>& piece);

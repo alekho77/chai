@@ -13,7 +13,7 @@ namespace Chai {
                   BROOK(a8), BKNIGHT(b8), BBISHOP(c8), BQUEEN(d8), BKING(e8), BBISHOP(f8), BKNIGHT(g8), BROOK(h8) })
       , activeSet(Set::white)
     {
-      evalMoves();
+      evalMoves({});
     }
 
     ChessState::ChessState(const ChessState& state, const Move& move)
@@ -27,6 +27,7 @@ namespace Chai {
       
       pieces.erase(move.from);
       pieces[move.to] = { state.activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, {} };
+      
       if (move.type == Type::king) {
         const char kingrank = state.activeSet == Set::white ? '1' : '8';
         const Position kingpos1 = { 'e', kingrank };
@@ -50,32 +51,41 @@ namespace Chai {
             pieces[rookpos2] = { state.activeSet, Type::rook, true,{} };
           }
         }
+      } else if (move.type == Type::pawn) {
+        if (abs(move.from.file - move.to.file) == 1 && state.pieces.find(move.to) == state.pieces.end()) {
+          pieces.erase({ move.to.file, move.from.rank }); // En passant
+        }
       }
       
-      evalMoves();
+      evalMoves(lastMove);
     }
 
-    void ChessState::evalMoves()
+    void ChessState::evalMoves(boost::optional<Move> oppmove)
     {
       std::set<Position> opponent;
       for (auto& piece : pieces) {
         if (piece.second.set != activeSet) {
-          piece.second.moves = pieceMoves(pieces, piece.first);
+          piece.second.moves = pieceMoves(pieces, piece.first, {});
           opponent.insert(piece.second.moves.begin(), piece.second.moves.end());
         }
       }
       for (auto& piece : pieces) {
         if (piece.second.set == activeSet) {
-          std::set<Position> probmoves = pieceMoves(pieces, piece.first, opponent);
+          std::set<Position> probmoves = pieceMoves(pieces, piece.first, oppmove, opponent);
           piece.second.moves = probmoves;
           for (auto m : probmoves) {
             Pieces testpieces = pieces;
             testpieces[m] = { piece.second.set, piece.second.type, true, {} };
             testpieces.erase(piece.first);
+            if (piece.second.type == Type::pawn) {
+              if (abs(piece.first.file - m.file) == 1 && pieces.find(m) == pieces.end()) {
+                testpieces.erase({ m.file, piece.first.rank }); // En passant
+              }
+            }
             Position king = std::find_if(testpieces.begin(), testpieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
             for (auto p : testpieces) {
               if (p.second.set != activeSet) {
-                std::set<Position> moves = pieceMoves(testpieces, p.first);
+                std::set<Position> moves = pieceMoves(testpieces, p.first, {});
                 if (moves.find(king) != moves.end()) {
                   piece.second.moves.erase(m);
                   break;
@@ -87,7 +97,7 @@ namespace Chai {
       }
     }
 
-    std::set<Position> ChessState::pieceMoves(const Pieces& pieces, const Position& pos, const std::set<Position>& opponent)
+    std::set<Position> ChessState::pieceMoves(const Pieces& pieces, const Position& pos, boost::optional<Move> oppmove, const std::set<Position>& opponent)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
@@ -105,14 +115,18 @@ namespace Chai {
           }
           addMoveIf(pieces, moves, { pos.file - 1, pos.rank + 1 }, piece.set, true);
           addMoveIf(pieces, moves, { pos.file + 1, pos.rank + 1 }, piece.set, true);
-          // TODO: added move 'En passant'
-        } else {
+          if (oppmove && oppmove->type == Type::pawn && pos.rank == '5' && (oppmove->from.rank - oppmove->to.rank) == 2 && abs(oppmove->to.file - pos.file) == 1) {
+            addMoveIf(pieces, moves, { oppmove->to.file, pos.rank + 1 }); // 'En passant'
+          }
+        } else { // black
           if (addMoveIf(pieces, moves, { pos.file, pos.rank - 1 }) && !piece.moved && pos.rank == '7') {
             addMoveIf(pieces, moves, { pos.file, pos.rank - 2 });
           }
           addMoveIf(pieces, moves, { pos.file - 1, pos.rank - 1 }, piece.set, true);
           addMoveIf(pieces, moves, { pos.file + 1, pos.rank - 1 }, piece.set, true);
-          // TODO: added move 'En passant'
+          if (oppmove && oppmove->type == Type::pawn && pos.rank == '4' && (oppmove->to.rank - oppmove->from.rank) == 2 && abs(oppmove->to.file - pos.file) == 1) {
+            addMoveIf(pieces, moves, { oppmove->to.file, pos.rank - 1 }); // 'En passant'
+          }
         }
         break;
        case Type::knight:

@@ -11,9 +11,9 @@ namespace Chai {
       return std::find_if(list.begin(), list.end(), [type](const auto& p) { return p.type == type; }) != list.end();
     }
 
-    template <size_t N, class T>
-    typename size_t count(const T(&list)[N], Type type) {
-      return std::count_if(&(list[0]), &(list[N]), [type](const auto& p) { return p.type == type; });
+    template <class T>
+    typename size_t count(const T& list, Type type) {
+      return std::count_if(list.begin(), list.end(), [type](const auto& p) { return p.type == type; });
     }
 
     template <class T>
@@ -79,6 +79,7 @@ namespace Chai {
     void testpos(const std::map<Type, Moves>& position, const std::vector<Piece>& pieces, const IChessMachine& machine) {
       static const std::map<Type, std::string> name = { { Type::pawn, "p" },{ Type::knight, "N" },{ Type::bishop, "B" },{ Type::rook, "R" },{ Type::queen, "Q" },{ Type::king, "K" } };
       for (const auto& p : position) {
+        BOOST_CHECK_MESSAGE(p.second.size() == count(pieces, p.first), "The number of pieces " + name.at(p.first) + " does not match");
         for (const auto& m : p.second) {
           BOOST_CHECK_MESSAGE(exactly(pieces, m.first, p.first), "The piece " + name.at(p.first) + " was not found at the position \"" + toStr(m.first) + "\"");
           BOOST_CHECK_MESSAGE(equal(arr2vec(machine.CheckMoves(m.first)), m.second), "Moves list does not match for piece " + name.at(p.first) + " at the position \"" + toStr(m.first) + "\"");
@@ -116,6 +117,7 @@ BOOST_AUTO_TEST_CASE( StartTest )
   BOOST_REQUIRE(!(h4 < a1));
 
   machine->Start();
+  BOOST_CHECK(machine->CheckStatus() == Status::normal);
 
   std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
   BOOST_REQUIRE(white.size() == 16);
@@ -166,6 +168,8 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "dxe4") {
+      BOOST_TEST_MESSAGE(m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{} },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { c3,{ b5, d5, a4, e4, b1, e2 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
@@ -185,6 +189,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
       testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
       testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
     } else if (m == "Nd6" ) {
+      BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
@@ -224,6 +229,8 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
   BOOST_REQUIRE(moves.size() == 13);
   for (auto m : moves) {
     if (m == "Bxf7") {
+      BOOST_TEST_MESSAGE("Before " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O"), "Can't make move O-O");
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
@@ -238,6 +245,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "Bxf7") {
+      BOOST_TEST_MESSAGE("After " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
@@ -258,6 +266,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
       testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
       testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
     } else if (m == "Qf3") {
+      BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
     }
   }
@@ -281,6 +290,7 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "Qxe5") {
+      BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{} },{ b2,{} },{ c2,{} },{ d2,{} },{ f2,{} },{ g2,{} },{ h4,{} } } },
@@ -321,6 +331,7 @@ BOOST_AUTO_TEST_CASE( DangerousReidTest )
   BOOST_REQUIRE(moves.size() == 23);
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK(machine->CheckStatus() == Status::normal);
   }
 }
 
@@ -340,7 +351,10 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "Bd7") {
+      BOOST_TEST_MESSAGE(m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
       BOOST_REQUIRE_MESSAGE(machine->Move("Qe2"), "Can't make move Queen!");
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
       {
         const std::map<Type, Moves> black_pieces = {
           { Type::pawn,{ { a7,{ a6 } },{ b7,{ b6 } },{ c7,{} },{ e7,{ e6, e5 } },{ f7,{} },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
@@ -353,6 +367,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
         testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
       }
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O-O"), "Can't make move O-O-O!");
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
       {
         const std::map<Type, Moves> black_pieces = {
           { Type::pawn,{ { a7,{ a6 } },{ b7,{ b6 } },{ c7,{} },{ e7,{ e6, e5 } },{ f7,{} },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
@@ -374,6 +389,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
         testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
       }
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O-O"), "Can't make move O-O-O!");
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
       {
         const std::map<Type, Moves> white_pieces = {
           { Type::pawn,{ { a2,{ a3, a4 } },{ b2,{ b3,b4 } },{ c2,{} },{ d4,{ d5 } },{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{ h3,h4 } } } },
@@ -389,6 +405,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       machine->Undo();
       machine->Undo();
     } else if (m == "Nxc7") {
+      BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
     }
   }
@@ -409,6 +426,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     if (m == "fxg1=N") {
+      BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> black_pieces = {
         { Type::pawn,{ { a7,{ a6,a5 } },{ b7,{ b6,b5 } },{ c7,{ c6,c5 } },{ f7,{ f6, f5 } },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
@@ -435,6 +453,299 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
       testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
       testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
     }
+  }
+}
+
+BOOST_AUTO_TEST_CASE( EnPassantTest )
+{
+  using namespace Chai::Chess;
+  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
+  machine->Start();
+
+  const std::vector<std::string> moves = split("\
+1.d4 d6 2.d5 e5 3.dxe6 fxe6 4.Na3 b5 5.Nh3 b4 6.c4 bxc3 7.bxc3 d5 8.c4 d4 9.e4\n\
+g5 10.f4 d3 11.fxg5 h5 12.Nf4 e5 13.g6 a5 14.Bb2 c6 15.Qxd3 Qxd3 16.Rd1 Bg4\n\
+17.Rxd3 Na6 18.c5 Rd8 19.g3 Bh3 20.Be2 h4 21.Rf1 Bxc5 22.gxh4 Nh6 23.Bg4 a4\n\
+24.Be6 exf4 25.Rxf4 Rxd3 26.Ke2 Be7 27.Bxh3 Bxh4 28.g7 Ng4 29.e5 Rxh3 30.\
+gxh8=Q+ Kd7 31.Rf7+ Ke6 32.Qf6+ Kd5 33.e6 Nb4 34.Qd8+ Kxe6 35.Qe7+ Kd5 36.Qe5+\n\
+Nxe5 37.Bxe5 Kxe5 38.Re7+ Kf5 39.Nc4 Bxe7 40.a3 Rd3 41.h4 c5 42.axb4 cxb4 43.\
+h5 Bh4 44.h6 Rh3 45.h7 Rh2+ 46.Ke3 b3 47.h8=Q b2 48.Qh5+ Ke6 49.Nxb2 a3 50.\
+Qe8+ Kd6 51.Qe4 Rxb2 52.Qxh4 a2 53.Qd4+ Ke7 54.Qxb2 a1=Q 55.Qxa1 Kd7 56.Qd4+\n\
+Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
+  BOOST_REQUIRE(moves.size() == 60*2+1);
+  int nm = 0;
+  for (auto m : moves) {
+    const int move = nm / 2 + 1;
+    BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m + " (#" + std::to_string(move) + ")");
+    if (move == 2 && m == "e5") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{a3,a4} },{ b2,{b3,b4} },{ c2,{c3,c4} },{ d5,{e6/*en passant*/}},{ e2,{e3,e4} },{f2,{f3,f4}},{ g2,{g3,g4} },{ h2,{h3,h4} } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+    } else if (move == 3 && m == "dxe6") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{ a3,a4 } },{ b2,{ b3,b4 } },{ c2,{ c3,c4 } },{ e6,{ e7,f7 } },{ e2,{ e3,e4 } },{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{ h3,h4 } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6,a5 } },{ b7,{ b6,b5 } },{ c7,{ c6,c5 } },{d6,{d5}},{ f7,{ f6, f5, e6 } },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } }
+      };
+      const auto black = arr2vec(machine->GetSet(Set::black));
+      testpos(black_pieces, black, *machine);
+      BOOST_REQUIRE(at(black, e5) == black.end());
+    } else if (move == 6 && m == "c4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6,a5 } },{ b4,{ b3,a3,c3/*en passant*/ } },{ c7,{ c6,c5 } },{ d6,{d5} },{ e6,{ e5 } },{ g7,{ g6,g5 } },{ h7,{ h5,h6 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 6 && m == "bxc3") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c3,{ b2,c2 } },{ c7,{ c6,c5 } },{ d6,{ d5 } },{ e6,{ e5 } },{ g7,{ g6,g5 } },{ h7,{ h5,h6 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ b2,{ b3,b4,c3 } },{e2,{e3,e4}},{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{} } } }
+      };
+      const auto white = arr2vec(machine->GetSet(Set::white));
+      testpos(white_pieces, white, *machine);
+      BOOST_REQUIRE(at(white, c4) == white.end());
+    } else if (move == 9 && m == "e4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c7,{ c6,c5 } },{ d4,{ d3,e3 /*en passant*/ } },{ e6,{ e5 } },{ g7,{ g6,g5 } },{ h7,{ h5,h6 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 10 && m == "f4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c7,{ c6,c5 } },{ d4,{ d3 /*no more en passant*/ } },{ e6,{ e5 } },{ g5,{ g4,f4 } },{ h7,{ h5,h6 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 11 && m == "h5") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ c4,{ c5 } },{ e4,{ e5 } },{ g5,{ g6,h6/*en passant*/ } },{ g2,{ g3,g4 } },{ h2,{} } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+    } else if (move == 12 && m == "e5") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ c4,{ c5 } },{ e4,{} },{ g5,{ g6/*no more en passant*/ } },{ g2,{ g3,g4 } },{ h2,{h3,h4} } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+    } else if (nm == 14 * 2 + 1 && m == "Qxd3") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::king,{ { e1,{ f2 /*impossible castling*/ } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+    } else if (move == 18 && m == "c5") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::king,{ { e8,{ e7 /*impossible castling*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 20 && m == "h4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::king,{ { e1,{ f2,d2,d1 /*impossible castling*/ } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+    } else if (move == 23 && m == "Bg4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::king,{ { e8,{ e7,f8,g8 /*possible castling*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 24 && m == "Be6") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::king,{ { e8,{ e7,f8 /*no more possible castling*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 27 && m == "Bxh3") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::king,{ { e8,{ d8 /*impossible castling*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 30 && m == "gxh8=Q") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ e5,{e6} },{ h2,{} } } },
+        { Type::knight,{ { a3,{b5,c4,c2,b1} } } },
+        { Type::bishop,{ { b2,{c3,d4,c1,a1} } } },
+        { Type::rook,{ { f4,{f5,f6,f7,f8,f3,f2,f1,g4,e4,d4,c4,b4,a4} } } },
+        { Type::queen,{ { h8,{g8,f8,e8,g7,f6,h7,h6,h5,h4} } } },
+        { Type::king,{ { e2,{ d3,e3,f3,f2,d2,d1,e1,f1 /*only the mobility*/ } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a4,{} },{ c6,{} } } },
+        { Type::knight,{ { a6,{} },{ g4,{} } } },
+        { Type::bishop,{ { h4,{} } } },
+        { Type::rook,{ { h3,{} } } },
+        { Type::queen,{} },
+        { Type::king,{ { e8,{ d7,e7 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 31 && m == "Rf7") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 32 && m == "Qf6") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 34 && m == "Qd8") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 35 && m == "Qe7") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 36 && m == "Qe5") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 38 && m == "Re7") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { a2,{} },{ h2,{} } } },
+        { Type::knight,{ { a3,{ b5,c4,c2,b1 } } } },
+        { Type::bishop,{} },
+        { Type::rook,{ { e7,{ e8,e6,e5,a7,b7,c7,d7,f7,g7,h7 } } } },
+        { Type::queen,{} },
+        { Type::king,{ { e2,{ d3,e3,f3,f2,d2,d1,e1,f1 /*only the mobility*/ } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a4,{} },{ c6,{} } } },
+        { Type::knight,{ { b4,{} } } },
+        { Type::bishop,{ { h4,{e7} } } },
+        { Type::rook,{ { h3,{} } } },
+        { Type::queen,{} },
+        { Type::king,{ { e5,{ d6,f6,d5,f5,d4,f4 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 45 && m == "Rh2") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{ { h7,{} } } },
+        { Type::knight,{ { c4,{} } } },
+        { Type::bishop,{} },
+        { Type::rook,{} },
+        { Type::queen,{} },
+        { Type::king,{ { e2,{ d3,e3,f3,d1,f1 } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a4,{a3} },{ b4,{b3} } } },
+        { Type::knight,{} },
+        { Type::bishop,{ { h4,{ g5,f6,e7,d8,g3,f2,e1 } } } },
+        { Type::rook,{ { h2,{h3,h1,g2,f2,e2} } } },
+        { Type::queen,{} },
+        { Type::king,{ { f5,{ e6,f6,g6,g5,e4,f4,g4,e5 /*only the mobility*/} } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 47 && m == "h8=Q") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{} },
+        { Type::knight,{ { c4,{a5,b6,d6,e5,d2,b2,a3} } } },
+        { Type::bishop,{} },
+        { Type::rook,{} },
+        { Type::queen,{ {h8,{a8,b8,c8,d8,e8,f8,g8,a1,b2,c3,d4,e5,f6,g7,h7,h6,h5,h4}} } },
+        { Type::king,{ { e3,{ d4,e4,f4,d3,f3,d2,e2,f2 /*only the mobility*/} } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{ { a4,{ a3 } },{ b3,{ b2 } } } },
+        { Type::knight,{} },
+        { Type::bishop,{ { h4,{ g5,f6,e7,d8,g3,f2,e1 } } } },
+        { Type::rook,{ { h2,{ h3,h1,a2,b2,c2,d2,e2,f2,g2 } } } },
+        { Type::queen,{} },
+        { Type::king,{ { f5,{ e6,g6,g5,g4 } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 48 && m == "Qh5") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 50 && m == "Qe8") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 53 && m == "Qd4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 54 && m == "a1=Q") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{} },
+        { Type::knight,{} },
+        { Type::bishop,{} },
+        { Type::rook,{} },
+        { Type::queen,{ { b2,{ a1,c3,d4,e5,f6,g7,h8,a3,c1,b1,b3,b4,b5,b6,b7,b8,a2,c2,d2,e2,f2,g2,h2 } } } },
+        { Type::king,{ { e3,{ d4,e4,f4,d3,f3,d2,e2,f2 } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{} },
+        { Type::knight,{} },
+        { Type::bishop,{} },
+        { Type::rook,{} },
+        { Type::queen,{ {a1,{a2,a3,a4,a5,a6,a7,a8,b1,c1,d1,e1,f1,g1,h1,b2}} } },
+        { Type::king,{ { e7,{ d8,e8,f8,d7,f7,d6,e6,f6 /*only the mobility*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    } else if (move == 56 && m == "Qd4") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 59 && m == "Qd6") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+    } else if (move == 61 && m == "Kc6") {
+      BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
+      BOOST_CHECK(machine->CheckStatus() == Status::stalemate);
+      const std::map<Type, Moves> white_pieces = {
+        { Type::pawn,{} },
+        { Type::knight,{} },
+        { Type::bishop,{} },
+        { Type::rook,{} },
+        { Type::queen,{ { d6,{ d1,d2,d3,d4,d5,d7,d8,e6,f6,g6,h6,a3,b4,c5,e7,f8,b8,c7,e5,f4,g3,h2 } } } },
+        { Type::king,{ { c6,{ b7,c7,d7,b6,b5,c5,d5 } } } }
+      };
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      const std::map<Type, Moves> black_pieces = {
+        { Type::pawn,{} },
+        { Type::knight,{} },
+        { Type::bishop,{} },
+        { Type::rook,{} },
+        { Type::queen,{} },
+        { Type::king,{ { c8,{ /*stalemate*/ } } } }
+      };
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+    }
+    nm++;
   }
 }
 

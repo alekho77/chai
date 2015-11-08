@@ -19,6 +19,7 @@
 #include <set>
 #include <algorithm>
 #include <assert.h>
+#include <stdlib.h>
 
 #include <boost/optional.hpp>
 
