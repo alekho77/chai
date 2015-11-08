@@ -428,6 +428,12 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
         { Type::king,{ { e2,{ e1,e3,f2 } } } }
       };
       testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
+      
+      machine->Undo();
+      BOOST_REQUIRE_MESSAGE(machine->Move("fxg1N"), "Can't make move fxg1N");
+      BOOST_CHECK(machine->CheckStatus() == Status::check);
+      testpos(black_pieces, arr2vec(machine->GetSet(Set::black)), *machine);
+      testpos(white_pieces, arr2vec(machine->GetSet(Set::white)), *machine);
     }
   }
 }
