@@ -161,7 +161,11 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
       char y = (event->y() - startCell.top()) / startCell.height();
       Q_ASSERT(x >= 0 && x < 8 && y >= 0 && y < 8);
       hotPos = {'a' + x, '0' + 8 - y};
-      setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
+      if (whitePieces.contains(hotPos) || blackPieces.contains(hotPos)) {
+        setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor);
+      } else {
+        setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::ArrowCursor); //Qt::ForbiddenCursor
+      }
     }
     else
     {
