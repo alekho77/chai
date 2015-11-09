@@ -12,6 +12,10 @@ public:
   chess(QWidget *parent = 0);
   ~chess();
 
+public slots:
+  void newGame();
+  void stopGame();
+
 protected:
   void resizeEvent(QResizeEvent * event) override;
 
