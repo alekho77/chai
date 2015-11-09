@@ -12,6 +12,7 @@ Chessboard::Chessboard(QWidget *parent)
   , cellLight(255, 206, 158)
   , cellDark(209, 139, 71)
   , hotPos(BADPOS)
+  , dragPos(BADPOS)
 {
   ui.setupUi(this);
   
@@ -106,12 +107,20 @@ void Chessboard::drawChesspieces(QPainter& painter)
   using namespace Chai::Chess;
   painter.save();
   for (auto p : chessPieces) {
-    const QImage& img = p.first == hotPos ?
-      (p.second.first == Set::white ? *(hotWhiteImages[p.second.second]) : *(hotBlackImages[p.second.second])) :
-      (p.second.first == Set::white ? *(whiteImages[p.second.second]) : *(blackImages[p.second.second]));
-    const int x = startCell.left() + startCell.width() * (p.first.file - 'a');
-    const int y = startCell.top() + startCell.height() * (8 - (p.first.rank - '0'));
-    painter.drawImage(x, y, img);
+    if (p.first != dragPos)
+    {
+      const QImage& img = p.first == hotPos ?
+        (p.second.first == Set::white ? *(hotWhiteImages[p.second.second]) : *(hotBlackImages[p.second.second])) :
+        (p.second.first == Set::white ? *(whiteImages[p.second.second]) : *(blackImages[p.second.second]));
+      const int x = startCell.left() + startCell.width() * (p.first.file - 'a');
+      const int y = startCell.top() + startCell.height() * (8 - (p.first.rank - '0'));
+      painter.drawImage(x, y, img);
+    }
+  }
+  if (dragPos != BADPOS) {
+    auto p = chessPieces.at(dragPos);
+    const QImage& img = p.first == Set::white ? *(hotWhiteImages[p.second]) : *(hotBlackImages[p.second]);
+    painter.drawImage(dragPoint, img);
   }
   painter.restore();
 }
@@ -119,16 +128,16 @@ void Chessboard::drawChesspieces(QPainter& painter)
 void Chessboard::drawChessMoves(QPainter& painter)
 {
   using namespace Chai::Chess;
-  auto hotpiece = chessPieces.find(hotPos);
-  if (hotpiece != chessPieces.end())
+  auto piece = chessPieces.find(dragPos != BADPOS ? dragPos : hotPos);
+  if (piece != chessPieces.end())
   {
     painter.save();
     painter.setPen(Qt::black);
-    painter.setBrush(QBrush(hotpiece->second.first == Set::white ? Qt::white : Qt::black, Qt::SolidPattern));
+    painter.setBrush(QBrush(piece->second.first == Set::white ? Qt::white : Qt::black, Qt::SolidPattern));
     const qreal scale = 0.3;
     const qreal adjx = startCell.width() * (1 - scale) / 2;
     const qreal adjy = startCell.height() * (1 - scale) / 2;
-    const Positions pos = arrToVec(chessMachine->CheckMoves(hotPos));
+    const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos != BADPOS ? dragPos : hotPos));
     for (auto p : pos) {
       QRectF rec;
       rec.setX(startCell.left() + startCell.width() * (p.file - 'a'));
@@ -184,7 +193,8 @@ void Chessboard::paintEvent(QPaintEvent * event)
 void Chessboard::leaveEvent(QEvent * event)
 {
   hotPos = BADPOS;
-  //setCursor(Qt::ArrowCursor);
+  dragPos = BADPOS;
+  setCursor(Qt::ArrowCursor);
   repaint();
   QWidget::leaveEvent(event);
 }
@@ -193,24 +203,32 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
 {
   if (imgBoard)
   {
-    if (event->x() >= startCell.left() && event->x() < (startCell.left() + 8 * startCell.width())
-      && event->y() >= startCell.top() && event->y() < (startCell.top() + 8 * startCell.height()))
+    if (overBoard(event->x(), event->y()))
     {
       char x = (event->x() - startCell.left()) / startCell.width();
       char y = (event->y() - startCell.top()) / startCell.height();
       Q_ASSERT(x >= 0 && x < 8 && y >= 0 && y < 8);
       hotPos = {'a' + x, '0' + 8 - y};
-//       if (whitePieces.find(hotPos) != whitePieces.end() || blackPieces.find(hotPos) != blackPieces.end()) {
-//         //setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor);
-//       } else {
-//         //setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::ArrowCursor); //Qt::ForbiddenCursor
-//       }
+      if (dragPos == BADPOS) {
+        auto piece = chessPieces.find(hotPos);
+        if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove()) {
+          setCursor(Qt::OpenHandCursor);
+        } else {
+          setCursor(Qt::ArrowCursor);
+        }
+      }
+      else
+      {
+        const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
+        setCursor(pos.find(hotPos) != pos.end() ? Qt::ClosedHandCursor : Qt::ForbiddenCursor);
+      }
     }
     else
     {
       hotPos = BADPOS;
-      //setCursor(Qt::ArrowCursor);
+      setCursor(dragPos == BADPOS ? Qt::ArrowCursor : Qt::ForbiddenCursor);
     }
+    dragPoint = event->pos() - QPoint(startCell.width() / 2, startCell.height() / 2);
     repaint();
   }
   QWidget::mouseMoveEvent(event);
@@ -218,20 +236,41 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
 
 void Chessboard::mousePressEvent(QMouseEvent * event)
 {
-  if (event->x() >= startCell.left() && event->x() < (startCell.left() + 8 * startCell.width())
-    && event->y() >= startCell.top() && event->y() < (startCell.top() + 8 * startCell.height()))
+  if (dragPos == BADPOS && event->buttons().testFlag(Qt::LeftButton))
   {
-    //setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
+    auto piece = chessPieces.find(hotPos);
+    if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove())
+    {
+      setCursor(Qt::ClosedHandCursor);
+      dragPos = hotPos;
+    }
+    repaint();
   }
   QWidget::mousePressEvent(event);
 }
 
 void Chessboard::mouseReleaseEvent(QMouseEvent * event)
 {
-  if (event->x() >= startCell.left() && event->x() < (startCell.left() + 8 * startCell.width())
-    && event->y() >= startCell.top() && event->y() < (startCell.top() + 8 * startCell.height()))
+  if (dragPos != BADPOS && !event->buttons().testFlag(Qt::LeftButton))
   {
-    //setCursor(event->buttons().testFlag(Qt::LeftButton) ? Qt::ClosedHandCursor : Qt::OpenHandCursor); // Qt::ForbiddenCursor
+    auto piece = chessPieces.at(dragPos);
+    const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
+    if (pos.find(hotPos) != pos.end() && chessMachine->Move(piece.second, dragPos, hotPos)) { // TODO: Promotion
+      updateChessPieces();
+      setCursor(Qt::ArrowCursor);
+    }
+    else
+    {
+      auto piece = chessPieces.find(hotPos);
+      if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove()) {
+        setCursor(Qt::OpenHandCursor);
+      }
+      else {
+        setCursor(Qt::ArrowCursor);
+      }
+    }
+    dragPos = BADPOS;
+    repaint();
   }
   QWidget::mouseReleaseEvent(event);
 }

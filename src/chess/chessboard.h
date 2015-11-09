@@ -43,6 +43,10 @@ private:
 
   void updateChessPieces();
   Positions arrToVec(const Chai::Chess::Position* p) const;
+  bool overBoard(int x, int y) const {
+    return x >= startCell.left() && x < (startCell.left() + 8 * startCell.width())
+      && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());
+  }
 
   Ui::chessboardClass ui;
   
@@ -52,10 +56,11 @@ private:
   QSharedPointer<QImage> imgBoard;
   QRect startCell;
   Chai::Chess::Position hotPos;
+  Chai::Chess::Position dragPos;
+  QPoint dragPoint;
   ChessPieceImages whiteImages, hotWhiteImages;
   ChessPieceImages blackImages, hotBlackImages;
   ChessPieces chessPieces;
-  //ChessPieces blackPieces;
 
   QSharedPointer<Chai::Chess::IChessMachine> chessMachine;
 };

@@ -41,6 +41,7 @@ namespace Chai {
       virtual bool Move(const char* notation) = 0; // Standard algebraic notation (SAN) is the notation standardized by FIDE. It omits the starting file and rank of the piece, unless it is necessary to disambiguate the move.
       virtual void Undo() = 0;
 
+      virtual Set CurrentMove() const = 0;
       virtual const Piece* GetSet(Set set) const = 0; // Type::bad type terminated array or nullptr if it is not started.
       virtual const Position* CheckMoves(Position from) const = 0; // BADPOS terminated array or nullptr if move is impossible.
       virtual Status CheckStatus() const = 0;
