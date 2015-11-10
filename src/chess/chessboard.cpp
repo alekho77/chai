@@ -211,8 +211,8 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
       hotPos = {'a' + x, '0' + 8 - y};
       if (dragPos == BADPOS) {
         auto piece = chessPieces.find(hotPos);
-        if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove()) {
-          setCursor(Qt::OpenHandCursor);
+        if (piece != chessPieces.end()) {
+          setCursor(piece->second.first == chessMachine->CurrentMove() ? Qt::OpenHandCursor : Qt::PointingHandCursor);
         } else {
           setCursor(Qt::ArrowCursor);
         }
@@ -257,7 +257,7 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
     const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
     if (pos.find(hotPos) != pos.end() && chessMachine->Move(piece.second, dragPos, hotPos)) { // TODO: Promotion
       updateChessPieces();
-      setCursor(Qt::ArrowCursor);
+      setCursor(Qt::PointingHandCursor);
     }
     else
     {
