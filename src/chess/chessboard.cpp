@@ -134,9 +134,12 @@ void Chessboard::drawChessMoves(QPainter& painter)
     painter.save();
     painter.setPen(Qt::black);
     painter.setBrush(QBrush(piece->second.first == Set::white ? Qt::white : Qt::black, Qt::SolidPattern));
-    const qreal scale = 0.3;
-    const qreal adjx = startCell.width() * (1 - scale) / 2;
-    const qreal adjy = startCell.height() * (1 - scale) / 2;
+    const qreal scalec = 0.3;
+    const qreal adjxc = startCell.width() * (1 - scalec) / 2;
+    const qreal adjyc = startCell.height() * (1 - scalec) / 2;
+    const qreal scalel = 0.5;
+    const qreal adjxl = startCell.width() * (1 - scalel) / 2;
+    const qreal adjyl = startCell.height() * (1 - scalel) / 2;
     const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos != BADPOS ? dragPos : hotPos));
     for (auto p : pos) {
       QRectF rec;
@@ -144,8 +147,23 @@ void Chessboard::drawChessMoves(QPainter& painter)
       rec.setY(startCell.top() + startCell.height() * (8 - (p.rank - '0')));
       rec.setWidth(startCell.width());
       rec.setHeight(startCell.height());
-      rec.adjust(adjx, adjy, -adjx, -adjy);
-      painter.drawEllipse(rec);
+      if (chessPieces.find(p) != chessPieces.end() || (piece->second.second == Type::pawn && p.file != piece->first.file))
+      {
+        rec.adjust(adjxl, adjyl, -adjxl, -adjyl);
+        painter.save();
+        QPen pen(Qt::red);
+        pen.setCapStyle(Qt::RoundCap);
+        pen.setWidthF(startCell.width() * 0.2);
+        painter.setPen(pen);
+        painter.drawLine(rec.topLeft(), rec.bottomRight());
+        painter.drawLine(rec.bottomLeft(), rec.topRight());
+        painter.restore();
+      }
+      else
+      {
+        rec.adjust(adjxc, adjyc, -adjxc, -adjyc);
+        painter.drawEllipse(rec);
+      }
     }
     painter.restore();
   }
