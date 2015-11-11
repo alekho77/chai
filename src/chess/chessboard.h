@@ -33,6 +33,9 @@ protected:
   void mousePressEvent(QMouseEvent * event) override;
   void mouseReleaseEvent(QMouseEvent * event) override;
 
+signals:
+  void updateLog(QString str);
+
 private:
   void createChessboard(int size);
   QSharedPointer<QImage> createPieceImage(const QString& filename, qreal scale);
@@ -62,6 +65,7 @@ private:
   ChessPieceImages whiteImages, hotWhiteImages;
   ChessPieceImages blackImages, hotBlackImages;
   ChessPieces chessPieces;
+  int moveCount;
 
   QSharedPointer<Chai::Chess::IChessMachine> chessMachine;
 };

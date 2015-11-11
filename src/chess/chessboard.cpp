@@ -14,6 +14,7 @@ Chessboard::Chessboard(QWidget *parent)
   , cellDark(209, 139, 71)
   , hotPos(BADPOS)
   , dragPos(BADPOS)
+  , moveCount(0)
 {
   ui.setupUi(this);
   
@@ -30,6 +31,7 @@ void Chessboard::newGame()
   chessMachine->Start();
   updateChessPieces();
   repaint();
+  moveCount = 1;
 }
 
 void Chessboard::createChessboard(int size)
@@ -300,6 +302,20 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
       }
       if (chessMachine->Move(piece.second, from, to, promotion))
       {
+        QString notation(chessMachine->LastMoveNotation());
+        if (piece.first == Set::white) {
+          const int c = (notation.length() < 8 ? 8 - notation.length() : 0) + 1;
+          notation = (moveCount < 10 ? "&nbsp;" : "") + QString::number(moveCount) + "." + notation;
+          for (int i = 0; i < c; i++) {
+            notation += "&nbsp;";
+          }
+        }
+        notation = "<code>" + notation + "</code>";
+        if (piece.first == Set::black) {
+          notation += QString("<br />");
+          moveCount++;
+        }
+        emit updateLog(notation);
         updateChessPieces();
       }
     }

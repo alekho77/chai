@@ -27,9 +27,13 @@ void chess::stopGame()
   ui.widgetChessboard->setEnabled(false);
 }
 
+void chess::onLogChanged()
+{
+  ui.textEditLog->ensureCursorVisible();
+}
+
 void chess::resizeEvent(QResizeEvent * event)
 {
-  //ui.plainTextEditLog->appendPlainText(QString::number(ui.centralWidget->height()));
   ui.widgetChessboard->setMaximumWidth(ui.centralWidget->height());
   QMainWindow::resizeEvent(event);
 }

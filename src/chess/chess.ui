@@ -181,15 +181,26 @@
        </layout>
       </item>
       <item>
-       <widget class="QPlainTextEdit" name="plainTextEditLog">
+       <widget class="QTextEdit" name="textEditLog">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOn</enum>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
         </property>
        </widget>
       </item>
@@ -224,6 +235,7 @@
    <header>chessboard.h</header>
    <container>1</container>
    <slots>
+    <signal>updateLog(QString)</signal>
     <slot>newGame()</slot>
    </slots>
   </customwidget>
@@ -239,8 +251,8 @@
    <slot>newGame()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>510</x>
-     <y>202</y>
+     <x>586</x>
+     <y>239</y>
     </hint>
     <hint type="destinationlabel">
      <x>261</x>
@@ -251,28 +263,12 @@
   <connection>
    <sender>pushButtonNewGame</sender>
    <signal>clicked()</signal>
-   <receiver>plainTextEditLog</receiver>
-   <slot>clear()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>510</x>
-     <y>202</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>420</x>
-     <y>262</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButtonNewGame</sender>
-   <signal>clicked()</signal>
    <receiver>chessClass</receiver>
    <slot>newGame()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>477</x>
-     <y>186</y>
+     <x>586</x>
+     <y>239</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -287,8 +283,8 @@
    <slot>stopGame()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>560</x>
-     <y>186</y>
+     <x>673</x>
+     <y>239</y>
     </hint>
     <hint type="destinationlabel">
      <x>411</x>
@@ -296,9 +292,59 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>updateLog(QString)</signal>
+   <receiver>textEditLog</receiver>
+   <slot>insertHtml(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>122</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>454</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonNewGame</sender>
+   <signal>clicked()</signal>
+   <receiver>textEditLog</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>547</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>textEditLog</sender>
+   <signal>textChanged()</signal>
+   <receiver>chessClass</receiver>
+   <slot>onLogChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>681</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>newGame()</slot>
   <slot>stopGame()</slot>
+  <slot>appendLog(QString)</slot>
+  <slot>onLogChanged()</slot>
  </slots>
 </ui>
