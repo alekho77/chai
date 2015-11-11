@@ -47,6 +47,7 @@ private:
     return x >= startCell.left() && x < (startCell.left() + 8 * startCell.width())
       && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());
   }
+  void updateCursor();
 
   Ui::chessboardClass ui;
   

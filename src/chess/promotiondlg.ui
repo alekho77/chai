@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>promotionClass</class>
+ <widget class="QDialog" name="promotionClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>319</width>
+    <height>78</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>319</width>
+    <height>78</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Pawn promotion</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="pageWhite">
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/knight-w.svg</normaloff>Resources/chess-pieces/knight-w.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/bishop-w.svg</normaloff>Resources/chess-pieces/bishop-w.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/rook-w.svg</normaloff>Resources/chess-pieces/rook-w.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/queen-w.svg</normaloff>Resources/chess-pieces/queen-w.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pageBlack">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>3</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="pushButton_6">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/knight-b.svg</normaloff>Resources/chess-pieces/knight-b.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_7">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/bishop-b.svg</normaloff>Resources/chess-pieces/bishop-b.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_8">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/rook-b.svg</normaloff>Resources/chess-pieces/rook-b.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_5">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>Resources/chess-pieces/queen-b.svg</normaloff>Resources/chess-pieces/queen-b.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>64</width>
+           <height>64</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectKnight()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>17</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectBishop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>112</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectRook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>195</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectQueen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>289</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_6</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectKnight()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>37</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_7</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectBishop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_8</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectRook()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>195</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>32</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_5</sender>
+   <signal>clicked()</signal>
+   <receiver>promotionClass</receiver>
+   <slot>selectQueen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>280</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>321</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>selectKnight()</slot>
+  <slot>selectBishop()</slot>
+  <slot>selectRook()</slot>
+  <slot>selectQueen()</slot>
+ </slots>
+</ui>

@@ -1,4 +1,5 @@
 #include "chessboard.h"
+#include "promotiondlg.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>
@@ -193,6 +194,29 @@ Positions Chessboard::arrToVec(const Chai::Chess::Position* p) const
   return set;
 }
 
+void Chessboard::updateCursor()
+{
+  if (dragPos != BADPOS) {
+    const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
+    setCursor(pos.find(hotPos) != pos.end() ? Qt::ClosedHandCursor : Qt::ForbiddenCursor);
+  }
+  else
+  {
+    auto piece = chessPieces.find(hotPos);
+    if (piece != chessPieces.end()) {
+      if (piece->second.first == chessMachine->CurrentMove()) {
+        setCursor(Qt::OpenHandCursor);
+      }
+      else {
+        setCursor(Qt::PointingHandCursor);
+      }
+    }
+    else {
+      setCursor(Qt::ArrowCursor);
+    }
+  }
+}
+
 void Chessboard::resizeEvent(QResizeEvent * event)
 {
   QWidget::resizeEvent(event);
@@ -212,7 +236,7 @@ void Chessboard::leaveEvent(QEvent * event)
 {
   hotPos = BADPOS;
   dragPos = BADPOS;
-  setCursor(Qt::ArrowCursor);
+  updateCursor();
   repaint();
   QWidget::leaveEvent(event);
 }
@@ -227,26 +251,13 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
       char y = (event->y() - startCell.top()) / startCell.height();
       Q_ASSERT(x >= 0 && x < 8 && y >= 0 && y < 8);
       hotPos = {'a' + x, '0' + 8 - y};
-      if (dragPos == BADPOS) {
-        auto piece = chessPieces.find(hotPos);
-        if (piece != chessPieces.end()) {
-          setCursor(piece->second.first == chessMachine->CurrentMove() ? Qt::OpenHandCursor : Qt::PointingHandCursor);
-        } else {
-          setCursor(Qt::ArrowCursor);
-        }
-      }
-      else
-      {
-        const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
-        setCursor(pos.find(hotPos) != pos.end() ? Qt::ClosedHandCursor : Qt::ForbiddenCursor);
-      }
     }
     else
     {
       hotPos = BADPOS;
-      setCursor(dragPos == BADPOS ? Qt::ArrowCursor : Qt::ForbiddenCursor);
     }
     dragPoint = event->pos() - QPoint(startCell.width() / 2, startCell.height() / 2);
+    updateCursor();
     repaint();
   }
   QWidget::mouseMoveEvent(event);
@@ -259,10 +270,10 @@ void Chessboard::mousePressEvent(QMouseEvent * event)
     auto piece = chessPieces.find(hotPos);
     if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove())
     {
-      setCursor(Qt::ClosedHandCursor);
       dragPos = hotPos;
     }
     repaint();
+    updateCursor();
   }
   QWidget::mousePressEvent(event);
 }
@@ -271,24 +282,30 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
 {
   if (dragPos != BADPOS && !event->buttons().testFlag(Qt::LeftButton))
   {
-    auto piece = chessPieces.at(dragPos);
     const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
-    if (pos.find(hotPos) != pos.end() && chessMachine->Move(piece.second, dragPos, hotPos)) { // TODO: Promotion
-      updateChessPieces();
-      setCursor(Qt::PointingHandCursor);
-    }
-    else
-    {
-      auto piece = chessPieces.find(hotPos);
-      if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove()) {
-        setCursor(Qt::OpenHandCursor);
+    if (pos.find(hotPos) != pos.end()) {
+      using namespace Chai::Chess;
+      auto piece = chessPieces.at(dragPos);
+      Type promotion = Type::bad;
+      Position from = dragPos;
+      Position to = hotPos;
+      if (piece.second == Type::pawn && ((piece.first == Set::white && to.rank == '8') || (piece.first == Set::black && to.rank == '1')))
+      {
+        PromotionDlg dlg(chessMachine->CurrentMove(), this);
+        int result = dlg.exec();
+        if (result != QDialog::Rejected)
+        {
+          promotion = static_cast<Type>(result);
+        }
       }
-      else {
-        setCursor(Qt::ArrowCursor);
+      if (chessMachine->Move(piece.second, from, to, promotion))
+      {
+        updateChessPieces();
       }
     }
     dragPos = BADPOS;
     repaint();
+    updateCursor();
   }
   QWidget::mouseReleaseEvent(event);
 }
