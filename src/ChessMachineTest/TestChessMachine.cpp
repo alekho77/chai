@@ -105,6 +105,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
   BOOST_CHECK(machine->CheckStatus() == Status::invalid);
   BOOST_CHECK(machine->CurrentMove() == Set::unknown);
+  BOOST_CHECK(machine->LastMoveNotation() == nullptr);
 }
 
 BOOST_AUTO_TEST_CASE( StartTest )
@@ -120,6 +121,7 @@ BOOST_AUTO_TEST_CASE( StartTest )
   machine->Start();
   BOOST_CHECK(machine->CheckStatus() == Status::normal);
   BOOST_CHECK(machine->CurrentMove() == Set::white);
+  BOOST_CHECK(machine->LastMoveNotation() == std::string());
 
   std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
   BOOST_REQUIRE(white.size() == 16);
@@ -169,6 +171,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
 
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (m == "dxe4") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
@@ -237,6 +240,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       BOOST_CHECK(machine->CurrentMove() == Set::white);
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O"), "Can't make move O-O");
+      BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O"));
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, e1, d2 } } } },
@@ -249,6 +253,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
       machine->Undo();
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (m == "Bxf7") {
       BOOST_TEST_MESSAGE("After " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
@@ -296,6 +301,7 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
   BOOST_REQUIRE(moves.size() == 31);
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (m == "Qxe5") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
@@ -340,6 +346,7 @@ BOOST_AUTO_TEST_CASE( DangerousReidTest )
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK(machine->CheckStatus() == Status::normal);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
   }
 }
 
@@ -358,6 +365,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
   BOOST_REQUIRE(moves.size() == 8*2+1);
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (m == "Bd7") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
@@ -377,6 +385,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       }
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O-O"), "Can't make move O-O-O!");
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O-O"));
       {
         const std::map<Type, Moves> black_pieces = {
           { Type::pawn,{ { a7,{ a6 } },{ b7,{ b6 } },{ c7,{} },{ e7,{ e6, e5 } },{ f7,{} },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
@@ -399,6 +408,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       }
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O-O"), "Can't make move O-O-O!");
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
+      BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O-O"));
       {
         const std::map<Type, Moves> white_pieces = {
           { Type::pawn,{ { a2,{ a3, a4 } },{ b2,{ b3,b4 } },{ c2,{} },{ d4,{ d5 } },{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{ h3,h4 } } } },
@@ -435,6 +445,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
   BOOST_REQUIRE(moves.size() == 8*2);
   for (auto m : moves) {
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (m == "fxg1=N") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
@@ -491,6 +502,7 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
     BOOST_CHECK(machine->CurrentMove() == (nm & 1 ? Set::black : Set::white));
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m + " (#" + std::to_string(move) + ")");
     BOOST_CHECK(machine->CurrentMove() == (nm & 1 ? Set::white : Set::black));
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (move == 2 && m == "e5") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);

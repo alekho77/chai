@@ -19,11 +19,13 @@ namespace Chai {
       const Piece* GetSet(Set set) const override;
       const Position* CheckMoves(Position from) const override;
       Status CheckStatus() const override;
+      const char* LastMoveNotation() const override;
 
     private:
       std::list<ChessState> states;
       mutable std::vector<Piece> piecesSet; // temporary
       mutable std::vector<Position> pieceMoves; // temporary
+      mutable std::string lastMove; // temporary
     };
   }
 }

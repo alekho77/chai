@@ -169,5 +169,78 @@ namespace Chai {
       return Status::invalid;
     }
 
+    const char* ChessMachine::LastMoveNotation() const
+    {
+      lastMove.clear();
+      if (!states.empty()) {
+        const ChessState& currentstate = states.back();
+        auto iter = ++(states.crbegin());
+        if (currentstate.lastMove && iter != states.rend()) {
+          const ChessState& prevstate = *iter;
+          static const std::map<Type, std::string> name = { { Type::pawn, "" },{ Type::knight, "N" },{ Type::bishop, "B" },{ Type::rook, "R" },{ Type::queen, "Q" },{ Type::king, "K" } };
+          if (currentstate.lastMove->type == Type::king) {
+            const char kingrank = prevstate.activeSet == Set::white ? '1' : '8';
+            if (currentstate.lastMove->from.rank == kingrank && currentstate.lastMove->to.rank == kingrank && currentstate.lastMove->from.file == 'e') {
+              if (currentstate.lastMove->to.file == 'g') {
+                return "O-O";
+              } else if (currentstate.lastMove->to.file == 'c') {
+                return "O-O-O";
+              }
+            }
+          } 
+          lastMove += name.at(currentstate.lastMove->type);
+          if (currentstate.lastMove->type == Type::pawn) {
+            if (currentstate.lastMove->from.file != currentstate.lastMove->to.file) {
+              lastMove += currentstate.lastMove->from.file;
+            }
+          } else if (std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
+                      [&](auto p) {
+                        return p.second.set == prevstate.activeSet
+                          && p.second.type == currentstate.lastMove->type
+                          && p.second.moves.find(currentstate.lastMove->to) != p.second.moves.end(); 
+                      }) > 1) {
+            // More than one piece could make this move.
+            size_t files = std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
+                            [&](auto p) {
+                              return p.second.set == prevstate.activeSet
+                                && p.second.type == currentstate.lastMove->type
+                                && p.second.moves.find(currentstate.lastMove->to) != p.second.moves.end()
+                                && p.first.file == currentstate.lastMove->from.file; 
+                            });
+            assert(files >= 1);
+            size_t ranks = std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
+                            [&](auto p) {
+                            return p.second.set == prevstate.activeSet
+                              && p.second.type == currentstate.lastMove->type
+                              && p.second.moves.find(currentstate.lastMove->to) != p.second.moves.end()
+                              && p.first.rank == currentstate.lastMove->from.rank;
+                            });
+            assert(ranks >= 1);
+            if (files > 1) {
+              if (ranks > 1) {
+                lastMove += currentstate.lastMove->from.file;
+                lastMove += currentstate.lastMove->from.rank;
+              } else {
+                lastMove += currentstate.lastMove->from.rank;
+              }
+            } else {
+              lastMove += currentstate.lastMove->from.file;
+            }
+          }
+          if ((prevstate.pieces.find(currentstate.lastMove->to) != prevstate.pieces.end())
+            || (currentstate.lastMove->type == Type::pawn && currentstate.lastMove->from.file != currentstate.lastMove->to.file)) {
+            lastMove += "x";
+          }
+          lastMove += currentstate.lastMove->to.file;
+          lastMove += currentstate.lastMove->to.rank;
+          if (currentstate.lastMove->promotion != Type::bad) {
+            lastMove += "=" + name.at(currentstate.lastMove->promotion);
+          }
+        }
+        return lastMove.c_str();
+      }
+      return nullptr;
+    }
+
   }
 }

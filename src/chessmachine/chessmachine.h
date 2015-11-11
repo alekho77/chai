@@ -45,7 +45,7 @@ namespace Chai {
       virtual const Piece* GetSet(Set set) const = 0; // Type::bad type terminated array or nullptr if it is not started.
       virtual const Position* CheckMoves(Position from) const = 0; // BADPOS terminated array or nullptr if move is impossible.
       virtual Status CheckStatus() const = 0;
-
+      virtual const char* LastMoveNotation() const = 0;
       virtual ~IChessMachine() {}
     };
 
