@@ -21,7 +21,10 @@ namespace Chai {
       Status CheckStatus() const override;
       const char* LastMoveNotation() const override;
 
+      IChessMachine* Clone() const override;
+
     private:
+      ChessMachine(const ChessMachine& other);
       std::list<ChessState> states;
       mutable std::vector<Piece> piecesSet; // temporary
       mutable std::vector<Position> pieceMoves; // temporary

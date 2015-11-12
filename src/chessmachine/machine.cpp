@@ -7,6 +7,10 @@ namespace Chai {
 
     }
 
+    ChessMachine::ChessMachine(const ChessMachine& other) : states(other.states) {
+
+    }
+
     void ChessMachine::Start() {
       states.clear();
       states.push_back(ChessState());
@@ -240,6 +244,11 @@ namespace Chai {
         return lastMove.c_str();
       }
       return nullptr;
+    }
+
+    IChessMachine* ChessMachine::Clone() const
+    {
+      return new ChessMachine(*this);
     }
 
   }

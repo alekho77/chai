@@ -46,6 +46,9 @@ namespace Chai {
       virtual const Position* CheckMoves(Position from) const = 0; // BADPOS terminated array or nullptr if move is impossible.
       virtual Status CheckStatus() const = 0;
       virtual const char* LastMoveNotation() const = 0;
+
+      virtual IChessMachine* Clone() const = 0;
+      
       virtual ~IChessMachine() {}
     };
 
