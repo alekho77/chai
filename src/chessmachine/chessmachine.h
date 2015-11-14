@@ -18,8 +18,7 @@ namespace Chai {
     enum class Type : int { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 1000 };
     enum class Status : int { invalid, normal, check, checkmate, stalemate };
 
-    struct Position
-    {
+    struct Position {
       char file; // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
       char rank; // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
       bool operator == (const Position& other) const { return file == other.file && rank == other.rank; }
@@ -28,13 +27,12 @@ namespace Chai {
       bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
     };
 
-    struct Piece
-    {
+    struct Piece {
       Type type;
       Position position;
     };
 
-    class IChessMachine {
+    class IMachine {
     public:
       virtual void Start() = 0;
       virtual bool Move(Type type, Position from, Position to, Type promotion = Type::bad) = 0;
@@ -47,12 +45,42 @@ namespace Chai {
       virtual Status CheckStatus() const = 0;
       virtual const char* LastMoveNotation() const = 0;
 
-      virtual IChessMachine* Clone() const = 0;
+      virtual IMachine* Clone() const = 0;
       
-      virtual ~IChessMachine() {}
+      virtual ~IMachine() {}
     };
 
-    CHESSMACHINE_API IChessMachine* CreateChessMachine();
-    CHESSMACHINE_API void DeleteChessMachine(IChessMachine* ptr);
+    CHESSMACHINE_API IMachine* CreateChessMachine();
+    CHESSMACHINE_API void DeleteChessMachine(IMachine* ptr);
+
+    class IInfoCall {
+    public:
+      virtual int SearchDepth() = 0;
+      virtual size_t NodesSearched() = 0;
+      virtual int NodesPerSecond() = 0;
+    };
+
+    class IEngine {
+    public:
+      /**
+        position - the position from which to start the analysis.
+        
+        depth = 0 - evaluate only the current position of the current player, without further analyze moves.
+        depth > 0 - evaluate the current position of the current player and further analyze half-moves (plies) in depth.
+        depth < 0 - it's not used, see timeout
+
+        timeout > 0 - limit of the estimated time in ms.
+        timeout <= 0 - it's not used, you can stop the calculation by using the Stop command.
+      */
+      virtual bool Start(const IMachine& position, int depth, int timeout = 0) = 0;
+      virtual void Stop() = 0;
+
+      virtual const char* BestMove() const = 0;
+
+      virtual ~IEngine() {}
+    };
+
+    CHESSMACHINE_API IMachine* CreateChessEngine(const IInfoCall* cb = nullptr);
+    CHESSMACHINE_API void DeleteChessEngine(IMachine* ptr);
   }
 }

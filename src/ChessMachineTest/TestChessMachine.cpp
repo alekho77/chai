@@ -76,7 +76,7 @@ namespace Chai {
       return p.isValid() ? std::string(&(p.file), &(p.file) + 1) + std::string(&(p.rank), &(p.rank) + 1) : std::string("");
     }
     
-    void testpos(const std::map<Type, Moves>& position, const std::vector<Piece>& pieces, const IChessMachine& machine) {
+    void testpos(const std::map<Type, Moves>& position, const std::vector<Piece>& pieces, const IMachine& machine) {
       static const std::map<Type, std::string> name = { { Type::pawn, "p" },{ Type::knight, "N" },{ Type::bishop, "B" },{ Type::rook, "R" },{ Type::queen, "Q" },{ Type::king, "K" } };
       for (const auto& p : position) {
         BOOST_CHECK_MESSAGE(p.second.size() == count(pieces, p.first), "The number of pieces " + name.at(p.first) + " does not match");
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_SUITE ( ChessMachineTest )
 BOOST_AUTO_TEST_CASE( ConstructorTest )  
 {
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   
   BOOST_REQUIRE(machine->GetSet(Set::white) == nullptr);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 BOOST_AUTO_TEST_CASE( StartTest )
 {
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   BOOST_REQUIRE(d4 == d4);
   BOOST_REQUIRE(a4 < d4);
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
     Caro-Kann Defence
   */
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     Defence Pirc-Ufimtsev
   */
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
     Caro-Kann Defence
   */
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE( DangerousReidTest )
     Caro-Kann Defence
   */
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -357,7 +357,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
     Scandinavian Defense
   */
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
     HORSE IS BETTER THAN THE QUEEN
   */
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -481,7 +481,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
 BOOST_AUTO_TEST_CASE( EnPassantTest )
 {
   using namespace Chai::Chess;
-  boost::shared_ptr<IChessMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 

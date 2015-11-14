@@ -246,7 +246,7 @@ namespace Chai {
       return nullptr;
     }
 
-    IChessMachine* ChessMachine::Clone() const
+    IMachine* ChessMachine::Clone() const
     {
       return new ChessMachine(*this);
     }

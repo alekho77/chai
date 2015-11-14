@@ -7,12 +7,12 @@
 
 namespace Chai {
   namespace Chess {
-    IChessMachine* CreateChessMachine()
+    IMachine* CreateChessMachine()
     {
       return new ChessMachine();
     }
 
-    void DeleteChessMachine(IChessMachine* ptr)
+    void DeleteChessMachine(IMachine* ptr)
     {
       delete ptr;
     }

@@ -4,7 +4,7 @@
 
 namespace Chai {
   namespace Chess {
-    class ChessMachine : public IChessMachine
+    class ChessMachine : public IMachine
     {
     public:
       ChessMachine();
@@ -21,7 +21,7 @@ namespace Chai {
       Status CheckStatus() const override;
       const char* LastMoveNotation() const override;
 
-      IChessMachine* Clone() const override;
+      IMachine* Clone() const override;
 
     private:
       ChessMachine(const ChessMachine& other);
