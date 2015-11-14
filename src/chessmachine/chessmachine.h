@@ -79,8 +79,5 @@ namespace Chai {
 
       virtual ~IEngine() {}
     };
-
-    CHESSMACHINE_API IMachine* CreateChessEngine(const IInfoCall* cb = nullptr);
-    CHESSMACHINE_API void DeleteChessEngine(IMachine* ptr);
   }
 }
