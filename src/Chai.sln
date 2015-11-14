@@ -31,6 +31,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessMachineTest", "ChessMa
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessEngineGreedy", "ChessEngineGreedy\ChessEngineGreedy.vcxproj", "{BD518759-8653-4BAB-A181-FD9AAEB560AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3BA1763C-A235-49D6-ADD3-7DDEACBB5073} = {3BA1763C-A235-49D6-ADD3-7DDEACBB5073}
+		{BC808389-7A1B-4FBA-A303-06FE3A10248C} = {BC808389-7A1B-4FBA-A303-06FE3A10248C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GreedyEngineTest", "GreedyEngineTest\GreedyEngineTest.vcxproj", "{6BBE8D66-9234-429B-9010-3F3397FA7350}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3BA1763C-A235-49D6-ADD3-7DDEACBB5073} = {3BA1763C-A235-49D6-ADD3-7DDEACBB5073}
+		{BD518759-8653-4BAB-A181-FD9AAEB560AD} = {BD518759-8653-4BAB-A181-FD9AAEB560AD}
+		{BC808389-7A1B-4FBA-A303-06FE3A10248C} = {BC808389-7A1B-4FBA-A303-06FE3A10248C}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{1A097800-BABC-46D3-8C77-C58D1AA9317B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,8 +101,20 @@ Global
 		{BD518759-8653-4BAB-A181-FD9AAEB560AD}.Release|x64.Build.0 = Release|x64
 		{BD518759-8653-4BAB-A181-FD9AAEB560AD}.Release|x86.ActiveCfg = Release|Win32
 		{BD518759-8653-4BAB-A181-FD9AAEB560AD}.Release|x86.Build.0 = Release|Win32
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Debug|x64.ActiveCfg = Debug|x64
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Debug|x64.Build.0 = Debug|x64
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Debug|x86.ActiveCfg = Debug|Win32
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Debug|x86.Build.0 = Debug|Win32
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x64.ActiveCfg = Release|x64
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x64.Build.0 = Release|x64
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x86.ActiveCfg = Release|Win32
+		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82125DA1-1CD7-45B5-9281-E6AE7C287CB7} = {1A097800-BABC-46D3-8C77-C58D1AA9317B}
+		{6BBE8D66-9234-429B-9010-3F3397FA7350} = {1A097800-BABC-46D3-8C77-C58D1AA9317B}
 	EndGlobalSection
 EndGlobal
