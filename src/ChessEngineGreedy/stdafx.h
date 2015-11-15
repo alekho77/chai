@@ -11,6 +11,8 @@
 // Windows Header Files:
 #include <windows.h>
 
-
-
-// TODO: reference additional headers your program requires here
+#define BOOST_ALL_DYN_LINK
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>

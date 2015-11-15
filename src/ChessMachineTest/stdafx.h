@@ -15,12 +15,9 @@
 #include <set>
 #include <algorithm>
 
-#include <boost/shared_ptr.hpp>
-
-#define BOOST_REGEX_DYN_LINK
+#define BOOST_ALL_DYN_LINK
 #include <boost/regex.hpp>
-
-#define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "../chessmachine/chessmachine.h"

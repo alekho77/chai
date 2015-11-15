@@ -75,8 +75,9 @@ namespace Chai {
         timeout > 0 - limit of the estimated time in ms.
         timeout <= 0 - it's not used, you can stop the calculation by using the Stop command.
       */
-      virtual bool Start(const IInfoCall* cb, const IMachine& position, int depth, int timeout = 0) = 0;
+      virtual bool Start(const IMachine& position, int depth, int timeout = 0) = 0;
       virtual void Stop() = 0;
+      virtual void ProcessInfo(const IInfoCall* cb) = 0;
 
       virtual ~IEngine() {}
     };

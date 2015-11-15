@@ -9,10 +9,13 @@
     #include "targetver.h"
 #endif
 
-#include <stdio.h>
+#include <string>
 
-#define BOOST_TEST_DYN_LINK
+#define BOOST_ALL_DYN_LINK
 #include <boost/test/unit_test.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
 
 #include "../ChessEngineGreedy/greedyengine.h"

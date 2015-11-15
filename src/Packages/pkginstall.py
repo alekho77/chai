@@ -20,7 +20,7 @@ for m in qtmudules:
 
 boost_root = "C:/Boost"
 boost_ver = "1.59"
-boost_modules = ["unit_test_framework", "regex"]
+boost_modules = ["unit_test_framework", "regex", "thread", "system", "date_time", "chrono"]
 for m in boost_modules:
     name = "boost_" + m + "-" + toolset + "-mt-" + ("gd-" if variant.lower()=="debug" else "") + boost_ver.replace('.', '_')
     for ext in (["dll"]):

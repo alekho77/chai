@@ -21,7 +21,6 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include <boost/optional.hpp>
-
-#define BOOST_REGEX_DYN_LINK
+#define BOOST_ALL_DYN_LINK
 #include <boost/regex.hpp>
+#include <boost/optional.hpp>
