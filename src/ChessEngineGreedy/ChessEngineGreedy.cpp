@@ -3,15 +3,16 @@
 
 #include "stdafx.h"
 #include "greedyengine.h"
+#include "engine.h"
 
 namespace Chai {
   namespace Chess {
-    IMachine* CreateGreedyEngine(const IInfoCall* cb)
+    IEngine* CreateGreedyEngine()
     {
-      return nullptr;
+      return new GreedyEngine();
     }
 
-    void DeleteGreedyEngine(IMachine* ptr)
+    void DeleteGreedyEngine(IEngine* ptr)
     {
       delete ptr;
     }

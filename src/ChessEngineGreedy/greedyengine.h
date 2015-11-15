@@ -9,7 +9,7 @@
 
 namespace Chai {
   namespace Chess {
-    CHESSENGINEGREEDY_API IMachine* CreateGreedyEngine(const IInfoCall* cb = nullptr);
-    CHESSENGINEGREEDY_API void DeleteGreedyEngine(IMachine* ptr);
+    CHESSENGINEGREEDY_API IEngine* CreateGreedyEngine();
+    CHESSENGINEGREEDY_API void DeleteGreedyEngine(IEngine* ptr);
   }
 }

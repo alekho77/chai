@@ -55,9 +55,12 @@ namespace Chai {
 
     class IInfoCall {
     public:
-      virtual int SearchDepth() = 0;
-      virtual size_t NodesSearched() = 0;
-      virtual int NodesPerSecond() = 0;
+      virtual void SearchDepth(int depth) = 0;
+      virtual void NodesSearched(size_t nodes) = 0;
+      virtual void NodesPerSecond(int nps) = 0;
+
+      virtual void ReadyOk() = 0;
+      virtual void BestMove(const char* notation) = 0;
     };
 
     class IEngine {
@@ -72,10 +75,8 @@ namespace Chai {
         timeout > 0 - limit of the estimated time in ms.
         timeout <= 0 - it's not used, you can stop the calculation by using the Stop command.
       */
-      virtual bool Start(const IMachine& position, int depth, int timeout = 0) = 0;
+      virtual bool Start(const IInfoCall* cb, const IMachine& position, int depth, int timeout = 0) = 0;
       virtual void Stop() = 0;
-
-      virtual const char* BestMove() const = 0;
 
       virtual ~IEngine() {}
     };
