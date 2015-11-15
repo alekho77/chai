@@ -55,12 +55,15 @@ namespace Chai {
 
     class IInfoCall {
     public:
+      // Messages sent during the search
       virtual void SearchDepth(int depth) = 0;
       virtual void NodesSearched(size_t nodes) = 0;
       virtual void NodesPerSecond(int nps) = 0;
 
+      // Messages sent after the search
       virtual void ReadyOk() = 0;
       virtual void BestMove(const char* notation) = 0;
+      virtual void BestScore(int score) = 0;
     };
 
     class IEngine {
@@ -77,7 +80,7 @@ namespace Chai {
       */
       virtual bool Start(const IMachine& position, int depth, int timeout = 0) = 0;
       virtual void Stop() = 0;
-      virtual void ProcessInfo(const IInfoCall* cb) = 0;
+      virtual void ProcessInfo(IInfoCall* cb) = 0;
 
       virtual ~IEngine() {}
     };

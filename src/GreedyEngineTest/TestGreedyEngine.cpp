@@ -3,28 +3,24 @@
 namespace Chai {
 namespace Chess {
 
-class InfoTest : public IInfoCall {
+class infotest : private IInfoCall {
 public:
-  InfoTest() : readyok(false), deadline(false) {}
+  infotest() : readyok(false), deadline(false), bestscore(0) {}
 
-  void SearchDepth(int depth) override {}
-  void NodesSearched(size_t nodes) override {}
-  void NodesPerSecond(int nps) override {}
+  std::string bestmove;
+  int bestscore;
 
-  void ReadyOk() override { readyok = true; }
-  void BestMove(const char* notation) override { bestmove.assign(notation); }
-
-  std::string GetBestMove() const { return bestmove; }
-  bool Wait(IEngine* engine, int timeout) {
+  bool wait(IEngine* engine, int timeout) {
     if (deadline) {
       return false; // wait only once
     }
     boost::asio::io_service service;
     boost::asio::deadline_timer timer(service);
     timer.expires_from_now(boost::posix_time::milliseconds(timeout));
-    timer.async_wait(boost::bind(&InfoTest::onTimeout, this, _1));
+    timer.async_wait(boost::bind(&infotest::on_timeout, this, _1));
     boost::thread thread = boost::thread(boost::bind(&boost::asio::io_service::run, &service));
     while (!readyok && !deadline) {
+      boost::this_thread::sleep(boost::posix_time::milliseconds(1));
       engine->ProcessInfo(this);
     }
     service.stop();
@@ -34,7 +30,15 @@ public:
   }
 
 private:
-  void onTimeout(const boost::system::error_code& e) {
+  void SearchDepth(int depth) override {}
+  void NodesSearched(size_t nodes) override {}
+  void NodesPerSecond(int nps) override {}
+
+  void ReadyOk() override { readyok = true; }
+  void BestMove(const char* notation) override { bestmove.assign(notation); }
+  void BestScore(int score) override { bestscore = score; }
+
+  void on_timeout(const boost::system::error_code& e) {
     if (e != boost::asio::error::operation_aborted) {
       deadline = true;
     }
@@ -42,7 +46,6 @@ private:
 
   volatile bool readyok;
   volatile bool deadline;
-  std::string bestmove;
 };
 
 }
@@ -73,12 +76,12 @@ BOOST_AUTO_TEST_CASE( StartTest )
   machine->Start();
 
   {
-    InfoTest info;
+    infotest info;
     BOOST_REQUIRE(engine->Start(*machine, 0));
-    BOOST_CHECK(info.Wait(&*engine, 5000));
+    BOOST_CHECK(info.wait(&*engine, 1000));
+    BOOST_CHECK(info.bestmove.empty());
+    BOOST_CHECK(info.bestscore == 0);
   }
-
-
 }
 
 BOOST_AUTO_TEST_SUITE_END()
