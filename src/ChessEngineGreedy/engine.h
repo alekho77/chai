@@ -4,6 +4,16 @@
 namespace Chai {
 namespace Chess {
 
+inline std::vector<Piece> arr2vec(const Piece* p) {
+  std::vector<Piece> vec;
+  if (p) {
+    while (p->type != Type::bad) {
+      vec.push_back(*(p++));
+    }
+  }
+  return vec;
+}
+
 class GreedyEngine : public IEngine, private IInfoCall
 {
 public:
@@ -25,8 +35,9 @@ private:
   void ThreadFun();
   int Search(Set set, int depth);
   int EvalPosition(Set set) const;
-  int EvalSide(Set set) const;
+  int EvalSide(Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
   int PieceWeight(Type type) const;
+  int PositionWeight(Set set, const Piece& piece, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
 
   boost::shared_ptr<IMachine> chessMachine;
   boost::asio::io_service service;

@@ -14,6 +14,8 @@
 
 #include <limits>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 #define BOOST_ALL_DYN_LINK
 #include <boost/shared_ptr.hpp>
