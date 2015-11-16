@@ -14,6 +14,12 @@ inline std::vector<Piece> arr2vec(const Piece* p) {
   return vec;
 }
 
+struct Move {
+  Piece piece;
+  Position to;
+  Type promotion;
+};
+
 class GreedyEngine : public IEngine, private IInfoCall
 {
 public:
@@ -34,6 +40,8 @@ private:
 
   void ThreadFun();
   int Search(Set set, int depth);
+  std::vector<Move> EmunMoves() const;
+  
   int EvalPosition(Set set) const;
   int EvalSide(Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
   int PieceWeight(Type type) const;

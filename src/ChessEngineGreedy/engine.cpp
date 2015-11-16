@@ -8,7 +8,7 @@ GreedyEngine::GreedyEngine() : callBack(nullptr), stopped(true), maxDepth(0) {
 }
 
 bool GreedyEngine::Start(const IMachine& position, int depth, int timeout) {
-  if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check) {
+  if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
     chessMachine.reset();
     chessMachine.reset(position.Clone(), DeleteChessMachine);
     stopped = false;
@@ -20,7 +20,7 @@ bool GreedyEngine::Start(const IMachine& position, int depth, int timeout) {
 }
 
 void GreedyEngine::Stop() {
-
+  stopped = true;
 }
 
 void GreedyEngine::ProcessInfo(IInfoCall* cb) {
@@ -63,15 +63,37 @@ void GreedyEngine::ThreadFun() {
   service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
   service.post(boost::bind(&GreedyEngine::BestMove, this, bestMove.c_str()));
   service.post(boost::bind(&GreedyEngine::ReadyOk, this));
+  stopped = true;
 }
 
 int GreedyEngine::Search(Set set, int depth) {
   if (depth > 0) {
     int maxscore = std::numeric_limits<int>::min();
-
+    std::vector<Move> moves = EmunMoves();
+    for (auto move : moves) {
+      if (stopped) {
+        break;
+      }
+      if (chessMachine->Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
+        int score = - Search(set == Set::white ? Set::black : Set::white, depth - 1);
+        if (score > maxscore) {
+          maxscore = score;
+          if (depth == maxDepth) {
+            bestMove.assign(chessMachine->LastMoveNotation());
+          }
+        }
+        chessMachine->Undo();
+      }
+    }
     return maxscore;
   }
   return EvalPosition(set);
+}
+
+std::vector<Move> GreedyEngine::EmunMoves() const
+{
+  std::vector<Move> moves;
+  return moves;
 }
 
 int GreedyEngine::EvalPosition(Set set) const {
