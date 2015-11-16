@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
-namespace Chai {
-namespace Chess {
+using namespace Chai::Chess;
+
+CHESSBOARD;
 
 class infotest : private IInfoCall {
 public:
@@ -48,14 +49,11 @@ private:
   volatile bool deadline;
 };
 
-}
-}
 
 BOOST_AUTO_TEST_SUITE( GreedyEngineTest )
 
 BOOST_AUTO_TEST_CASE( ConstructorTest )
 {
-  using namespace Chai::Chess;
   boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
@@ -67,7 +65,6 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
 BOOST_AUTO_TEST_CASE( StartTest )
 {
-  using namespace Chai::Chess;
   boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
@@ -82,6 +79,52 @@ BOOST_AUTO_TEST_CASE( StartTest )
     BOOST_CHECK(info.bestmove.empty());
     BOOST_CHECK(info.bestscore == 0);
   }
+}
+
+BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
+{
+  /*
+    Gump - Steinitz Vienna, 1859 Vienna Game
+  */
+  boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
+  BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
+
+  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
+  machine->Start();
+
+  const std::vector<std::string> moves = split("\
+1.e4 e5 2.Nc3 Nf6 3.f4 d5 4.exd5 Nxd5 5.fxe5 Nxc3 6.bxc3 Qh4+ 7.Ke2 Bg4+ 8.Nf3 Nc6 \
+9.d4 O-O-O 10.Bd2 Bxf3+ 11.gxf3 Nxe5 12.dxe5 Bc5 13.Qe1 Qc4+ 14.Kd1 Qxc3 \
+15.Rb1 Qxf3+ 16.Qe2 Rxd2+ 17.Kxd2 Rd8+ 18.Kc1 Ba3+ 19.Rb2 Qc3 20.Bh3+ Kb8 \
+21.Qb5 Qd2+ 22.Kb1 Qd1+ 23.Rxd1 Rxd1# *\
+");
+  BOOST_REQUIRE(moves.size() == 46);
+
+  const std::map<std::string, int > scores0 = {
+    { "e4", 0 }, { "e5", 0 }
+  };
+
+  for (auto m : moves) {
+    auto s0 = scores0.find(m);
+    if (s0 != scores0.end()) {
+      infotest info;
+      BOOST_REQUIRE_MESSAGE(engine->Start(*machine, 0), "Can't evaluate position at move '" + m + "'");
+      BOOST_CHECK_MESSAGE(info.wait(&*engine, 1000), "Evaluation timeout at move '" + m + "'");
+      BOOST_CHECK_MESSAGE(info.bestmove.empty(), "The evaluated best move (" + info.bestmove + ") do not match at move '" + m + "'");
+      BOOST_CHECK_MESSAGE(info.bestscore == s0->second, "The evaluated best score (" + std::to_string(info.bestscore) + ") do not match at move '" + m + "'");
+    }
+    BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
+    BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
+  }
+  {
+    //infotest info;
+    //BOOST_REQUIRE(engine->Start(*machine, 0));
+    //BOOST_CHECK(info.wait(&*engine, 1000));
+    //BOOST_CHECK(info.bestmove.empty());
+    //BOOST_CHECK(info.bestscore == 0);
+  }
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()

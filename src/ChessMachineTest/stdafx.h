@@ -11,13 +11,9 @@
 
 #include <stdlib.h>
 #include <memory>
-#include <vector>
-#include <set>
-#include <algorithm>
 
 #define BOOST_ALL_DYN_LINK
-#include <boost/regex.hpp>
-#include <boost/test/unit_test.hpp>
+
 #include <boost/shared_ptr.hpp>
 
-#include "../chessmachine/chessmachine.h"
+#include "machinetestutils.h"

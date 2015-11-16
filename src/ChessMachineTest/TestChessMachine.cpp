@@ -1,100 +1,13 @@
 #include "stdafx.h"
 
-namespace Chai {
-  namespace Chess {
-    CHESSBOARD;
+using namespace Chai::Chess;
 
-    typedef std::map< Position, std::set<Position> > Moves;
-
-    template <class T>
-    bool contains(const T& list, Type type) {
-      return std::find_if(list.begin(), list.end(), [type](const auto& p) { return p.type == type; }) != list.end();
-    }
-
-    template <class T>
-    typename size_t count(const T& list, Type type) {
-      return std::count_if(list.begin(), list.end(), [type](const auto& p) { return p.type == type; });
-    }
-
-    template <class T>
-    typename typename T::const_iterator at(const T& list, Position pos) {
-      return std::find_if(list.begin(), list.end(), [pos](const auto& p) { return p.position == pos; });
-    }
-
-    template <class T>
-    bool exactly(const T& list, Position pos, Type type) {
-      auto p = at(list, pos);
-      if (p != list.end()) {
-        return p->type == type;
-      }
-      return false;
-    }
-
-    template <class T>
-    bool equal(const T& list1, const T& list2) {
-      return list1 == list2;
-    }
-
-    std::vector<Piece> arr2vec(const Piece* p) {
-      std::vector<Piece> vec;
-      if (p) {
-        while (p->type != Type::bad) {
-          vec.push_back(*(p++));
-        }
-      }
-      return vec;
-    }
-
-    std::set<Position> arr2vec(const Position* p) {
-      std::set<Position> vec;
-      if (p) {
-        while (*p != BADPOS) {
-          vec.insert(*(p++));
-        }
-      }
-      return vec;
-    }
-
-    std::vector<std::string> split(const std::string& game) {
-      std::vector<std::string> moves;
-      boost::regex xreg("(?|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x,=]+)|(O-O-O)|(O-O))\\+*\\s+(?|([p,N,B,R,Q,K,1-8,a-h,x,=]+)|(O-O-O)|(O-O))|(\\d+)\\.(?|([p,N,B,R,Q,K,1-8,a-h,x,=]+)|(O-O-O)|(O-O)))");
-      for (auto xit = make_regex_iterator(game, xreg); xit != boost::sregex_iterator(); ++xit) {
-        auto& res = *xit;
-        assert(res.size() == 4);
-        int nm = std::stoi(res[1].str());
-        assert(nm == (moves.size() / 2 + 1));
-        moves.push_back(res[2].str());
-        std::string bm = res[3].str();
-        if (!bm.empty()) {
-          moves.push_back(bm);
-        }
-      }
-      return moves;
-    }
-
-    std::string toStr(const Position& p) {
-      return p.isValid() ? std::string(&(p.file), &(p.file) + 1) + std::string(&(p.rank), &(p.rank) + 1) : std::string("");
-    }
-    
-    void testpos(const std::map<Type, Moves>& position, const std::vector<Piece>& pieces, const IMachine& machine) {
-      static const std::map<Type, std::string> name = { { Type::pawn, "p" },{ Type::knight, "N" },{ Type::bishop, "B" },{ Type::rook, "R" },{ Type::queen, "Q" },{ Type::king, "K" } };
-      for (const auto& p : position) {
-        BOOST_CHECK_MESSAGE(p.second.size() == count(pieces, p.first), "The number of pieces " + name.at(p.first) + " does not match");
-        for (const auto& m : p.second) {
-          BOOST_CHECK_MESSAGE(exactly(pieces, m.first, p.first), "The piece " + name.at(p.first) + " was not found at the position \"" + toStr(m.first) + "\"");
-          BOOST_CHECK_MESSAGE(equal(arr2vec(machine.CheckMoves(m.first)), m.second), "Moves list does not match for piece " + name.at(p.first) + " at the position \"" + toStr(m.first) + "\"");
-        }
-      }
-    }
-  }
-}
-
+CHESSBOARD;
 
 BOOST_AUTO_TEST_SUITE ( ChessMachineTest )
 
 BOOST_AUTO_TEST_CASE( ConstructorTest )  
 {
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   
@@ -110,7 +23,6 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
 BOOST_AUTO_TEST_CASE( StartTest )
 {
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   BOOST_REQUIRE(d4 == d4);
@@ -161,7 +73,6 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
     Szczawno Zdroj, 1950
     Caro-Kann Defence
   */
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
@@ -227,7 +138,6 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     Vienna 1899
     Defence Pirc-Ufimtsev
   */
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
@@ -292,7 +202,6 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
     1934
     Caro-Kann Defence
   */
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
@@ -336,7 +245,6 @@ BOOST_AUTO_TEST_CASE( DangerousReidTest )
     Moscow 1935
     Caro-Kann Defence
   */
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
@@ -356,7 +264,6 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
     Hapless QUEEN
     Scandinavian Defense
   */
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
@@ -436,7 +343,6 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
   /*
     HORSE IS BETTER THAN THE QUEEN
   */
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
@@ -480,7 +386,6 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
 
 BOOST_AUTO_TEST_CASE( EnPassantTest )
 {
-  using namespace Chai::Chess;
   boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
