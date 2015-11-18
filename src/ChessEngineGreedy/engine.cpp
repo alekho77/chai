@@ -100,10 +100,10 @@ int GreedyEngine::EvalPosition(Set set) const {
   if (chessMachine->CheckStatus() == Status::checkmate) {
     return std::numeric_limits<int>::min();
   }
-  Set opset = set == Set::white ? Set::black : Set::white;
-  std::vector<Piece> white = arr2vec(chessMachine->GetSet(set));
-  std::vector<Piece> black = arr2vec(chessMachine->GetSet(opset));
-  return EvalSide(set, white, black) - EvalSide(opset, white, black);
+  Set xset = set == Set::white ? Set::black : Set::white;
+  std::vector<Piece> white = arr2vec(chessMachine->GetSet(Set::white));
+  std::vector<Piece> black = arr2vec(chessMachine->GetSet(Set::black));
+  return EvalSide(set, white, black) - EvalSide(xset, white, black);
 }
 
 int GreedyEngine::EvalSide(Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const {
@@ -183,11 +183,11 @@ int GreedyEngine::PositionWeight(Set set, const Piece & piece, const std::vector
   case Type::rook:    return 22;
   case Type::queen:
   {
-    const auto& opieces = set == Set::white ? black : white;
-    auto oking = std::find_if(opieces.begin(), opieces.end(), [](auto p) { return p.type == Type::king; });
-    assert(oking != opieces.end());
-    int kx = oking->position.file - 'a';
-    int ky = oking->position.rank - '1';
+    const auto& xpieces = set == Set::white ? black : white;
+    auto xking = std::find_if(xpieces.begin(), xpieces.end(), [](auto p) { return p.type == Type::king; });
+    assert(xking != xpieces.end());
+    int kx = xking->position.file - 'a';
+    int ky = xking->position.rank - '1';
     if (set == Set::black) {
       ky = 7 - ky;
     }

@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
   BOOST_REQUIRE(moves.size() == 46);
 
   const std::map<std::string, int > scores0 = {
-    { "e4", 0 }, { "e5", 0 }
+    { "e4", 0 }, { "e5", -26 }
   };
 
   for (auto m : moves) {
