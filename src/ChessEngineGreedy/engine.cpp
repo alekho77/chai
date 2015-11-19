@@ -180,7 +180,7 @@ int GreedyEngine::PositionWeight(Set set, const Piece & piece, const std::vector
   case Type::pawn:    return pawn[y][x];
   case Type::knight:  return knight[y][x];
   case Type::bishop:  return bishop[y][x];
-  case Type::rook:    return 22;
+  case Type::rook:    return 0;
   case Type::queen:
   {
     const auto& xpieces = set == Set::white ? black : white;

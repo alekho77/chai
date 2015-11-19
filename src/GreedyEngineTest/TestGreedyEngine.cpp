@@ -101,21 +101,29 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
 ");
   BOOST_REQUIRE(moves.size() == 46);
 
-  const std::map<std::string, int > scores0 = {
-    { "e4", 0 }, { "e5", -26 }, { "Nc3", 0 }, { "Nf6", -22 }, { "f4", 4 }, { "d5", -12 }, { "exd5", -12 }, { "Nxd5", -1011 }, { "fxe5", -26 }
+  const std::vector< std::pair<std::string, int> > scores0 = {
+    { "e4", 0 },{ "e5", -26 },{ "Nc3", 0 },{ "Nf6", -22 },{ "f4", 4 },{ "d5", -12 },{ "exd5", -12 },{ "Nxd5", -1011 },{ "fxe5", -26 },{ "Nxc3", -1003 },
+    { "bxc3", -2023 },{ "Qh4", -1007 },{ "Ke2", 965 },{ "Bg4", -980 },{ "Nf3", 963 },{ "Nc6", -1003 },{ "d4", 970 },{ "O-O-O", -1000 },{ "Bd2", 990 },
+    { "Bxf3", -999 },{ "gxf3", -2056 },{ "Nxe5", -991 },{ "dxe5", -47 },{ "Bc5", -2997 },{ "Qe1", 2977 },{ "Qc4", -2983 },{ "Kd1", 2956 },{ "Qxc3", -2984 },
+    { "Rb1", 1981 },{ "Qxf3", -1993 },{ "Qe2", 951 },{ "Rxd2", -992 },{ "Kxd2", -2064 },{ "Rd8", -2977 },{ "Kc1", 2938 },{ "Ba3", -2976 },{ "Rb2", 2956 },
+    { "Qc3", -2985 },{ "Bh3", 2976 },{ "Kb8", -3035 },{ "Qb5", 2976 },{ "Qd2", -2993 },{ "Kb1", 2958 },{ "Qd1", -2998 },{ "Rxd1", 2964 },{ "Rxd1", -12053 }
   };
 
+  size_t nm = 0;
   for (auto m : moves) {
-    auto s0 = scores0.find(m);
-    if (s0 != scores0.end()) {
+    if (nm < scores0.size()) {
+      auto s0 = scores0[nm];
       infotest info;
+      assert(s0.first == m);
+      BOOST_REQUIRE(s0.first == m);
       BOOST_REQUIRE_MESSAGE(engine->Start(*machine, 0), "Can't evaluate position at move '" + m + "'");
       BOOST_CHECK_MESSAGE(info.wait(&*engine, 1000), "Evaluation timeout at move '" + m + "'");
       BOOST_CHECK_MESSAGE(info.bestmove.empty(), "The evaluated best move (" + info.bestmove + ") do not match at move '" + m + "'");
-      BOOST_CHECK_MESSAGE(info.bestscore == s0->second, "The evaluated best score (" + std::to_string(info.bestscore) + ") do not match at move '" + m + "'");
+      BOOST_CHECK_MESSAGE(info.bestscore == s0.second, "The evaluated best score (" + std::to_string(info.bestscore) + ") do not match at move '" + m + "'");
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
+    ++nm;
   }
   {
     //infotest info;
