@@ -126,11 +126,12 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
     ++nm;
   }
   {
-    //infotest info;
-    //BOOST_REQUIRE(engine->Start(*machine, 0));
-    //BOOST_CHECK(info.wait(&*engine, 1000));
-    //BOOST_CHECK(info.bestmove.empty());
-    //BOOST_CHECK(info.bestscore == 0);
+    infotest info;
+    BOOST_REQUIRE(machine->CheckStatus() == Status::checkmate);
+    BOOST_REQUIRE(engine->Start(*machine, 0));
+    BOOST_CHECK(info.wait(&*engine, 1000));
+    BOOST_CHECK(info.bestmove.empty());
+    BOOST_CHECK(info.bestscore == std::numeric_limits<int>::min());
   }
 
 }
