@@ -6,6 +6,7 @@ chess::chess(QWidget *parent)
   ui.setupUi(this);
 
   ui.comboBoxGame->addItem("Manual");
+  ui.comboBoxGame->addItem("Greedy");
 }
 
 chess::~chess()
@@ -30,6 +31,16 @@ void chess::stopGame()
 void chess::onLogChanged()
 {
   ui.textEditLog->ensureCursorVisible();
+}
+
+void chess::onMove()
+{
+  switch (ui.comboBoxGame->currentIndex())
+  {
+  case 1:
+    //ui.lineEditGreedyScore->setText(QString().setNum(ui.widgetChessboard->positionScore()));
+    break;
+  }
 }
 
 void chess::resizeEvent(QResizeEvent * event)

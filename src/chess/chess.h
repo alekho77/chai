@@ -16,6 +16,7 @@ public slots:
   void newGame();
   void stopGame();
   void onLogChanged();
+  void onMove();
 
 protected:
   void resizeEvent(QResizeEvent * event) override;

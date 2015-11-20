@@ -22,6 +22,8 @@ public:
   Chessboard(QWidget *parent = 0);
   ~Chessboard();
 
+  int positionScore() const;
+
 public slots:
   void newGame();
 
@@ -35,6 +37,7 @@ protected:
 
 signals:
   void updateLog(QString str);
+  void moveMade();
 
 private:
   void createChessboard(int size);

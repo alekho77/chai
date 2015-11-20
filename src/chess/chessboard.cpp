@@ -26,12 +26,18 @@ Chessboard::~Chessboard()
 {
 }
 
+int Chessboard::positionScore() const
+{
+  return 0;
+}
+
 void Chessboard::newGame()
 {
   chessMachine->Start();
   updateChessPieces();
   repaint();
   moveCount = 1;
+  emit moveMade();
 }
 
 void Chessboard::createChessboard(int size)
@@ -317,6 +323,7 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
         }
         emit updateLog(notation);
         updateChessPieces();
+        emit moveMade();
       }
     }
     dragPos = BADPOS;
