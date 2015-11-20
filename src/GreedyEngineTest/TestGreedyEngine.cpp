@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
     BOOST_REQUIRE(engine->Start(*machine, 0));
     BOOST_CHECK(info.wait(&*engine, 1000));
     BOOST_CHECK(info.bestmove.empty());
-    BOOST_CHECK(info.bestscore == std::numeric_limits<int>::min());
+    BOOST_CHECK(info.bestscore == - std::numeric_limits<int>::max());
   }
 
 }

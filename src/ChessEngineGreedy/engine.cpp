@@ -98,7 +98,7 @@ std::vector<Move> GreedyEngine::EmunMoves() const
 
 int GreedyEngine::EvalPosition(Set set) const {
   if (chessMachine->CheckStatus() == Status::checkmate) {
-    return std::numeric_limits<int>::min();
+    return - std::numeric_limits<int>::max();
   }
   Set xset = set == Set::white ? Set::black : Set::white;
   std::vector<Piece> white = arr2vec(chessMachine->GetSet(Set::white));
