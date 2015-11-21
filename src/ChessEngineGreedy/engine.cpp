@@ -9,11 +9,9 @@ GreedyEngine::GreedyEngine() : callBack(nullptr), stopped(true), maxDepth(0) {
 
 bool GreedyEngine::Start(const IMachine& position, int depth, int timeout) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
-    chessMachine.reset();
-    chessMachine.reset(position.Clone(), DeleteChessMachine);
     stopped = false;
     maxDepth = depth;
-    thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this));
+    thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, boost::shared_ptr<IMachine>(position.Clone(), DeleteChessMachine)));
     return true;
   }
   return false;
@@ -28,6 +26,11 @@ void GreedyEngine::ProcessInfo(IInfoCall* cb) {
   service.poll();
   service.reset();
   callBack = nullptr;
+}
+
+int GreedyEngine::EvalPosition(const IMachine & position) const
+{
+  return EvalPosition(position, Set::white);
 }
 
 void GreedyEngine::SearchDepth(int depth) {
@@ -57,16 +60,16 @@ void GreedyEngine::BestScore(int score) {
   }
 }
 
-void GreedyEngine::ThreadFun() {
+void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine) {
   bestMove.clear();
-  int bestscore = Search(chessMachine->CurrentMove(), maxDepth);
+  int bestscore = Search(machine, machine->CurrentPlayer(), maxDepth);
   service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
   service.post(boost::bind(&GreedyEngine::BestMove, this, bestMove.c_str()));
   service.post(boost::bind(&GreedyEngine::ReadyOk, this));
   stopped = true;
 }
 
-int GreedyEngine::Search(Set set, int depth) {
+int GreedyEngine::Search(boost::shared_ptr<IMachine> machine, Set set, int depth) {
   if (depth > 0) {
     int maxscore = std::numeric_limits<int>::min();
     std::vector<Move> moves = EmunMoves();
@@ -74,44 +77,44 @@ int GreedyEngine::Search(Set set, int depth) {
       if (stopped) {
         break;
       }
-      if (chessMachine->Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
-        int score = - Search(set == Set::white ? Set::black : Set::white, depth - 1);
+      if (machine->Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
+        int score = - Search(machine, xSet(set), depth - 1);
         if (score > maxscore) {
           maxscore = score;
           if (depth == maxDepth) {
-            bestMove.assign(chessMachine->LastMoveNotation());
+            bestMove.assign(machine->LastMoveNotation());
           }
         }
-        chessMachine->Undo();
+        machine->Undo();
       }
     }
     return maxscore;
   }
-  return EvalPosition(set);
+  return EvalPosition(*machine, set);
 }
 
 std::vector<Move> GreedyEngine::EmunMoves() const
 {
   std::vector<Move> moves;
+  // TODO ...
   return moves;
 }
 
-int GreedyEngine::EvalPosition(Set set) const {
-  if (chessMachine->CheckStatus() == Status::checkmate) {
+int GreedyEngine::EvalPosition(const IMachine & position, Set set) const {
+  if (position.CheckStatus() == Status::checkmate) {
     return - std::numeric_limits<int>::max();
   }
-  Set xset = set == Set::white ? Set::black : Set::white;
-  std::vector<Piece> white = arr2vec(chessMachine->GetSet(Set::white));
-  std::vector<Piece> black = arr2vec(chessMachine->GetSet(Set::black));
-  return EvalSide(set, white, black) - EvalSide(xset, white, black);
+  std::vector<Piece> white = arr2vec(position.GetSet(Set::white));
+  std::vector<Piece> black = arr2vec(position.GetSet(Set::black));
+  return EvalSide(position, set, white, black) - EvalSide(position, xSet(set), white, black);
 }
 
-int GreedyEngine::EvalSide(Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const {
+int GreedyEngine::EvalSide(const IMachine & position, Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const {
   int score = 0;
   const std::vector<Piece>& pieces = set == Set::white ? white : black;
   for (auto piece : pieces) {
     score += PieceWeight(piece.type) + PositionWeight(set, piece, white, black);
-    for (const Position* pos = chessMachine->CheckMoves(piece.position); *pos != BADPOS; ++pos) {
+    for (const Position* pos = position.CheckMoves(piece.position); *pos != BADPOS; ++pos) {
       score++;
     }
   }

@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
   BOOST_CHECK(machine->CheckMoves(d4) == nullptr);
 
   BOOST_CHECK(machine->CheckStatus() == Status::invalid);
-  BOOST_CHECK(machine->CurrentMove() == Set::unknown);
+  BOOST_CHECK(machine->CurrentPlayer() == Set::unknown);
   BOOST_CHECK(machine->LastMoveNotation() == nullptr);
 }
 
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE( StartTest )
 
   machine->Start();
   BOOST_CHECK(machine->CheckStatus() == Status::normal);
-  BOOST_CHECK(machine->CurrentMove() == Set::white);
+  BOOST_CHECK(machine->CurrentPlayer() == Set::white);
   BOOST_CHECK(machine->LastMoveNotation() == std::string());
 
   std::vector<Piece> white = arr2vec(machine->GetSet(Set::white));
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
     if (m == "dxe4") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
-      BOOST_CHECK(machine->CurrentMove() == Set::white);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{} },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { c3,{ b5, d5, a4, e4, b1, e2 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
     } else if (m == "Nd6" ) {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
-      BOOST_CHECK(machine->CurrentMove() == Set::black);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::black);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { d6,{ c8, e8, b7, f7, b5, f5, c4, e4 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     if (m == "Bxf7") {
       BOOST_TEST_MESSAGE("Before " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
-      BOOST_CHECK(machine->CurrentMove() == Set::white);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O"), "Can't make move O-O");
       BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O"));
       const std::map<Type, Moves> white_pieces = {
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     if (m == "Bxf7") {
       BOOST_TEST_MESSAGE("After " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
-      BOOST_CHECK(machine->CurrentMove() == Set::black);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::black);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
         { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, g1, d2 } } } },
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     } else if (m == "Qf3") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
-      BOOST_CHECK(machine->CurrentMove() == Set::black);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::black);
     }
   }
 }
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
     if (m == "Qxe5") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
-      BOOST_CHECK(machine->CurrentMove() == Set::white);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{ { a2,{} },{ b2,{} },{ c2,{} },{ d2,{} },{ f2,{} },{ g2,{} },{ h4,{} } } },
         { Type::knight,{ { g3,{ e2, e4 } } } },
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
     if (m == "Bd7") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
-      BOOST_CHECK(machine->CurrentMove() == Set::white);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       BOOST_REQUIRE_MESSAGE(machine->Move("Qe2"), "Can't make move Queen!");
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       {
@@ -333,7 +333,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
     } else if (m == "Nxc7") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
-      BOOST_CHECK(machine->CurrentMove() == Set::black);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::black);
     }
   }
 }
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
     if (m == "fxg1=N") {
       BOOST_TEST_MESSAGE(m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
-      BOOST_CHECK(machine->CurrentMove() == Set::white);
+      BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       const std::map<Type, Moves> black_pieces = {
         { Type::pawn,{ { a7,{ a6,a5 } },{ b7,{ b6,b5 } },{ c7,{ c6,c5 } },{ f7,{ f6, f5 } },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
         { Type::knight,{ { b8,{ a6,c6,d7 } },{ g8,{ h6,f6,e7 } },{ g1, {e2,f3,h3} } } },
@@ -404,9 +404,9 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
   int nm = 0;
   for (auto m : moves) {
     const int move = nm / 2 + 1;
-    BOOST_CHECK(machine->CurrentMove() == (nm & 1 ? Set::black : Set::white));
+    BOOST_CHECK(machine->CurrentPlayer() == (nm & 1 ? Set::black : Set::white));
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m + " (#" + std::to_string(move) + ")");
-    BOOST_CHECK(machine->CurrentMove() == (nm & 1 ? Set::white : Set::black));
+    BOOST_CHECK(machine->CurrentPlayer() == (nm & 1 ? Set::white : Set::black));
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     if (move == 2 && m == "e5") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);

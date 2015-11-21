@@ -212,7 +212,7 @@ void Chessboard::updateCursor()
   {
     auto piece = chessPieces.find(hotPos);
     if (piece != chessPieces.end()) {
-      if (piece->second.first == chessMachine->CurrentMove()) {
+      if (piece->second.first == chessMachine->CurrentPlayer()) {
         setCursor(Qt::OpenHandCursor);
       }
       else {
@@ -276,7 +276,7 @@ void Chessboard::mousePressEvent(QMouseEvent * event)
   if (dragPos == BADPOS && event->buttons().testFlag(Qt::LeftButton))
   {
     auto piece = chessPieces.find(hotPos);
-    if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentMove())
+    if (piece != chessPieces.end() && piece->second.first == chessMachine->CurrentPlayer())
     {
       dragPos = hotPos;
     }
@@ -299,7 +299,7 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
       Position to = hotPos;
       if (piece.second == Type::pawn && ((piece.first == Set::white && to.rank == '8') || (piece.first == Set::black && to.rank == '1')))
       {
-        PromotionDlg dlg(chessMachine->CurrentMove(), this);
+        PromotionDlg dlg(chessMachine->CurrentPlayer(), this);
         int result = dlg.exec();
         if (result != QDialog::Rejected)
         {

@@ -61,6 +61,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
 
   BOOST_REQUIRE(!engine->Start(*machine, 0));
+  BOOST_CHECK(engine->EvalPosition(*machine) == 0);
 }
 
 BOOST_AUTO_TEST_CASE( StartTest )
@@ -72,6 +73,7 @@ BOOST_AUTO_TEST_CASE( StartTest )
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
+  BOOST_CHECK(engine->EvalPosition(*machine) == 0);
   {
     infotest info;
     BOOST_REQUIRE(engine->Start(*machine, 0));
@@ -120,6 +122,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
       BOOST_CHECK_MESSAGE(info.wait(&*engine, 1000), "Evaluation timeout at move '" + m + "'");
       BOOST_CHECK_MESSAGE(info.bestmove.empty(), "The evaluated best move (" + info.bestmove + ") do not match at move '" + m + "'");
       BOOST_CHECK_MESSAGE(info.bestscore == s0.second, "The evaluated best score (" + std::to_string(info.bestscore) + ") do not match at move '" + m + "'");
+      BOOST_CHECK(engine->EvalPosition(*machine) == (machine->CurrentPlayer() == Set::white ? s0.second : - s0.second));
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);

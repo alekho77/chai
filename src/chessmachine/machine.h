@@ -15,7 +15,7 @@ namespace Chai {
       bool Move(const char* notation) override;
       void Undo() override;
 
-      Set CurrentMove() const override { return states.empty() ? Set::unknown : states.back().activeSet; }
+      Set CurrentPlayer() const override { return states.empty() ? Set::unknown : states.back().activeSet; }
       const Piece* GetSet(Set set) const override;
       const Position* CheckMoves(Position from) const override;
       Status CheckStatus() const override;
