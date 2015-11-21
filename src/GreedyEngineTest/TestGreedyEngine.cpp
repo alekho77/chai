@@ -9,7 +9,7 @@ public:
   infotest() : readyok(false), deadline(false), bestscore(0) {}
 
   std::string bestmove;
-  int bestscore;
+  float bestscore;
 
   bool wait(IEngine* engine, int timeout) {
     if (deadline) {
@@ -37,7 +37,7 @@ private:
 
   void ReadyOk() override { readyok = true; }
   void BestMove(const char* notation) override { bestmove.assign(notation); }
-  void BestScore(int score) override { bestscore = score; }
+  void BestScore(float score) override { bestscore = score; }
 
   void on_timeout(const boost::system::error_code& e) {
     if (e != boost::asio::error::operation_aborted) {
@@ -103,12 +103,16 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
 ");
   BOOST_REQUIRE(moves.size() == 46);
 
-  const std::vector< std::pair<std::string, int> > scores0 = {
-    { "e4", 0 },{ "e5", -26 },{ "Nc3", 0 },{ "Nf6", -22 },{ "f4", 4 },{ "d5", -12 },{ "exd5", -12 },{ "Nxd5", -1011 },{ "fxe5", -26 },{ "Nxc3", -1003 },
-    { "bxc3", -2023 },{ "Qh4", -1007 },{ "Ke2", 965 },{ "Bg4", -980 },{ "Nf3", 963 },{ "Nc6", -1003 },{ "d4", 970 },{ "O-O-O", -1000 },{ "Bd2", 990 },
-    { "Bxf3", -999 },{ "gxf3", -2056 },{ "Nxe5", -991 },{ "dxe5", -47 },{ "Bc5", -2997 },{ "Qe1", 2977 },{ "Qc4", -2983 },{ "Kd1", 2956 },{ "Qxc3", -2984 },
-    { "Rb1", 1981 },{ "Qxf3", -1993 },{ "Qe2", 951 },{ "Rxd2", -992 },{ "Kxd2", -2064 },{ "Rd8", -2977 },{ "Kc1", 2938 },{ "Ba3", -2976 },{ "Rb2", 2956 },
-    { "Qc3", -2985 },{ "Bh3", 2976 },{ "Kb8", -3035 },{ "Qb5", 2976 },{ "Qd2", -2993 },{ "Kb1", 2958 },{ "Qd1", -2998 },{ "Rxd1", 2964 },{ "Rxd1", -12053 }
+  static const float wpawn = 1000.0f;
+  const std::vector< std::pair<std::string, float> > scores0 = {
+    { "e4", 0 / wpawn },{ "e5", -26 / wpawn },{ "Nc3", 0 / wpawn },{ "Nf6", -22 / wpawn },{ "f4", 4 / wpawn },{ "d5", -12 / wpawn },{ "exd5", -12 / wpawn },
+    { "Nxd5", -1011 / wpawn },{ "fxe5", -26 / wpawn },{ "Nxc3", -1003 / wpawn },{ "bxc3", -2023 / wpawn },{ "Qh4", -1007 / wpawn },{ "Ke2", 965 / wpawn },
+    { "Bg4", -980 / wpawn },{ "Nf3", 963 / wpawn },{ "Nc6", -1003 / wpawn },{ "d4", 970 / wpawn },{ "O-O-O", -1000 / wpawn },{ "Bd2", 990 / wpawn },
+    { "Bxf3", -999 / wpawn },{ "gxf3", -2056 / wpawn },{ "Nxe5", -991 / wpawn },{ "dxe5", -47 / wpawn },{ "Bc5", -2997 / wpawn },{ "Qe1", 2977 / wpawn },
+    { "Qc4", -2983 / wpawn },{ "Kd1", 2956 / wpawn },{ "Qxc3", -2984 / wpawn },{ "Rb1", 1981 / wpawn },{ "Qxf3", -1993 / wpawn },{ "Qe2", 951 / wpawn },
+    { "Rxd2", -992 / wpawn },{ "Kxd2", -2064 / wpawn },{ "Rd8", -2977 / wpawn },{ "Kc1", 2938 / wpawn },{ "Ba3", -2976 / wpawn },{ "Rb2", 2956 / wpawn },
+    { "Qc3", -2985 / wpawn },{ "Bh3", 2976 / wpawn },{ "Kb8", -3035 / wpawn },{ "Qb5", 2976 / wpawn },{ "Qd2", -2993 / wpawn },{ "Kb1", 2958 / wpawn },
+    { "Qd1", -2998 / wpawn },{ "Rxd1", 2964 / wpawn },{ "Rxd1", -12053 / wpawn }
   };
 
   size_t nm = 0;
@@ -121,8 +125,9 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
       BOOST_REQUIRE_MESSAGE(engine->Start(*machine, 0), "Can't evaluate position at move '" + m + "'");
       BOOST_CHECK_MESSAGE(info.wait(&*engine, 1000), "Evaluation timeout at move '" + m + "'");
       BOOST_CHECK_MESSAGE(info.bestmove.empty(), "The evaluated best move (" + info.bestmove + ") do not match at move '" + m + "'");
-      BOOST_CHECK_MESSAGE(info.bestscore == s0.second, "The evaluated best score (" + std::to_string(info.bestscore) + ") do not match at move '" + m + "'");
-      BOOST_CHECK(engine->EvalPosition(*machine) == (machine->CurrentPlayer() == Set::white ? s0.second : - s0.second));
+      BOOST_TEST_MESSAGE("The evaluated best score is {" + std::to_string(info.bestscore) + "} at move '" + m + "'");
+      BOOST_CHECK_SMALL(info.bestscore - s0.second, 0.001f);
+      BOOST_CHECK_SMALL(engine->EvalPosition(*machine) - (machine->CurrentPlayer() == Set::white ? s0.second : - s0.second), 0.001f);
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
@@ -134,7 +139,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
     BOOST_REQUIRE(engine->Start(*machine, 0));
     BOOST_CHECK(info.wait(&*engine, 1000));
     BOOST_CHECK(info.bestmove.empty());
-    BOOST_CHECK(info.bestscore == - std::numeric_limits<int>::max());
+    BOOST_CHECK(info.bestscore == - std::numeric_limits<float>::infinity());
   }
 
 }
