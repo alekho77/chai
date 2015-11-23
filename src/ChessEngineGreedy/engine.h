@@ -40,12 +40,12 @@ private:
   void BestScore(float score) override;
 
   void ThreadFun(boost::shared_ptr<IMachine> machine);
-  float Search(boost::shared_ptr<IMachine> machine, Set set, int depth);
+  float Search(IMachine& machine, Set set, int depth);
   std::vector<Move> EmunMoves() const;
   
   Set xSet(Set set) const { return set == Set::white ? Set::black : (set == Set::black ? Set::white : Set::unknown); }
-  float EvalPosition(const IMachine & position, Set set) const;
-  float EvalSide(const IMachine & position, Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
+  float EvalPosition(const IMachine& position, Set set) const;
+  float EvalSide(const IMachine& position, Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
   float PieceWeight(Type type) const;
   float PositionWeight(Set set, const Piece& piece, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
 

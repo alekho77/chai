@@ -62,14 +62,14 @@ void GreedyEngine::BestScore(float score) {
 
 void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine) {
   bestMove.clear();
-  float bestscore = Search(machine, machine->CurrentPlayer(), maxDepth);
+  float bestscore = Search(*machine, machine->CurrentPlayer(), maxDepth);
   service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
   service.post(boost::bind(&GreedyEngine::BestMove, this, bestMove.c_str()));
   service.post(boost::bind(&GreedyEngine::ReadyOk, this));
   stopped = true;
 }
 
-float GreedyEngine::Search(boost::shared_ptr<IMachine> machine, Set set, int depth) {
+float GreedyEngine::Search(IMachine& machine, Set set, int depth) {
   if (depth > 0) {
     float maxscore = - std::numeric_limits<float>::infinity();
     std::vector<Move> moves = EmunMoves();
@@ -77,20 +77,22 @@ float GreedyEngine::Search(boost::shared_ptr<IMachine> machine, Set set, int dep
       if (stopped) {
         break;
       }
-      if (machine->Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
+      if (machine.Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
         float score = - Search(machine, xSet(set), depth - 1);
         if (score > maxscore) {
           maxscore = score;
           if (depth == maxDepth) {
-            bestMove.assign(machine->LastMoveNotation());
+            bestMove.assign(machine.LastMoveNotation());
           }
         }
-        machine->Undo();
+        machine.Undo();
+      } else {
+        assert(!"Can't make move!");
       }
     }
     return maxscore;
   }
-  return EvalPosition(*machine, set);
+  return EvalPosition(machine, set);
 }
 
 std::vector<Move> GreedyEngine::EmunMoves() const
