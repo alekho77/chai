@@ -81,7 +81,7 @@ namespace Chai {
       virtual bool Start(const IMachine& position, int depth, int timeout = 0) = 0;
       virtual void Stop() = 0;
       virtual void ProcessInfo(IInfoCall* cb) = 0;
-      virtual float EvalPosition(const IMachine& position) const = 0; // Evaluation of the current position. It's positive for white set of and it's negative for black.
+      virtual float EvalPosition(const IMachine& position) const = 0; // Evaluation of the current position for current player.
 
       virtual ~IEngine() {}
     };

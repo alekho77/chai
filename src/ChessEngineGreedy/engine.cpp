@@ -30,7 +30,7 @@ void GreedyEngine::ProcessInfo(IInfoCall* cb) {
 
 float GreedyEngine::EvalPosition(const IMachine & position) const
 {
-  return EvalPosition(position, Set::white);
+  return EvalPosition(position, position.CurrentPlayer());
 }
 
 void GreedyEngine::SearchDepth(int depth) {
@@ -72,7 +72,7 @@ void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine) {
 float GreedyEngine::Search(IMachine& machine, Set set, int depth) {
   if (depth > 0) {
     float maxscore = - std::numeric_limits<float>::infinity();
-    std::vector<Move> moves = EmunMoves();
+    std::vector<Move> moves = EmunMoves(machine);
     for (auto move : moves) {
       if (stopped) {
         break;
@@ -95,10 +95,20 @@ float GreedyEngine::Search(IMachine& machine, Set set, int depth) {
   return EvalPosition(machine, set);
 }
 
-std::vector<Move> GreedyEngine::EmunMoves() const
+std::vector<Move> GreedyEngine::EmunMoves(const IMachine& position) const
 {
   std::vector<Move> moves;
-  // TODO ...
+  for (auto piece : arr2vec(position.GetSet(position.CurrentPlayer()))) {
+    for (auto move : arr2vec(position.CheckMoves(piece.position))) {
+      if (piece.type == Type::pawn && (move.rank == '1' || move.rank == '8')) {
+        for (auto type : { Type::knight, Type::bishop, Type::rook, Type::queen }) {
+          moves.push_back({ piece, move, type });
+        }
+      } else {
+        moves.push_back({ piece, move, Type::bad });
+      }
+    }
+  }
   return moves;
 }
 
