@@ -60,7 +60,6 @@
       <property name="mouseTracking">
        <bool>true</bool>
       </property>
-      <zorder>groupBoxOptions</zorder>
      </widget>
     </item>
     <item>
@@ -363,7 +362,9 @@
    <slots>
     <signal>updateLog(QString)</signal>
     <signal>moveMade()</signal>
-    <slot>newGame()</slot>
+    <signal>currentScore(float)</signal>
+    <slot>newGame(QString)</slot>
+    <slot>stopGame()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -371,22 +372,6 @@
   <include location="chess.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>pushButtonNewGame</sender>
-   <signal>clicked()</signal>
-   <receiver>widgetChessboard</receiver>
-   <slot>newGame()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>560</x>
-     <y>239</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>261</x>
-     <y>115</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>pushButtonNewGame</sender>
    <signal>clicked()</signal>
@@ -485,17 +470,33 @@
   </connection>
   <connection>
    <sender>widgetChessboard</sender>
-   <signal>moveMade()</signal>
+   <signal>currentScore(float)</signal>
    <receiver>chessClass</receiver>
-   <slot>onMove()</slot>
+   <slot>setCurrentScore(float)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>114</x>
-     <y>79</y>
+     <x>35</x>
+     <y>143</y>
     </hint>
     <hint type="destinationlabel">
      <x>-3</x>
-     <y>101</y>
+     <y>146</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonStopGame</sender>
+   <signal>clicked()</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>stopGame()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>596</x>
+     <y>225</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -506,5 +507,6 @@
   <slot>appendLog(QString)</slot>
   <slot>onLogChanged()</slot>
   <slot>onMove()</slot>
+  <slot>setCurrentScore(float)</slot>
  </slots>
 </ui>

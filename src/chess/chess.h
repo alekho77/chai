@@ -16,7 +16,7 @@ public slots:
   void newGame();
   void stopGame();
   void onLogChanged();
-  void onMove();
+  void setCurrentScore(float score);
 
 protected:
   void resizeEvent(QResizeEvent * event) override;

@@ -7,6 +7,7 @@
 #include <QSvgRenderer>
 #include <QSet>
 #include <QPair>
+#include "../ChessEngineGreedy/greedyengine.h"
 
 Chessboard::Chessboard(QWidget *parent)
   : QWidget(parent)
@@ -26,18 +27,24 @@ Chessboard::~Chessboard()
 {
 }
 
-int Chessboard::positionScore() const
+void Chessboard::newGame(QString engine)
 {
-  return 0;
-}
-
-void Chessboard::newGame()
-{
+  using namespace Chai::Chess;
   chessMachine->Start();
   updateChessPieces();
   repaint();
   moveCount = 1;
-  emit moveMade();
+  if (engine == "Greedy") {
+    chessEngine.reset(CreateGreedyEngine(), DeleteGreedyEngine);
+  }
+  if (chessEngine) {
+    emit currentScore(chessEngine->EvalPosition(*chessMachine));
+  }
+}
+
+void Chessboard::stopGame()
+{
+  chessEngine.reset();
 }
 
 void Chessboard::createChessboard(int size)
@@ -329,7 +336,9 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
         }
         emit updateLog(notation);
         updateChessPieces();
-        emit moveMade();
+        if (chessEngine) {
+          emit currentScore(chessEngine->EvalPosition(*chessMachine));
+        }
       }
     }
     dragPos = BADPOS;

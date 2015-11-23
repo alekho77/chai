@@ -22,10 +22,9 @@ public:
   Chessboard(QWidget *parent = 0);
   ~Chessboard();
 
-  int positionScore() const;
-
 public slots:
-  void newGame();
+  void newGame(QString engine);
+  void stopGame();
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -37,7 +36,7 @@ protected:
 
 signals:
   void updateLog(QString str);
-  void moveMade();
+  void currentScore(float score);
 
 private:
   void createChessboard(int size);
@@ -71,6 +70,7 @@ private:
   int moveCount;
 
   QSharedPointer<Chai::Chess::IMachine> chessMachine;
+  QSharedPointer<Chai::Chess::IEngine>  chessEngine;
 };
 
 #endif // CHESSBOARD_H

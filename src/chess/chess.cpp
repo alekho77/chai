@@ -19,6 +19,9 @@ void chess::newGame()
   ui.groupBoxOptions->setEnabled(false);
   ui.pushButtonStopGame->setEnabled(true);
   ui.widgetChessboard->setEnabled(true);
+  ui.lineEditCurScore->clear();
+  ui.lineEditBestScore->clear();
+  ui.widgetChessboard->newGame(ui.comboBoxGame->currentText());
 }
 
 void chess::stopGame()
@@ -33,14 +36,9 @@ void chess::onLogChanged()
   ui.textEditLog->ensureCursorVisible();
 }
 
-void chess::onMove()
+void chess::setCurrentScore(float score)
 {
-  switch (ui.comboBoxGame->currentIndex())
-  {
-  case 1:
-    //ui.lineEditGreedyScore->setText(QString().setNum(ui.widgetChessboard->positionScore()));
-    break;
-  }
+  ui.lineEditCurScore->setText(QString().setNum(score, 'f', 3));
 }
 
 void chess::resizeEvent(QResizeEvent * event)
