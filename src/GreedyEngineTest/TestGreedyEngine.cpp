@@ -103,16 +103,13 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
 ");
   BOOST_REQUIRE(moves.size() == 46);
 
-  static const float wpawn = 1000.0f;
   const std::vector< std::pair<std::string, float> > scores0 = {
-    { "e4", 0 / wpawn },{ "e5", -26 / wpawn },{ "Nc3", 0 / wpawn },{ "Nf6", -22 / wpawn },{ "f4", 4 / wpawn },{ "d5", -12 / wpawn },{ "exd5", -12 / wpawn },
-    { "Nxd5", -1011 / wpawn },{ "fxe5", -26 / wpawn },{ "Nxc3", -1003 / wpawn },{ "bxc3", -2023 / wpawn },{ "Qh4", -1007 / wpawn },{ "Ke2", 965 / wpawn },
-    { "Bg4", -980 / wpawn },{ "Nf3", 963 / wpawn },{ "Nc6", -1003 / wpawn },{ "d4", 970 / wpawn },{ "O-O-O", -1000 / wpawn },{ "Bd2", 990 / wpawn },
-    { "Bxf3", -999 / wpawn },{ "gxf3", -2056 / wpawn },{ "Nxe5", -991 / wpawn },{ "dxe5", -47 / wpawn },{ "Bc5", -2997 / wpawn },{ "Qe1", 2977 / wpawn },
-    { "Qc4", -2983 / wpawn },{ "Kd1", 2956 / wpawn },{ "Qxc3", -2984 / wpawn },{ "Rb1", 1981 / wpawn },{ "Qxf3", -1993 / wpawn },{ "Qe2", 951 / wpawn },
-    { "Rxd2", -992 / wpawn },{ "Kxd2", -2064 / wpawn },{ "Rd8", -2977 / wpawn },{ "Kc1", 2938 / wpawn },{ "Ba3", -2976 / wpawn },{ "Rb2", 2956 / wpawn },
-    { "Qc3", -2985 / wpawn },{ "Bh3", 2976 / wpawn },{ "Kb8", -3035 / wpawn },{ "Qb5", 2976 / wpawn },{ "Qd2", -2993 / wpawn },{ "Kb1", 2958 / wpawn },
-    { "Qd1", -2998 / wpawn },{ "Rxd1", 2964 / wpawn },{ "Rxd1", -12053 / wpawn }
+    { "e4", 0.000f },{ "e5", -0.026f },{ "Nc3", 0.000f },{ "Nf6", -0.022f },{ "f4", 0.004f },{ "d5", -0.012f },{ "exd5", -0.012f },{ "Nxd5", -1.011f },
+    { "fxe5", -0.026f },{ "Nxc3", -1.003f },{ "bxc3", -2.023f },{ "Qh4", -1.007f },{ "Ke2", 0.965f },{ "Bg4", -0.980f },{ "Nf3", 0.963f },{ "Nc6", -1.003f },
+    { "d4", 0.970f },{ "O-O-O", -1.000f },{ "Bd2", 0.990f },{ "Bxf3", -0.999f },{ "gxf3", -2.056f },{ "Nxe5", -0.991f },{ "dxe5", -0.047f },
+    { "Bc5", -2.997f },{ "Qe1", 2.977f },{ "Qc4", -2.983f },{ "Kd1", 2.956f },{ "Qxc3", -2.984f },{ "Rb1", 1.981f },{ "Qxf3", -1.993f },{ "Qe2", 0.951f },
+    { "Rxd2", -0.992f },{ "Kxd2", -2.064f },{ "Rd8", -2.977f },{ "Kc1", 2.938f },{ "Ba3", -2.976f },{ "Rb2", 2.956f },{ "Qc3", -2.985f },
+    { "Bh3", 2.976f },{ "Kb8", -3.035f },{ "Qb5", 2.976f },{ "Qd2", -2.993f },{ "Kb1", 2.958f },{ "Qd1", -2.998f },{ "Rxd1", 2.964f },{ "Rxd1", -12.053f }
   };
 
   size_t nm = 0;
