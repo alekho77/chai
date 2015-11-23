@@ -49,6 +49,42 @@ private:
   volatile bool deadline;
 };
 
+/* Classic NegaMax searching */
+std::pair<float, std::string> TestSearch(IMachine& machine, int depth) {
+  if (depth > 0) {
+    if (machine.CheckStatus() == Status::checkmate) {
+      return std::make_pair(-std::numeric_limits<float>::infinity(), std::string());
+    }
+    if (machine.CheckStatus() == Status::stalemate) {
+      return std::make_pair(0.0f, std::string());
+    }
+    std::vector< std::pair<float, std::string> > moves;
+    for (auto p : arr2vec(machine.GetSet(machine.CurrentPlayer()))) {
+      for (auto m : arr2vec(machine.CheckMoves(p.position))) {
+        if (p.type == Type::pawn && (m.rank == '1' || m.rank == '8')) {
+          for (auto pp : { Type::knight, Type::bishop, Type::rook, Type::queen }) {
+            if (machine.Move(p.type, p.position, m, pp)) {
+              moves.push_back(std::make_pair(-TestSearch(machine, depth - 1).first, std::string(machine.LastMoveNotation())));
+              machine.Undo();
+            } else {
+              assert(!"Can't make move!");
+            }
+          }
+        } else if (machine.Move(p.type, p.position, m)) {
+          moves.push_back(std::make_pair(-TestSearch(machine, depth - 1).first, std::string(machine.LastMoveNotation())));
+          machine.Undo();
+        } else {
+          assert(!"Can't make move!");
+        }
+      }
+    }
+    assert(!moves.empty());
+    return *std::max_element(moves.begin(), moves.end(), [](auto a, auto b) { return a.first < b.first; });
+  }
+  boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
+  return std::make_pair(engine->EvalPosition(machine), std::string());
+}
+
 
 BOOST_AUTO_TEST_SUITE( GreedyEngineTest )
 
@@ -95,6 +131,11 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
+#ifdef _DEBUG
+  const int max_depth_testing = 1;
+#else
+  const int max_depth_testing = 3;
+#endif
   const std::vector<std::string> moves = split("\
 1.e4 e5 2.Nc3 Nf6 3.f4 d5 4.exd5 Nxd5 5.fxe5 Nxc3 6.bxc3 Qh4+ 7.Ke2 Bg4+ 8.Nf3 Nc6 \
 9.d4 O-O-O 10.Bd2 Bxf3+ 11.gxf3 Nxe5 12.dxe5 Bc5 13.Qe1 Qc4+ 14.Kd1 Qxc3 \
@@ -126,6 +167,15 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
       BOOST_CHECK_SMALL(info.bestscore - s0.second, 0.001f);
       BOOST_CHECK_SMALL(engine->EvalPosition(*machine) - (machine->CurrentPlayer() == Set::white ? s0.second : - s0.second), 0.001f);
     }
+    for (int depth = 1; depth <= max_depth_testing; depth++)
+    {
+      auto bestmove = TestSearch(*machine, depth);
+      infotest info;
+      BOOST_REQUIRE_MESSAGE(engine->Start(*machine, depth), "Can't start search " + std::to_string(depth) + " moves in depth at '" + m + "' move");
+      BOOST_CHECK_MESSAGE(info.wait(&*engine, 1000), "Searching timeout at move '" + m + "'");
+      BOOST_CHECK_SMALL(info.bestscore - bestmove.first, 0.001f);
+      BOOST_CHECK(info.bestmove == bestmove.second);
+    }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
     ++nm;
@@ -138,7 +188,15 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
     BOOST_CHECK(info.bestmove.empty());
     BOOST_CHECK(info.bestscore == - std::numeric_limits<float>::infinity());
   }
-
+  for (int depth = 1; depth <= max_depth_testing; depth++)
+  {
+    auto bestmove = TestSearch(*machine, depth);
+    infotest info;
+    BOOST_REQUIRE(engine->Start(*machine, depth));
+    BOOST_CHECK(info.wait(&*engine, 1000));
+    BOOST_CHECK_SMALL(info.bestscore - bestmove.first, 0.001f);
+    BOOST_CHECK(info.bestmove == bestmove.second);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

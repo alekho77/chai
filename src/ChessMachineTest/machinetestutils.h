@@ -12,6 +12,14 @@
 namespace Chai {
 namespace Chess {
 
+//struct Move
+//{
+//  Type type;
+//  Position from;
+//  Position to;
+//  Type promotion;
+//};
+
 typedef std::map< Position, std::set<Position> > Moves;
 
 template <class T>
