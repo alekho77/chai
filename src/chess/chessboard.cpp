@@ -309,6 +309,12 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
       if (chessMachine->Move(piece.second, from, to, promotion))
       {
         QString notation(chessMachine->LastMoveNotation());
+        switch (chessMachine->CheckStatus())
+        {
+        case Status::check: notation += "+"; break;
+        case Status::checkmate: notation += "#"; break;
+        case Status::stalemate: notation += "="; break;
+        }
         if (piece.first == Set::white) {
           const int c = (notation.length() < 8 ? 8 - notation.length() : 0) + 1;
           notation = (moveCount < 10 ? "&nbsp;" : "") + QString::number(moveCount) + "." + notation;
