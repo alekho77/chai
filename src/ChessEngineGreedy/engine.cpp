@@ -71,15 +71,22 @@ void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine) {
 
 float GreedyEngine::Search(IMachine& machine, Set set, int depth) {
   if (depth > 0) {
-    float maxscore = - std::numeric_limits<float>::infinity();
+    if (machine.CheckStatus() == Status::checkmate) {
+      return -std::numeric_limits<float>::infinity();
+    }
+    if (machine.CheckStatus() == Status::stalemate) {
+      return 0;
+    }
     std::vector<Move> moves = EmunMoves(machine);
+    assert(!moves.empty());
+    boost::optional<float> maxscore;
     for (auto move : moves) {
       if (stopped) {
         break;
       }
       if (machine.Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
         float score = - Search(machine, xSet(set), depth - 1);
-        if (score > maxscore) {
+        if (!maxscore || score > *maxscore) {
           maxscore = score;
           if (depth == maxDepth) {
             bestMove.assign(machine.LastMoveNotation());
@@ -90,7 +97,7 @@ float GreedyEngine::Search(IMachine& machine, Set set, int depth) {
         assert(!"Can't make move!");
       }
     }
-    return maxscore;
+    return *maxscore;
   }
   return EvalPosition(machine, set);
 }

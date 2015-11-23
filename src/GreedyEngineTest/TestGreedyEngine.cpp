@@ -167,20 +167,19 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
       BOOST_CHECK_SMALL(info.bestscore - s0.second, 0.001f);
       BOOST_CHECK_SMALL(engine->EvalPosition(*machine) - s0.second, 0.001f);
     }
-    //if (nm == 8)
     for (int depth = 1; depth <= max_depth_testing; depth++)
     {
       BOOST_TEST_MESSAGE("Search at '" + m + "'(" + std::to_string(nm / 2 + 1) + ") with " + std::to_string(depth) + " moves in depth");
       auto bestmove = TestSearch(*machine, depth);
-      infotest info;
+      infotest info2;
       BOOST_REQUIRE_MESSAGE(engine->Start(*machine, depth), "Can't start search " + std::to_string(depth) + " moves in depth at '" + m + "' move");
-      BOOST_REQUIRE_MESSAGE(info.wait(&*engine, 90000), "Searching timeout at move '" + m + "' with " + std::to_string(depth) + " moves in depth");
-      if (bestmove.first == std::numeric_limits<float>::infinity()) {
-        BOOST_CHECK(info.bestscore == bestmove.first);
+      BOOST_REQUIRE_MESSAGE(info2.wait(&*engine, 90000), "Searching timeout at move '" + m + "' with " + std::to_string(depth) + " moves in depth");
+      if (std::abs(bestmove.first) == std::numeric_limits<float>::infinity()) {
+        BOOST_CHECK(info2.bestscore == bestmove.first);
       } else {
-        BOOST_CHECK_SMALL(info.bestscore - bestmove.first, 0.001f);
+        BOOST_CHECK_SMALL(info2.bestscore - bestmove.first, 0.001f);
       }
-      BOOST_CHECK(info.bestmove == bestmove.second);
+      BOOST_CHECK(info2.bestmove == bestmove.second);
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
