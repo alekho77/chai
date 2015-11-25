@@ -60,18 +60,18 @@ namespace Chai {
       evalMoves(lastMove);
     }
 
-    void ChessState::evalMoves(boost::optional<Move> oppmove)
+    void ChessState::evalMoves(boost::optional<Move> xmove)
     {
-      Positions opponent;
+      Positions xmoves;
       for (auto& piece : pieces) {
         if (piece.second.set != activeSet) {
           piece.second.moves = pieceMoves(pieces, piece.first, {});
-          opponent.insert(piece.second.moves.begin(), piece.second.moves.end());
+          xmoves.insert(piece.second.moves.begin(), piece.second.moves.end());
         }
       }
       for (auto& piece : pieces) {
         if (piece.second.set == activeSet) {
-          Positions probmoves = pieceMoves(pieces, piece.first, oppmove, opponent);
+          Positions probmoves = pieceMoves(pieces, piece.first, xmove, xmoves);
           piece.second.moves = probmoves;
           for (auto m : probmoves) {
             PieceStates testpieces = pieces;
@@ -97,7 +97,7 @@ namespace Chai {
       }
     }
 
-    Positions ChessState::pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> oppmove, const Positions& opponent)
+    Positions ChessState::pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const Positions& xmoves)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
@@ -115,8 +115,8 @@ namespace Chai {
           }
           addMoveIf(pieces, moves, { pos.file - 1, pos.rank + 1 }, piece.set, true);
           addMoveIf(pieces, moves, { pos.file + 1, pos.rank + 1 }, piece.set, true);
-          if (oppmove && oppmove->type == Type::pawn && pos.rank == '5' && (oppmove->from.rank - oppmove->to.rank) == 2 && abs(oppmove->to.file - pos.file) == 1) {
-            addMoveIf(pieces, moves, { oppmove->to.file, pos.rank + 1 }); // 'En passant'
+          if (xmove && xmove->type == Type::pawn && pos.rank == '5' && (xmove->from.rank - xmove->to.rank) == 2 && abs(xmove->to.file - pos.file) == 1) {
+            addMoveIf(pieces, moves, { xmove->to.file, pos.rank + 1 }); // 'En passant'
           }
         } else { // black
           if (addMoveIf(pieces, moves, { pos.file, pos.rank - 1 }) && !piece.moved && pos.rank == '7') {
@@ -124,8 +124,8 @@ namespace Chai {
           }
           addMoveIf(pieces, moves, { pos.file - 1, pos.rank - 1 }, piece.set, true);
           addMoveIf(pieces, moves, { pos.file + 1, pos.rank - 1 }, piece.set, true);
-          if (oppmove && oppmove->type == Type::pawn && pos.rank == '4' && (oppmove->to.rank - oppmove->from.rank) == 2 && abs(oppmove->to.file - pos.file) == 1) {
-            addMoveIf(pieces, moves, { oppmove->to.file, pos.rank - 1 }); // 'En passant'
+          if (xmove && xmove->type == Type::pawn && pos.rank == '4' && (xmove->to.rank - xmove->from.rank) == 2 && abs(xmove->to.file - pos.file) == 1) {
+            addMoveIf(pieces, moves, { xmove->to.file, pos.rank - 1 }); // 'En passant'
           }
         }
         break;
@@ -156,11 +156,11 @@ namespace Chai {
         const char kingrank = piece.set == Set::white ? '1' : '8';
         if (!piece.moved && pos == Position({ 'e', kingrank })) {
           // O-O
-          if ( testPath(pieces, opponent, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Position({ 'h',kingrank }), piece.set)) ) {
+          if ( testPath(pieces, xmoves, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Position({ 'h',kingrank }), piece.set)) ) {
             moves.insert(Position({'g', kingrank}));
           }
           // O-O-O
-          if ( testPath(pieces, opponent, { { 'd', kingrank },{ 'c', kingrank },{ 'b', kingrank } }) && testPiece(pieces, ROOK(Position({ 'a', kingrank }), piece.set)) ) {
+          if ( testPath(pieces, xmoves, { { 'd', kingrank },{ 'c', kingrank },{ 'b', kingrank } }) && testPiece(pieces, ROOK(Position({ 'a', kingrank }), piece.set)) ) {
             moves.insert(Position({ 'c', kingrank }));
           }
         }
