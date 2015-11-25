@@ -19,4 +19,4 @@
 
 #include "chessmachine.h"
 #include "greedyengine.h"
-#include "../ChessMachineTest/machinetestutils.h"
+#include "machinetestutils.h"

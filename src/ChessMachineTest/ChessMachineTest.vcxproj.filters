@@ -17,7 +17,7 @@
     <ClInclude Include="stdafx.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="machinetestutils.h">
+    <ClInclude Include="..\Common\machinetestutils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
