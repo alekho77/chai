@@ -124,38 +124,33 @@ namespace Chai {
       }
     }
 
-    const Piece* ChessMachine::GetSet(Set set) const
+    Pieces ChessMachine::GetSet(Set set) const
     {
-      piecesSet.clear();
+      Pieces pieces;
       if (!states.empty()) {
         const ChessState& laststate = states.back();
-        piecesSet.reserve(laststate.pieces.size() + 1);
         for (auto p : laststate.pieces) {
           if (p.second.set == set) {
-            piecesSet.push_back({ p.second.type, p.first });
+            pieces.push_back({ p.second.type, p.first });
           }
         }
-        piecesSet.push_back({ Type::bad, BADPOS });
-        return &piecesSet[0];
       }
-      return nullptr;
+      return pieces;
     }
 
-    const Position* ChessMachine::CheckMoves(Position from) const
+    Positions ChessMachine::CheckMoves(Position from) const
     {
-      pieceMoves.clear();
+      Positions moves;
       if (!states.empty()) {
         const ChessState& laststate = states.back();
         auto piece = laststate.pieces.find(from);
         if (piece != laststate.pieces.end()) {
           for (const Position& m : piece->second.moves) {
-            pieceMoves.push_back(m);
+            moves.insert(m);
           }
-          pieceMoves.push_back(BADPOS);
-          return &pieceMoves[0];
         }
       }
-      return nullptr;
+      return moves;
     }
 
     Status ChessMachine::CheckStatus() const

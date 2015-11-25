@@ -155,7 +155,7 @@ void Chessboard::drawChessMoves(QPainter& painter)
     const qreal scalel = 0.5;
     const qreal adjxl = startCell.width() * (1 - scalel) / 2;
     const qreal adjyl = startCell.height() * (1 - scalel) / 2;
-    const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos != BADPOS ? dragPos : hotPos));
+    const Positions pos = chessMachine->CheckMoves(dragPos != BADPOS ? dragPos : hotPos);
     for (auto p : pos) {
       QRectF rec;
       rec.setX(startCell.left() + startCell.width() * (p.file - 'a'));
@@ -188,30 +188,19 @@ void Chessboard::updateChessPieces()
 {
   using namespace Chai::Chess;
   chessPieces.clear();
-  for (const Piece* p = chessMachine->GetSet(Set::white); p && p->type != Type::bad; ++p) {
-    chessPieces[p->position] = { Set::white, p->type };
+  for (const auto& p : chessMachine->GetSet(Set::white)) {
+    chessPieces[p.position] = { Set::white, p.type };
   }
-  for (const Piece* p = chessMachine->GetSet(Set::black); p && p->type != Type::bad; ++p) {
-    chessPieces[p->position] = { Set::black, p->type };
+  for (const auto& p : chessMachine->GetSet(Set::black)) {
+    chessPieces[p.position] = { Set::black, p.type };
   }
-}
-
-Positions Chessboard::arrToVec(const Chai::Chess::Position* p) const
-{
-  using namespace Chai::Chess;
-  Positions set;
-  if (p) {
-    while (*p != BADPOS) {
-      set.insert(*(p++));
-    }
-  }
-  return set;
 }
 
 void Chessboard::updateCursor()
 {
+  using namespace Chai::Chess;
   if (dragPos != BADPOS) {
-    const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
+    const Positions pos = chessMachine->CheckMoves(dragPos);
     setCursor(pos.find(hotPos) != pos.end() ? Qt::ClosedHandCursor : Qt::ForbiddenCursor);
   }
   else
@@ -294,9 +283,10 @@ void Chessboard::mousePressEvent(QMouseEvent * event)
 
 void Chessboard::mouseReleaseEvent(QMouseEvent * event)
 {
+  using namespace Chai::Chess;
   if (dragPos != BADPOS && !event->buttons().testFlag(Qt::LeftButton))
   {
-    const Positions pos = arrToVec(chessMachine->CheckMoves(dragPos));
+    const Positions pos = chessMachine->CheckMoves(dragPos);
     if (pos.find(hotPos) != pos.end()) {
       using namespace Chai::Chess;
       auto piece = chessPieces.at(dragPos);

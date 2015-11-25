@@ -5,13 +5,11 @@
 #include <QSharedPointer>
 #include <QMap>
 #include <QVector>
-#include <set>
 #include <map>
 #include "ui_chessboard.h"
 #include "chessmachine.h"
 
 typedef std::map< Chai::Chess::Position, std::pair<Chai::Chess::Set, Chai::Chess::Type> > ChessPieces;
-typedef std::set<Chai::Chess::Position> Positions;
 typedef QMap< Chai::Chess::Type, QSharedPointer<QImage> > ChessPieceImages;
 
 class Chessboard : public QWidget
@@ -47,7 +45,6 @@ private:
   void drawChessMoves(QPainter& painter);
 
   void updateChessPieces();
-  Positions arrToVec(const Chai::Chess::Position* p) const;
   bool overBoard(int x, int y) const {
     return x >= startCell.left() && x < (startCell.left() + 8 * startCell.width())
       && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());

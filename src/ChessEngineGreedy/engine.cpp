@@ -110,8 +110,8 @@ float GreedyEngine::Search(IMachine& machine, Set set, int depth) {
 std::vector<Move> GreedyEngine::EmunMoves(const IMachine& position) const
 {
   std::vector<Move> moves;
-  for (auto piece : arr2vec(position.GetSet(position.CurrentPlayer()))) {
-    for (auto move : arr2vec(position.CheckMoves(piece.position))) {
+  for (auto piece : position.GetSet(position.CurrentPlayer())) {
+    for (auto move : position.CheckMoves(piece.position)) {
       if (piece.type == Type::pawn && (move.rank == '1' || move.rank == '8')) {
         for (auto type : { Type::knight, Type::bishop, Type::rook, Type::queen }) {
           moves.push_back({ piece, move, type });
@@ -128,17 +128,17 @@ float GreedyEngine::EvalPosition(const IMachine & position, Set set) const {
   if (position.CheckStatus() == Status::checkmate) {
     return - std::numeric_limits<float>::infinity();
   }
-  std::vector<Piece> white = arr2vec(position.GetSet(Set::white));
-  std::vector<Piece> black = arr2vec(position.GetSet(Set::black));
+  Pieces white = position.GetSet(Set::white);
+  Pieces black = position.GetSet(Set::black);
   return EvalSide(position, set, white, black) - EvalSide(position, xSet(set), white, black);
 }
 
-float GreedyEngine::EvalSide(const IMachine & position, Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const {
+float GreedyEngine::EvalSide(const IMachine & position, Set set, const Pieces& white, const Pieces& black) const {
   float score = 0;
-  const std::vector<Piece>& pieces = set == Set::white ? white : black;
+  const Pieces& pieces = set == Set::white ? white : black;
   for (auto piece : pieces) {
     score += PieceWeight(piece.type) + PositionWeight(set, piece, white, black);
-    for (const Position* pos = position.CheckMoves(piece.position); *pos != BADPOS; ++pos) {
+    for (const Position& pos : position.CheckMoves(piece.position)) {
       score += 0.001f;
     }
   }
@@ -150,7 +150,7 @@ float GreedyEngine::PieceWeight(Type type) const {
   return weights.at(type);
 }
 
-float GreedyEngine::PositionWeight(Set set, const Piece & piece, const std::vector<Piece>& white, const std::vector<Piece>& black) const {
+float GreedyEngine::PositionWeight(Set set, const Piece & piece, const Pieces& white, const Pieces& black) const {
   static const float pawn[8][8] =   { {  0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f },
                                       {  0.004f, 0.004f, 0.004f, 0.000f, 0.000f, 0.004f, 0.004f, 0.004f },
                                       {  0.006f, 0.008f, 0.002f, 0.010f, 0.010f, 0.002f, 0.008f, 0.006f },

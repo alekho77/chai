@@ -1,6 +1,8 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include <boost/container/static_vector.hpp>
+#include <boost/container/flat_set.hpp>
 
 #ifdef CHESSMACHINE_EXPORTS
 #define CHESSMACHINE_API __declspec(dllexport)
@@ -35,10 +37,14 @@ namespace Chai {
       bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
     };
 
+    typedef boost::container::flat_set<Position> Positions;
+
     struct Piece {
       Type type;
       Position position;
     };
+
+    typedef boost::container::static_vector<Piece, 16> Pieces;
 
     class IMachine {
     public:
@@ -48,8 +54,8 @@ namespace Chai {
       virtual void Undo() = 0;
 
       virtual Set CurrentPlayer() const = 0;
-      virtual const Piece* GetSet(Set set) const = 0; // Type::bad type terminated array or nullptr if it is not started.
-      virtual const Position* CheckMoves(Position from) const = 0; // BADPOS terminated array or nullptr if move is impossible.
+      virtual Pieces GetSet(Set set) const = 0;
+      virtual Positions CheckMoves(Position from) const = 0;
       virtual Status CheckStatus() const = 0;
       virtual const char* LastMoveNotation() const = 0;
 

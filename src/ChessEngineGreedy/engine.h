@@ -3,26 +3,6 @@
 namespace Chai {
 namespace Chess {
 
-inline std::vector<Piece> arr2vec(const Piece* p) {
-  std::vector<Piece> vec;
-  if (p) {
-    while (p->type != Type::bad) {
-      vec.push_back(*(p++));
-    }
-  }
-  return vec;
-}
-
-inline std::set<Position> arr2vec(const Position* p) {
-  std::set<Position> vec;
-  if (p) {
-    while (*p != BADPOS) {
-      vec.insert(*(p++));
-    }
-  }
-  return vec;
-}
-
 struct Move {
   Piece piece;
   Position to;
@@ -54,9 +34,9 @@ private:
   
   Set xSet(Set set) const { return set == Set::white ? Set::black : (set == Set::black ? Set::white : Set::unknown); }
   float EvalPosition(const IMachine& position, Set set) const;
-  float EvalSide(const IMachine& position, Set set, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
+  float EvalSide(const IMachine& position, Set set, const Pieces& white, const Pieces& black) const;
   float PieceWeight(Type type) const;
-  float PositionWeight(Set set, const Piece& piece, const std::vector<Piece>& white, const std::vector<Piece>& black) const;
+  float PositionWeight(Set set, const Piece& piece, const Pieces& white, const Pieces& black) const;
 
   boost::asio::io_service service;
   boost::thread thread;
