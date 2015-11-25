@@ -81,7 +81,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth) {
     assert(!moves.empty());
     return *std::max_element(moves.begin(), moves.end(), [](auto a, auto b) { return a.first < b.first; });
   }
-  boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
+  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
   return std::make_pair(engine->EvalPosition(machine), std::string());
 }
 
@@ -90,10 +90,10 @@ BOOST_AUTO_TEST_SUITE( GreedyEngineTest )
 
 BOOST_AUTO_TEST_CASE( ConstructorTest )
 {
-  boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
+  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
-  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine = CreateChessMachine();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
 
   BOOST_REQUIRE(!engine->Start(*machine, 0));
@@ -102,10 +102,10 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
 BOOST_AUTO_TEST_CASE( StartTest )
 {
-  boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
+  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
-  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine = CreateChessMachine();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -124,10 +124,10 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
   /*
     Gump - Steinitz Vienna, 1859 Vienna Game
   */
-  boost::shared_ptr<IEngine> engine(CreateGreedyEngine(), DeleteGreedyEngine);
+  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
-  boost::shared_ptr<IMachine> machine(CreateChessMachine(), DeleteChessMachine);
+  boost::shared_ptr<IMachine> machine = CreateChessMachine();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 

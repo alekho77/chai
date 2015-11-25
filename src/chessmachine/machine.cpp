@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "machine.h"
 
+boost::shared_ptr<Chai::Chess::IMachine> CreateChessMachine()
+{
+  return boost::shared_ptr<Chai::Chess::IMachine>(new Chai::Chess::ChessMachine());
+}
+
 namespace Chai {
   namespace Chess {
     ChessMachine::ChessMachine() {
@@ -246,9 +251,9 @@ namespace Chai {
       return nullptr;
     }
 
-    IMachine* ChessMachine::Clone() const
+    boost::shared_ptr<IMachine> ChessMachine::Clone() const
     {
-      return new ChessMachine(*this);
+      return boost::shared_ptr<IMachine>(new ChessMachine(*this));
     }
 
   }

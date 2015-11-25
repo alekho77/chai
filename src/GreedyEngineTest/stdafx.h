@@ -18,5 +18,4 @@
 #include <boost/container/static_vector.hpp>
 
 #include "chessmachine.h"
-#include "greedyengine.h"
 #include "machinetestutils.h"

@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "engine.h"
 
+boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine()
+{
+  return boost::shared_ptr<Chai::Chess::IEngine>(new Chai::Chess::GreedyEngine());
+}
+
 namespace Chai {
 namespace Chess {
 
@@ -11,7 +16,7 @@ bool GreedyEngine::Start(const IMachine& position, int depth, int timeout) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
     stopped = false;
     maxDepth = depth;
-    thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, boost::shared_ptr<IMachine>(position.Clone(), DeleteChessMachine)));
+    thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.Clone()));
     return true;
   }
   return false;

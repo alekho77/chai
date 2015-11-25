@@ -1,9 +1,17 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
+
 #ifdef CHESSMACHINE_EXPORTS
 #define CHESSMACHINE_API __declspec(dllexport)
 #else
 #define CHESSMACHINE_API __declspec(dllimport)
+#endif
+
+#ifdef CHESSENGINEGREEDY_EXPORTS
+#define CHESSENGINEGREEDY_API __declspec(dllexport)
+#else
+#define CHESSENGINEGREEDY_API __declspec(dllimport)
 #endif
 
 #define CHESSPOS(name) const Position (##name) = { (#name)[0], (#name)[1] }
@@ -45,13 +53,10 @@ namespace Chai {
       virtual Status CheckStatus() const = 0;
       virtual const char* LastMoveNotation() const = 0;
 
-      virtual IMachine* Clone() const = 0;
+      virtual boost::shared_ptr<IMachine> Clone() const = 0;
       
       virtual ~IMachine() {}
     };
-
-    CHESSMACHINE_API IMachine* CreateChessMachine();
-    CHESSMACHINE_API void DeleteChessMachine(IMachine* ptr);
 
     class IInfoCall {
     public:
@@ -87,3 +92,6 @@ namespace Chai {
     };
   }
 }
+
+CHESSMACHINE_API boost::shared_ptr<Chai::Chess::IMachine> CreateChessMachine();
+CHESSENGINEGREEDY_API boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine();

@@ -69,8 +69,8 @@ private:
   ChessPieces chessPieces;
   int moveCount;
 
-  QSharedPointer<Chai::Chess::IMachine> chessMachine;
-  QSharedPointer<Chai::Chess::IEngine>  chessEngine;
+  boost::shared_ptr<Chai::Chess::IMachine> chessMachine;
+  boost::shared_ptr<Chai::Chess::IEngine>  chessEngine;
 };
 
 #endif // CHESSBOARD_H

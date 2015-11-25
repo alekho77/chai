@@ -7,7 +7,6 @@
 #include <QSvgRenderer>
 #include <QSet>
 #include <QPair>
-#include "greedyengine.h"
 
 Chessboard::Chessboard(QWidget *parent)
   : QWidget(parent)
@@ -20,7 +19,7 @@ Chessboard::Chessboard(QWidget *parent)
   ui.setupUi(this);
   
   using namespace Chai::Chess;
-  chessMachine.reset(CreateChessMachine(), DeleteChessMachine);
+  chessMachine = CreateChessMachine();
 }
 
 Chessboard::~Chessboard()
@@ -35,7 +34,7 @@ void Chessboard::newGame(QString engine)
   repaint();
   moveCount = 1;
   if (engine == "Greedy") {
-    chessEngine.reset(CreateGreedyEngine(), DeleteGreedyEngine);
+    chessEngine = CreateGreedyEngine();
   }
   if (chessEngine) {
     emit currentScore(chessEngine->EvalPosition(*chessMachine));

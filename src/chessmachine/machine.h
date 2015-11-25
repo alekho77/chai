@@ -20,7 +20,7 @@ namespace Chai {
       Status CheckStatus() const override;
       const char* LastMoveNotation() const override;
 
-      IMachine* Clone() const override;
+      boost::shared_ptr<IMachine> Clone() const override;
 
     private:
       ChessMachine(const ChessMachine& other);
