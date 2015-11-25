@@ -1,5 +1,4 @@
 #pragma once
-#include "chessmachine.h"
 
 #define PIECE(p,s,t) std::make_pair(p, PieceState({s, t, false, {}}))
 

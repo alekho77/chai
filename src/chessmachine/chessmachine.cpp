@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "chessmachine.h"
 #include "machine.h"
 
 namespace Chai {

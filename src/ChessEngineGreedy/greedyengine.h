@@ -1,5 +1,4 @@
 #pragma once
-#include "../chessmachine/chessmachine.h"
 
 #ifdef CHESSENGINEGREEDY_EXPORTS
 #define CHESSENGINEGREEDY_API __declspec(dllexport)

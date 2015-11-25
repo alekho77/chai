@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../chessmachine/chessmachine.h"
+#include "chessmachine.h"
 #include <string>
 #include <algorithm>
 #include <map>

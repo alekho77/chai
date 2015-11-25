@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "ui_promotiondlg.h"
-#include "../chessmachine/chessmachine.h"
+#include "chessmachine.h"
 
 class PromotionDlg : public QDialog
 {

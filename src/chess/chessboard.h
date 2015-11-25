@@ -8,7 +8,7 @@
 #include <set>
 #include <map>
 #include "ui_chessboard.h"
-#include "../chessmachine/chessmachine.h"
+#include "chessmachine.h"
 
 typedef std::map< Chai::Chess::Position, std::pair<Chai::Chess::Set, Chai::Chess::Type> > ChessPieces;
 typedef std::set<Chai::Chess::Position> Positions;

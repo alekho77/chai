@@ -1,5 +1,4 @@
 #pragma once
-#include "chessmachine.h"
 #include "state.h"
 
 namespace Chai {

@@ -12,7 +12,6 @@
 // Windows Header Files:
 #include <windows.h>
 
-// TODO: reference additional headers your program requires here
 #include <list>
 #include <vector>
 #include <map>
@@ -24,3 +23,5 @@
 #define BOOST_ALL_DYN_LINK
 #include <boost/regex.hpp>
 #include <boost/optional.hpp>
+
+#include "chessmachine.h"
