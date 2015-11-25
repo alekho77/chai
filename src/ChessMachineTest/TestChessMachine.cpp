@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
   BOOST_CHECK(machine->CheckStatus() == Status::invalid);
   BOOST_CHECK(machine->CurrentPlayer() == Set::unknown);
-  BOOST_CHECK(machine->LastMoveNotation() == nullptr);
+  BOOST_CHECK(machine->LastMoveNotation().empty());
 }
 
 BOOST_AUTO_TEST_CASE( StartTest )

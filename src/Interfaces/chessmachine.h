@@ -3,6 +3,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/container/static_vector.hpp>
 #include <boost/container/flat_set.hpp>
+#include <string>
 
 #ifdef CHESSMACHINE_EXPORTS
 #define CHESSMACHINE_API __declspec(dllexport)
@@ -50,14 +51,14 @@ namespace Chai {
     public:
       virtual void Start() = 0;
       virtual bool Move(Type type, Position from, Position to, Type promotion = Type::bad) = 0;
-      virtual bool Move(const char* notation) = 0; // Standard algebraic notation (SAN) is the notation standardized by FIDE. It omits the starting file and rank of the piece, unless it is necessary to disambiguate the move.
+      virtual bool Move(const std::string& notation) = 0; // Standard algebraic notation (SAN) is the notation standardized by FIDE. It omits the starting file and rank of the piece, unless it is necessary to disambiguate the move.
       virtual void Undo() = 0;
 
       virtual Set CurrentPlayer() const = 0;
       virtual Pieces GetSet(Set set) const = 0;
       virtual Positions CheckMoves(Position from) const = 0;
       virtual Status CheckStatus() const = 0;
-      virtual const char* LastMoveNotation() const = 0;
+      virtual std::string LastMoveNotation() const = 0;
 
       virtual boost::shared_ptr<IMachine> Clone() const = 0;
       
@@ -73,7 +74,7 @@ namespace Chai {
 
       // Messages sent after the search
       virtual void ReadyOk() = 0;
-      virtual void BestMove(const char* notation) = 0;
+      virtual void BestMove(std::string notation) = 0;
       virtual void BestScore(float score) = 0; // in pawns
     };
 

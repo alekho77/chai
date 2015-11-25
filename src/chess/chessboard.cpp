@@ -304,7 +304,7 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
       }
       if (chessMachine->Move(piece.second, from, to, promotion))
       {
-        QString notation(chessMachine->LastMoveNotation());
+        QString notation = QString::fromStdString(chessMachine->LastMoveNotation());
         switch (chessMachine->CheckStatus())
         {
         case Status::check: notation += "+"; break;

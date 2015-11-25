@@ -53,7 +53,7 @@ void GreedyEngine::ReadyOk() {
   }
 }
 
-void GreedyEngine::BestMove(const char* notation) {
+void GreedyEngine::BestMove(std::string notation) {
   if (callBack) {
     callBack->BestMove(notation);
   }
@@ -69,7 +69,7 @@ void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine) {
   bestMove.clear();
   float bestscore = Search(*machine, machine->CurrentPlayer(), maxDepth);
   service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
-  service.post(boost::bind(&GreedyEngine::BestMove, this, bestMove.c_str()));
+  service.post(boost::bind(&GreedyEngine::BestMove, this, bestMove));
   service.post(boost::bind(&GreedyEngine::ReadyOk, this));
   stopped = true;
 }

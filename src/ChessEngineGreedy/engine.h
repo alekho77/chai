@@ -25,7 +25,7 @@ private:
   void NodesSearched(size_t nodes) override;
   void NodesPerSecond(int nps) override;
   void ReadyOk() override;
-  void BestMove(const char* notation) override;
+  void BestMove(std::string notation) override;
   void BestScore(float score) override;
 
   void ThreadFun(boost::shared_ptr<IMachine> machine);

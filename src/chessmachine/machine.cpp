@@ -51,13 +51,12 @@ namespace Chai {
       return false;
     }
 
-    bool ChessMachine::Move(const char* notation)
+    bool ChessMachine::Move(const std::string& notation)
     {
       if (!states.empty()) {
         boost::regex xreg("^([p,N,B,R,Q,K]?)([a-h]?)([1-8]?)(x?)([a-h])([1-8])=?([N,B,R,Q]?)");
         boost::smatch xres;
-        std::string snotation(notation);
-        if (boost::regex_match(snotation, xres, xreg)) {
+        if (boost::regex_match(notation, xres, xreg)) {
           assert(xres.size() == 8);
           std::string name = xres[1].str();
           if (name.empty()) {
@@ -107,9 +106,9 @@ namespace Chai {
         } else {
           const ChessState& laststate = states.back();
           const char kingrank = laststate.activeSet == Set::white ? '1' : '8';
-          if (snotation == "O-O") {
+          if (notation == "O-O") {
             return Move(Type::king, { 'e', kingrank }, { 'g', kingrank }, Type::bad);
-          } else if (snotation == "O-O-O") {
+          } else if (notation == "O-O-O") {
             return Move(Type::king, { 'e', kingrank }, { 'c', kingrank }, Type::bad);
           }
         }
@@ -173,9 +172,9 @@ namespace Chai {
       return Status::invalid;
     }
 
-    const char* ChessMachine::LastMoveNotation() const
+    std::string ChessMachine::LastMoveNotation() const
     {
-      lastMove.clear();
+      std::string lastmove;
       if (!states.empty()) {
         const ChessState& currentstate = states.back();
         auto iter = ++(states.crbegin());
@@ -192,10 +191,10 @@ namespace Chai {
               }
             }
           } 
-          lastMove += name.at(currentstate.lastMove->type);
+          lastmove = name.at(currentstate.lastMove->type);
           if (currentstate.lastMove->type == Type::pawn) {
             if (currentstate.lastMove->from.file != currentstate.lastMove->to.file) {
-              lastMove += currentstate.lastMove->from.file;
+              lastmove = currentstate.lastMove->from.file;
             }
           } else if (std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
                       [&](auto p) {
@@ -222,28 +221,27 @@ namespace Chai {
             assert(ranks >= 1);
             if (files > 1) {
               if (ranks > 1) {
-                lastMove += currentstate.lastMove->from.file;
-                lastMove += currentstate.lastMove->from.rank;
+                lastmove += currentstate.lastMove->from.file;
+                lastmove += currentstate.lastMove->from.rank;
               } else {
-                lastMove += currentstate.lastMove->from.rank;
+                lastmove += currentstate.lastMove->from.rank;
               }
             } else {
-              lastMove += currentstate.lastMove->from.file;
+              lastmove += currentstate.lastMove->from.file;
             }
           }
           if ((prevstate.pieces.find(currentstate.lastMove->to) != prevstate.pieces.end())
             || (currentstate.lastMove->type == Type::pawn && currentstate.lastMove->from.file != currentstate.lastMove->to.file)) {
-            lastMove += "x";
+            lastmove += "x";
           }
-          lastMove += currentstate.lastMove->to.file;
-          lastMove += currentstate.lastMove->to.rank;
+          lastmove += currentstate.lastMove->to.file;
+          lastmove += currentstate.lastMove->to.rank;
           if (currentstate.lastMove->promotion != Type::bad) {
-            lastMove += "=" + name.at(currentstate.lastMove->promotion);
+            lastmove += "=" + name.at(currentstate.lastMove->promotion);
           }
         }
-        return lastMove.c_str();
       }
-      return nullptr;
+      return lastmove;
     }
 
     boost::shared_ptr<IMachine> ChessMachine::Clone() const

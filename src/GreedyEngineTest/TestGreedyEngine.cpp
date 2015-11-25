@@ -36,7 +36,7 @@ private:
   void NodesPerSecond(int nps) override {}
 
   void ReadyOk() override { readyok = true; }
-  void BestMove(const char* notation) override { bestmove.assign(notation); }
+  void BestMove(std::string notation) override { bestmove = notation; }
   void BestScore(float score) override { bestscore = score; }
 
   void on_timeout(const boost::system::error_code& e) {
