@@ -14,7 +14,7 @@
 
 #include <list>
 #include <vector>
-#include <map>
+//#include <map>
 #include <algorithm>
 #include <assert.h>
 #include <stdlib.h>
@@ -22,5 +22,6 @@
 #define BOOST_ALL_DYN_LINK
 #include <boost/regex.hpp>
 #include <boost/optional.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include "chessmachine.h"

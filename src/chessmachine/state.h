@@ -37,7 +37,7 @@ namespace Chai {
       }
     };
 
-    typedef std::map< Position, PieceState > PieceStates;
+    typedef boost::container::flat_map< Position, PieceState > PieceStates;
     
     struct Move
     {

@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
 #ifdef _DEBUG
   const int max_depth_testing = 1;
 #else
-  const int max_depth_testing = 3;
+  const int max_depth_testing = 2;
 #endif
   const std::vector<std::string> moves = split("\
 1.e4 e5 2.Nc3 Nf6 3.f4 d5 4.exd5 Nxd5 5.fxe5 Nxc3 6.bxc3 Qh4+ 7.Ke2 Bg4+ 8.Nf3 Nc6 \
