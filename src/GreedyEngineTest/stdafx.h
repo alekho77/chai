@@ -15,6 +15,7 @@
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/container/static_vector.hpp>
 
 #include "../ChessEngineGreedy/greedyengine.h"
 #include "../ChessMachineTest/machinetestutils.h"
