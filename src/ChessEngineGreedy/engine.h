@@ -9,6 +9,8 @@ struct Move {
   Type promotion;
 };
 
+typedef boost::container::static_vector<Move, 100> Moves;
+
 class GreedyEngine : public IEngine, private IInfoCall
 {
 public:
@@ -28,12 +30,10 @@ private:
   void BestMove(std::string notation) override;
   void BestScore(float score) override;
 
-  void ThreadFun(boost::shared_ptr<IMachine> machine);
-  float Search(IMachine& machine, Set set, int depth);
-  std::vector<Move> EmunMoves(const IMachine& position) const;
+  void ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth);
+  float Search(IMachine& machine, int depth, std::string *bestmove = nullptr);
+  Moves EmunMoves(const IMachine& position) const;
   
-  Set xSet(Set set) const { return set == Set::white ? Set::black : (set == Set::black ? Set::white : Set::unknown); }
-  float EvalPosition(const IMachine& position, Set set) const;
   float EvalSide(const IMachine& position, Set set, const Pieces& white, const Pieces& black) const;
   float PieceWeight(Type type) const;
   float PositionWeight(Set set, const Piece& piece, const Pieces& white, const Pieces& black) const;
@@ -42,8 +42,6 @@ private:
   boost::thread thread;
   IInfoCall* callBack;
   volatile bool stopped;
-  int maxDepth;
-  std::string bestMove;
 };
 
 }
