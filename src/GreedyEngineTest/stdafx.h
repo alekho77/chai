@@ -18,5 +18,5 @@
 #include <boost/container/static_vector.hpp>
 
 #include "chessmachine.h"
-#include "../ChessEngineGreedy/greedyengine.h"
+#include "greedyengine.h"
 #include "../ChessMachineTest/machinetestutils.h"

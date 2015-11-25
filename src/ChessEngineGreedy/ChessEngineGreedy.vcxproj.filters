@@ -17,10 +17,10 @@
     <ClInclude Include="stdafx.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="greedyengine.h">
+    <ClInclude Include="engine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine.h">
+    <ClInclude Include="..\Interfaces\greedyengine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

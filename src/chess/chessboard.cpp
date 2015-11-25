@@ -7,7 +7,7 @@
 #include <QSvgRenderer>
 #include <QSet>
 #include <QPair>
-#include "../ChessEngineGreedy/greedyengine.h"
+#include "greedyengine.h"
 
 Chessboard::Chessboard(QWidget *parent)
   : QWidget(parent)
