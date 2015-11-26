@@ -1,6 +1,6 @@
 #pragma once
 
-#define PIECE(p,s,t) std::make_pair(p, PieceState({ s, t, false, PieceMoves() }))
+#define PIECE(p,s,t) std::make_pair(p, PieceState({ s, t, false, {} }))
 
 #define PAWN(p,s)   PIECE(p, s, Type::pawn)
 #define KNIGHT(p,s) PIECE(p, s, Type::knight)
@@ -67,13 +67,16 @@ namespace Chai {
     {
     public:
       ChessState();
-      ChessState(const ChessState& state, const Move& move);
+      
+      ChessState MakeMove(const Move& move) const;
 
       Set activeSet;
       boost::optional<Move> lastMove;
       PieceStates pieces;
 
     private:
+      ChessState(Set set, const Move& move, const PieceStates& pieces);
+
       void evalMoves(boost::optional<Move> xmove);
       static PieceMoves pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves = SetMoves());
       static bool addMoveIf(const PieceStates& pieces, PieceMoves& moves, const Position& pos, Set set = Set::unknown, bool capture = false);

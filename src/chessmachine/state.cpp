@@ -16,20 +16,26 @@ namespace Chai {
       evalMoves({});
     }
 
-    ChessState::ChessState(const ChessState& state, const Move& move)
-      : pieces(state.pieces)
+    ChessState::ChessState(Set set, const Move& move, const PieceStates& pieces)
+      : pieces(pieces)
       , lastMove(move)
-      , activeSet(state.activeSet == Set::white ? Set::black : Set ::white)
+      , activeSet(set)
     {
-      assert(pieces.at(move.from).set == state.activeSet);
+      evalMoves(lastMove);
+    }
+
+    ChessState ChessState::MakeMove(const Move & move) const
+    {
+      assert(pieces.at(move.from).set == activeSet);
       assert(pieces.at(move.from).type == move.type);
       assert(std::binary_search(pieces.at(move.from).moves.begin(), pieces.at(move.from).moves.end(), move.to));
-      
-      pieces.erase(move.from);
-      pieces[move.to] = PieceState({ state.activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, PieceMoves() });
-      
+
+      PieceStates newpieces = pieces;
+      newpieces.erase(move.from);
+      newpieces[move.to] = PieceState({ activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, {} });
+
       if (move.type == Type::king) {
-        const char kingrank = state.activeSet == Set::white ? '1' : '8';
+        const char kingrank = activeSet == Set::white ? '1' : '8';
         const Position kingpos1 = { 'e', kingrank };
         if (move.from == kingpos1) {
           const Position kingpos2 = { 'g', kingrank };
@@ -37,27 +43,26 @@ namespace Chai {
           if (move.to == kingpos2) {
             Position rookpos1 = { 'h', kingrank };
             Position rookpos2 = { 'f', kingrank };
-            assert(pieces.at(rookpos1).set == state.activeSet);
-            assert(pieces.at(rookpos1).type == Type::rook);
-            pieces.erase(rookpos1);
-            pieces[rookpos2] = PieceState({ state.activeSet, Type::rook, true, PieceMoves() });
-          }
-          else if (move.to == kingpos3) {
+            assert(newpieces.at(rookpos1).set == activeSet);
+            assert(newpieces.at(rookpos1).type == Type::rook);
+            newpieces.erase(rookpos1);
+            newpieces[rookpos2] = PieceState({ activeSet, Type::rook, true, {} });
+          } else if (move.to == kingpos3) {
             Position rookpos1 = { 'a', kingrank };
             Position rookpos2 = { 'd', kingrank };
-            assert(pieces.at(rookpos1).set == state.activeSet);
-            assert(pieces.at(rookpos1).type == Type::rook);
-            pieces.erase(rookpos1);
-            pieces[rookpos2] = PieceState({ state.activeSet, Type::rook, true, PieceMoves() });
+            assert(newpieces.at(rookpos1).set == activeSet);
+            assert(newpieces.at(rookpos1).type == Type::rook);
+            newpieces.erase(rookpos1);
+            newpieces[rookpos2] = PieceState({ activeSet, Type::rook, true, {} });
           }
         }
       } else if (move.type == Type::pawn) {
-        if (abs(move.from.file - move.to.file) == 1 && state.pieces.find(move.to) == state.pieces.end()) {
-          pieces.erase({ move.to.file, move.from.rank }); // En passant
+        if (abs(move.from.file - move.to.file) == 1 && pieces.find(move.to) == pieces.end()) {
+          newpieces.erase({ move.to.file, move.from.rank }); // En passant
         }
       }
-      
-      evalMoves(lastMove);
+
+      return { activeSet == Set::white ? Set::black : Set::white, move, newpieces };
     }
 
     void ChessState::evalMoves(boost::optional<Move> xmove)

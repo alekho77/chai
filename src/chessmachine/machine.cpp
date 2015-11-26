@@ -41,7 +41,7 @@ namespace Chai {
                 return false; // Pawn can be promoted only to one of the following pieces.
               }
             }
-            states.push_back(ChessState(laststate, { type, from, to, promotion }));
+            states.push_back(laststate.MakeMove({ type, from, to, promotion }));
             return true;
           }
         }
