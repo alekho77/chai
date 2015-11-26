@@ -35,12 +35,38 @@ namespace Chai {
       Type type;
       bool moved;
       PieceMoves moves;
+
       bool operator == (const PieceState& that) const {
         return set == that.set && type == that.type && moved == that.moved;
       }
+      bool isMove(const Position& to) const {
+        return std::binary_search(moves.begin(), moves.end(), to);
+      }
     };
 
-    typedef boost::container::flat_map< Position, PieceState > PieceStates; // it takes more than 50% (at, find methods)
+    struct PieceStates
+    {
+      typedef boost::container::flat_map< Position, PieceState > pieces_map;
+      
+      pieces_map pieces;
+
+      const PieceState& operator[] (const Position& pos) const {
+        return pieces.at(pos);
+      }
+      void erase(const Position& pos) {
+        pieces.erase(pos);
+      }
+      void set(const Position& pos, const PieceState& state) {
+        pieces[pos] = state;
+      }
+      const boost::optional<const PieceState> get(const Position& pos) const {
+        auto p = pieces.find(pos);
+        return p != pieces.end() ? p->second : boost::optional<const PieceState>();
+      }
+      bool test(const Position& pos) const {
+        return pieces.find(pos) != pieces.end();
+      }
+    };
     
     struct Move
     {
