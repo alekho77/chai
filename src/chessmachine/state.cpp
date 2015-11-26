@@ -57,12 +57,12 @@ namespace Chai {
         }
       }
       
-      evalMoves(lastMove);
+      evalMoves(lastMove); // It is the heaviest operation! More than 90%!!!
     }
 
     void ChessState::evalMoves(boost::optional<Move> xmove)
     {
-      Positions xmoves;
+      Positions xmoves; // working with that type takes around 11% 
       for (auto& piece : pieces) {
         if (piece.second.set != activeSet) {
           piece.second.moves = pieceMoves(pieces, piece.first, {});
@@ -97,6 +97,7 @@ namespace Chai {
       }
     }
 
+    // It takes more than 50%!
     Positions ChessState::pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const Positions& xmoves)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
@@ -171,6 +172,7 @@ namespace Chai {
 
     bool ChessState::addMoveIf(const PieceStates& pieces, Positions& moves, const Position& pos, Set set, bool capture)
     {
+      // moves.insert(pos)  takes around 25%!!!
       if (pos.isValid()) {
         if (pieces.find(pos) == pieces.end()) {
           if (!capture) {
