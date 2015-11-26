@@ -1,6 +1,6 @@
 #pragma once
 
-#define PIECE(p,s,t) std::make_pair(p, PieceState({ s, t, false, Positions() }))
+#define PIECE(p,s,t) std::make_pair(p, PieceState({ s, t, false, PieceMoves() }))
 
 #define PAWN(p,s)   PIECE(p, s, Type::pawn)
 #define KNIGHT(p,s) PIECE(p, s, Type::knight)
@@ -26,18 +26,21 @@
 namespace Chai {
   namespace Chess {
 
+    typedef boost::container::flat_set<Position> SetMoves;
+    typedef boost::container::small_vector<Position, 3> PiecePath;
+
     struct PieceState
     {
       Set set;
       Type type;
       bool moved;
-      Positions moves;
+      PieceMoves moves;
       bool operator == (const PieceState& that) const {
         return set == that.set && type == that.type && moved == that.moved;
       }
     };
 
-    typedef boost::container::flat_map< Position, PieceState > PieceStates;
+    typedef boost::container::flat_map< Position, PieceState > PieceStates; // it takes more than 50% (at, find methods)
     
     struct Move
     {
@@ -72,9 +75,9 @@ namespace Chai {
 
     private:
       void evalMoves(boost::optional<Move> xmove);
-      static Positions pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const Positions& xmoves = Positions());
-      static bool addMoveIf(const PieceStates& pieces, Positions& moves, const Position& pos, Set set = Set::unknown, bool capture = false);
-      static bool testPath(const PieceStates& pieces, const Positions& attack, const std::vector<Position>& path);
+      static PieceMoves pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves = SetMoves());
+      static bool addMoveIf(const PieceStates& pieces, PieceMoves& moves, const Position& pos, Set set = Set::unknown, bool capture = false);
+      static bool testPath(const PieceStates& pieces, const SetMoves& xmoves, const PiecePath& path);
       static bool testPiece(const PieceStates& pieces, const std::pair<Position, PieceState>& piece);
     };
   }

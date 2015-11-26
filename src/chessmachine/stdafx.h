@@ -23,5 +23,7 @@
 #include <boost/regex.hpp>
 #include <boost/optional.hpp>
 #include <boost/container/flat_map.hpp>
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
 
 #include "chessmachine.h"

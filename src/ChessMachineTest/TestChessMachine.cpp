@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_CASE( StartTest )
   BOOST_REQUIRE(!contains(white, Type::bad));
 
   const std::map<Type, Moves> white_pieces = {
-    { Type::pawn,{ { a2,Positions({ a4, a3 }) },{ b2,Positions({ b3, b4 }) },{ c2,Positions({ c3, c4 }) },{ d2,Positions({ d4, d3 }) },{ e2,Positions({ e3, e4 }) },{ f2,Positions({ f3, f4 }) },{ g2,Positions({ g3, g4 }) },{ h2,Positions({ h3, h4 }) } } },
-    { Type::knight, { { b1,Positions({ a3, c3 }) },{ g1,Positions({ f3, h3 }) } } },
-    { Type::bishop, { { c1,Positions({}) },{ f1,Positions({}) } } },
-    { Type::rook, { { a1,Positions({}) }, { h1,Positions({}) } } },
-    { Type::queen, { { d1,Positions({}) } } },
-    { Type::king, { { e1,Positions({}) } } }
+    { Type::pawn,{ { a2, { a4, a3 } },{ b2, {b3, b4 } },{ c2,{ c3, c4 } },{ d2,{ d4, d3 } },{ e2,{ e3, e4 } },{ f2,{ f3, f4 } },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+    { Type::knight, { { b1,{ a3, c3 } },{ g1,{ f3, h3 } } } },
+    { Type::bishop, { { c1,{} },{ f1,{} } } },
+    { Type::rook, { { a1,{} }, { h1,{} } } },
+    { Type::queen, { { d1,{} } } },
+    { Type::king, { { e1,{} } } }
   };
   testpos(white_pieces, white, *machine);
 
@@ -54,12 +54,12 @@ BOOST_AUTO_TEST_CASE( StartTest )
   BOOST_REQUIRE(!contains(black, Type::bad));
 
   const std::map<Type, Moves> black_pieces = {
-    { Type::pawn,{ { a7,Positions({ a6, a5 }) },{ b7,Positions({ b6, b5 }) },{ c7,Positions({ c6, c5 }) },{ d7,Positions({ d6, d5 }) },{ e7,Positions({ e6, e5 }) },{ f7,Positions({ f6, f5 }) },{ g7,Positions({ g6, g5 }) },{ h7,Positions({ h6, h5 }) } } },
-    { Type::knight,{ { b8,Positions({ c6, a6 }) },{ g8,Positions({ h6, f6 }) } } },
-    { Type::bishop,{ { c8,Positions({}) },{ f8,Positions({}) } } },
-    { Type::rook,{ { a8,Positions({}) },{ h8,Positions({}) } } },
-    { Type::queen,{ { d8,Positions({}) } } },
-    { Type::king,{ { e8,Positions({}) } } }
+    { Type::pawn,{ { a7,{ a6, a5 } },{ b7,{ b6, b5 } },{ c7,{ c6, c5 } },{ d7,{ d6, d5 } },{ e7,{ e6, e5 } },{ f7,{ f6, f5 } },{ g7,{ g6, g5 } },{ h7,{ h6, h5 } } } },
+    { Type::knight,{ { b8,{ c6, a6 } },{ g8,{ h6, f6 } } } },
+    { Type::bishop,{ { c8,{} },{ f8,{} } } },
+    { Type::rook,{ { a8,{} },{ h8,{} } } },
+    { Type::queen,{ { d8,{} } } },
+    { Type::king,{ { e8,{} } } }
   };
   testpos(black_pieces, black, *machine);
 }
@@ -88,20 +88,20 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({ a4, a3 }) },{ b2,Positions({ b3, b4 }) },{ c2,Positions({}) },{ d2,Positions({ d4, d3 }) },{ f2,Positions({}) },{ g2,Positions({ g3, g4 }) },{ h2,Positions({ h3, h4 }) } } },
-        { Type::knight,{ { c3,Positions({ b5, d5, a4, e4, b1, e2 }) },{ f3,Positions({ d4, e5, g5, h4, g1 }) } } },
-        { Type::bishop,{ { c1,Positions({}) },{ f1,Positions({ e2, d3, c4, b5, a6 }) } } },
-        { Type::rook,{ { a1,Positions({ b1 }) },{ h1,Positions({ g1 }) } } },
-        { Type::queen,{ { d1,Positions({ e2 }) } } },
-        { Type::king,{ { e1,Positions({ e2 }) } } }
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{} },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { c3,{ b5, d5, a4, e4, b1, e2 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
+        { Type::bishop,{ { c1,{} },{ f1,{ e2, d3, c4, b5, a6 } } } },
+        { Type::rook,{ { a1,{ b1 } },{ h1,{ g1 } } } },
+        { Type::queen,{ { d1,{ e2 } } } },
+        { Type::king,{ { e1,{ e2 } } } }
       };
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6, a5 }) },{ b7,Positions({ b6, b5 }) },{ c6,Positions({ c5 }) },{ e4,Positions({ e3, f3 }) },{ e7,Positions({ e6, e5 }) },{ f7,Positions({ f6, f5 }) },{ g7,Positions({ g6, g5 }) },{ h7,Positions({ h6, h5 }) } } },
-        { Type::knight,{ { b8,Positions({ a6, d7 }) },{ g8,Positions({ h6, f6 }) } } },
-        { Type::bishop,{ { c8,Positions({ d7, e6, f5, g4, h3 }) },{ f8,Positions({}) } } },
-        { Type::rook,{ { a8,Positions({}) },{ h8,Positions({}) } } },
-        { Type::queen,{ { d8,Positions({ d7, d6, d5, d4, d3, d2, c7, b6, a5 }) } } },
-        { Type::king,{ { e8,Positions({ d7 }) } } }
+        { Type::pawn,{ { a7,{ a6, a5 } },{ b7,{ b6, b5 } },{ c6,{ c5 } },{ e4,{ e3, f3 } },{ e7,{ e6, e5 } },{ f7,{ f6, f5 } },{ g7,{ g6, g5 } },{ h7,{ h6, h5 } } } },
+        { Type::knight,{ { b8,{ a6, d7 } },{ g8,{ h6, f6 } } } },
+        { Type::bishop,{ { c8,{ d7, e6, f5, g4, h3 } },{ f8,{} } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{ d7, d6, d5, d4, d3, d2, c7, b6, a5 } } } },
+        { Type::king,{ { e8,{ d7 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
@@ -110,20 +110,20 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
       BOOST_CHECK(machine->CheckStatus() == Status::checkmate);
       BOOST_CHECK(machine->CurrentPlayer() == Set::black);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({ a4, a3 }) },{ b2,Positions({ b3, b4 }) },{ c2,Positions({ c3, c4 }) },{ d2,Positions({ d4, d3 }) },{ f2,Positions({}) },{ g2,Positions({ g3, g4 }) },{ h2,Positions({ h3, h4 }) } } },
-        { Type::knight,{ { d6,Positions({ c8, e8, b7, f7, b5, f5, c4, e4 }) },{ f3,Positions({ d4, e5, g5, h4, g1 }) } } },
-        { Type::bishop,{ { c1,Positions({}) },{ f1,Positions({}) } } },
-        { Type::rook,{ { a1,Positions({ b1 }) },{ h1,Positions({ g1 }) } } },
-        { Type::queen,{ { e2,Positions({ e3, e4, e5, e6, e7, d3, c4, b5, a6, d1 }) } } },
-        { Type::king,{ { e1,Positions({ d1 }) } } }
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d2,{ d4, d3 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { d6,{ c8, e8, b7, f7, b5, f5, c4, e4 } },{ f3,{ d4, e5, g5, h4, g1 } } } },
+        { Type::bishop,{ { c1,{} },{ f1,{} } } },
+        { Type::rook,{ { a1,{ b1 } },{ h1,{ g1 } } } },
+        { Type::queen,{ { e2,{ e3, e4, e5, e6, e7, d3, c4, b5, a6, d1 } } } },
+        { Type::king,{ { e1,{ d1 } } } }
       };
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({}) },{ b7,Positions({}) },{ c6,Positions({}) },{ e7,Positions({}) },{ f7,Positions({}) },{ g7,Positions({}) },{ h7,Positions({}) } } },
-        { Type::knight,{ { d7,Positions({}) },{ f6,Positions({}) } } },
-        { Type::bishop,{ { c8,Positions({}) },{ f8,Positions({}) } } },
-        { Type::rook,{ { a8,Positions({}) },{ h8,Positions({}) } } },
-        { Type::queen,{ { d8,Positions({}) } } },
-        { Type::king,{ { e8,Positions({}) } } }
+        { Type::pawn,{ { a7,{} },{ b7,{} },{ c6,{} },{ e7,{} },{ f7,{} },{ g7,{} },{ h7,{} } } },
+        { Type::knight,{ { d7,{} },{ f6,{} } } },
+        { Type::bishop,{ { c8,{} },{ f8,{} } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{} } } },
+        { Type::king,{ { e8,{} } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
@@ -152,12 +152,12 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
       BOOST_REQUIRE_MESSAGE(machine->Move("O-O"), "Can't make move O-O");
       BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O"));
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({ a4, a3 }) },{ b2,Positions({ b3, b4 }) },{ c2,Positions({ c3 }) },{ d4,Positions({ d5 }) },{ e4,Positions({ e5 }) },{ f2,Positions({}) },{ g2,Positions({ g3, g4 }) },{ h2,Positions({ h3, h4 }) } } },
-        { Type::knight,{ { b1,Positions({ a3, c3, d2 }) },{ f3,Positions({ e5, g5, h4, e1, d2 }) } } },
-        { Type::bishop,{ { c1,Positions({ d2, e3, f4, g5, h6 }) },{ c4,Positions({ b3, d5, e6, f7, b5, a6, d3, e2 }) } } },
-        { Type::rook,{ { a1,Positions({}) },{ f1,Positions({ e1 }) } } },
-        { Type::queen,{ { d1,Positions({ e1, e2, d2, d3 }) } } },
-        { Type::king,{ { g1,Positions({ h1 }) } } }
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, e1, d2 } } } },
+        { Type::bishop,{ { c1,{ d2, e3, f4, g5, h6 } },{ c4,{ b3, d5, e6, f7, b5, a6, d3, e2 } } } },
+        { Type::rook,{ { a1,{} },{ f1,{ e1 } } } },
+        { Type::queen,{ { d1,{ e1, e2, d2, d3 } } } },
+        { Type::king,{ { g1,{ h1 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       machine->Undo();
@@ -169,20 +169,20 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       BOOST_CHECK(machine->CurrentPlayer() == Set::black);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({ a4, a3 }) },{ b2,Positions({ b3, b4 }) },{ c2,Positions({ c3, c4 }) },{ d4,Positions({ d5 }) },{ e4,Positions({ e5 }) },{ f2,Positions({}) },{ g2,Positions({ g3, g4 }) },{ h2,Positions({ h3, h4 }) } } },
-        { Type::knight,{ { b1,Positions({ a3, c3, d2 }) },{ f3,Positions({ e5, g5, h4, g1, d2 }) } } },
-        { Type::bishop,{ { c1,Positions({ d2, e3, f4, g5, h6 }) },{ f7,Positions({ e8, e6, d5, c4, b3, g8, g6 }) } } },
-        { Type::rook,{ { a1,Positions({}) },{ h1,Positions({ g1, f1 }) } } },
-        { Type::queen,{ { d1,Positions({ e2, d2, d3 }) } } },
-        { Type::king,{ { e1,Positions({ f1, e2, d2, g1 /*O-O*/ }) } } }
+        { Type::pawn,{ { a2,{ a4, a3 } },{ b2,{ b3, b4 } },{ c2,{ c3, c4 } },{ d4,{ d5 } },{ e4,{ e5 } },{ f2,{} },{ g2,{ g3, g4 } },{ h2,{ h3, h4 } } } },
+        { Type::knight,{ { b1,{ a3, c3, d2 } },{ f3,{ e5, g5, h4, g1, d2 } } } },
+        { Type::bishop,{ { c1,{ d2, e3, f4, g5, h6 } },{ f7,{ e8, e6, d5, c4, b3, g8, g6 } } } },
+        { Type::rook,{ { a1,{} },{ h1,{ g1, f1 } } } },
+        { Type::queen,{ { d1,{ e2, d2, d3 } } } },
+        { Type::king,{ { e1,{ f1, e2, d2, g1 /*O-O*/ } } } }
       };
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({}) },{ b7,Positions({}) },{ c7,Positions({}) },{ d6,Positions({}) },{ e7,Positions({}) },{ g6,Positions({}) },{ h7,Positions({}) } } },
-        { Type::knight,{ { d7,Positions({}) },{ g8,Positions({}) } } },
-        { Type::bishop,{ { c8,Positions({}) },{ g7,Positions({}) } } },
-        { Type::rook,{ { a8,Positions({}) },{ h8,Positions({}) } } },
-        { Type::queen,{ { d8,Positions({}) } } },
-        { Type::king,{ { e8,Positions({ f8, f7 }) } } }
+        { Type::pawn,{ { a7,{} },{ b7,{} },{ c7,{} },{ d6,{} },{ e7,{} },{ g6,{} },{ h7,{} } } },
+        { Type::knight,{ { d7,{} },{ g8,{} } } },
+        { Type::bishop,{ { c8,{} },{ g7,{} } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{} } } },
+        { Type::king,{ { e8,{ f8, f7 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
@@ -216,20 +216,20 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ b2,Positions({}) },{ c2,Positions({}) },{ d2,Positions({}) },{ f2,Positions({}) },{ g2,Positions({}) },{ h4,Positions({}) } } },
-        { Type::knight,{ { g3,Positions({ e2, e4 }) } } },
-        { Type::bishop,{ { c1,Positions({}) },{ f1,Positions({ e2 }) } } },
-        { Type::rook,{ { a1,Positions({}) },{ h1,Positions({}) } } },
-        { Type::queen,{ { b7,Positions({}) } } },
-        { Type::king,{ { e1,Positions({ d1 }) } } }
+        { Type::pawn,{ { a2,{} },{ b2,{} },{ c2,{} },{ d2,{} },{ f2,{} },{ g2,{} },{ h4,{} } } },
+        { Type::knight,{ { g3,{ e2, e4 } } } },
+        { Type::bishop,{ { c1,{} },{ f1,{ e2 } } } },
+        { Type::rook,{ { a1,{} },{ h1,{} } } },
+        { Type::queen,{ { b7,{} } } },
+        { Type::king,{ { e1,{ d1 } } } }
       };
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ c6,Positions({ c5 }) },{ e7,Positions({ e6 }) },{ f7,Positions({}) },{ g6,Positions({ g5 }) },{ h6,Positions({ h5 }) } } },
-        { Type::knight,{ { b8,Positions({ a6,d7 }) },{ f6,Positions({ d7,g8,h5,g4,e4,d5 }) } } },
-        { Type::bishop,{ { f8,Positions({ g7 }) },{ h7,Positions({ g8 }) } } },
-        { Type::rook,{ { a8,Positions({}) },{ h8,Positions({ g8 }) } } },
-        { Type::queen,{ { e5,Positions({ e6,e4,e3,e2,e1,d5,c5,b5,a5,f5,g5,h5,d6,c7,f4,g3,d4,c3,b2 }) } } },
-        { Type::king,{ { e8,Positions({ d8, d7 /*because White to move, so we consider only the mobility*/ }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c6,{ c5 } },{ e7,{ e6 } },{ f7,{} },{ g6,{ g5 } },{ h6,{ h5 } } } },
+        { Type::knight,{ { b8,{ a6,d7 } },{ f6,{ d7,g8,h5,g4,e4,d5 } } } },
+        { Type::bishop,{ { f8,{ g7 } },{ h7,{ g8 } } } },
+        { Type::rook,{ { a8,{} },{ h8,{ g8 } } } },
+        { Type::queen,{ { e5,{ e6,e4,e3,e2,e1,d5,c5,b5,a5,f5,g5,h5,d6,c7,f4,g3,d4,c3,b2 } } } },
+        { Type::king,{ { e8,{ d8, d7 /*because White to move, so we consider only the mobility*/ } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
@@ -281,12 +281,12 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       {
         const std::map<Type, Moves> black_pieces = {
-          { Type::pawn,{ { a7,Positions({ a6 }) },{ b7,Positions({ b6 }) },{ c7,Positions({}) },{ e7,Positions({ e6, e5 }) },{ f7,Positions({}) },{ g7,Positions({ g5, g6 }) },{ h7,Positions({ h5, h6 }) } } },
-          { Type::knight,{ { c6,Positions({ b8, d8, e5, d4, b4 }) },{ f6,Positions({ g8, h5, g4, e4, d5 }) } } },
-          { Type::bishop,{ { d7,Positions({ c8,e6,f5,g4,h3 }) },{ f8,Positions({}) } } },
-          { Type::rook,{ { a8,Positions({ b8,c8,d8 }) },{ h8,Positions({ g8 }) } } },
-          { Type::queen,{ { a5,Positions({ a6,b6,b5,b4,c3,a4,a3,a2 }) } } },
-          { Type::king,{ { e8,Positions({ d8, c8 /*O-O-O*/}) } } }
+          { Type::pawn,{ { a7,{ a6 } },{ b7,{ b6 } },{ c7,{} },{ e7,{ e6, e5 } },{ f7,{} },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
+          { Type::knight,{ { c6,{ b8, d8, e5, d4, b4 } },{ f6,{ g8, h5, g4, e4, d5 } } } },
+          { Type::bishop,{ { d7,{ c8,e6,f5,g4,h3 } },{ f8,{} } } },
+          { Type::rook,{ { a8,{ b8,c8,d8 } },{ h8,{ g8 } } } },
+          { Type::queen,{ { a5,{ a6,b6,b5,b4,c3,a4,a3,a2 } } } },
+          { Type::king,{ { e8,{ d8, c8 /*O-O-O*/} } } }
         };
         testpos(black_pieces, machine->GetSet(Set::black), *machine);
       }
@@ -295,20 +295,20 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O-O"));
       {
         const std::map<Type, Moves> black_pieces = {
-          { Type::pawn,{ { a7,Positions({ a6 }) },{ b7,Positions({ b6 }) },{ c7,Positions({}) },{ e7,Positions({ e6, e5 }) },{ f7,Positions({}) },{ g7,Positions({ g5, g6 }) },{ h7,Positions({ h5, h6 }) } } },
-          { Type::knight,{ { c6,Positions({ b8, e5, d4, b4,b8 }) },{ f6,Positions({ e8,g8, h5, g4, e4, d5 }) } } },
-          { Type::bishop,{ { d7,Positions({ e8,e6,f5,g4,h3 }) },{ f8,Positions({}) } } },
-          { Type::rook,{ { d8,Positions({ e8 }) },{ h8,Positions({ g8 }) } } },
-          { Type::queen,{ { a5,Positions({ a6,b6,b5,b4,c3,a4,a3,a2 }) } } },
-          { Type::king,{ { c8,Positions({ b8 }) } } }
+          { Type::pawn,{ { a7,{ a6 } },{ b7,{ b6 } },{ c7,{} },{ e7,{ e6, e5 } },{ f7,{} },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
+          { Type::knight,{ { c6,{ b8, e5, d4, b4 } },{ f6,{ e8,g8, h5, g4, e4, d5 } } } },
+          { Type::bishop,{ { d7,{ e8,e6,f5,g4,h3 } },{ f8,{} } } },
+          { Type::rook,{ { d8,{ e8 } },{ h8,{ g8 } } } },
+          { Type::queen,{ { a5,{ a6,b6,b5,b4,c3,a4,a3,a2 } } } },
+          { Type::king,{ { c8,{ b8 } } } }
         };
         const std::map<Type, Moves> white_pieces = {
-          { Type::pawn,{ { a2,Positions({ a3, a4 }) },{ b2,Positions({ b3,b4 }) },{ c2,Positions({}) },{ d4,Positions({ d5 }) },{ f2,Positions({ f3,f4 }) },{ g2,Positions({ g3,g4 }) },{ h2,Positions({ h3,h4 }) } } },
-          { Type::knight,{ { c3,Positions({ a4,d5,e4,d1,b1 }) },{ g1,Positions({ f3,h3 }) } } },
-          { Type::bishop,{ { b5,Positions({ a6,c6,c4,d3,a4 }) },{ d2,Positions({ e3,f4,g5,h6,c1 }) } } },
-          { Type::rook,{ { a1,Positions({ b1,c1,d1 }) },{ h1,Positions({}) } } },
-          { Type::queen,{ { e2,Positions({ d3,c4,e3,e4,e5,e6,e7,f3,g4,h5,f1,d1 }) } } },
-          { Type::king,{ { e1,Positions({ d1,f1,c1 /*O-O-O*/ }) } } }
+          { Type::pawn,{ { a2,{ a3, a4 } },{ b2,{ b3,b4 } },{ c2,{} },{ d4,{ d5 } },{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{ h3,h4 } } } },
+          { Type::knight,{ { c3,{ a4,d5,e4,d1,b1 } },{ g1,{ f3,h3 } } } },
+          { Type::bishop,{ { b5,{ a6,c6,c4,d3,a4 } },{ d2,{ e3,f4,g5,h6,c1 } } } },
+          { Type::rook,{ { a1,{ b1,c1,d1 } },{ h1,{} } } },
+          { Type::queen,{ { e2,{ d3,c4,e3,e4,e5,e6,e7,f3,g4,h5,f1,d1 } } } },
+          { Type::king,{ { e1,{ d1,f1,c1 /*O-O-O*/ } } } }
         };
         testpos(white_pieces, machine->GetSet(Set::white), *machine);
         testpos(black_pieces, machine->GetSet(Set::black), *machine);
@@ -318,12 +318,12 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
       BOOST_CHECK(machine->LastMoveNotation() == std::string("O-O-O"));
       {
         const std::map<Type, Moves> white_pieces = {
-          { Type::pawn,{ { a2,Positions({ a3, a4 }) },{ b2,Positions({ b3,b4 }) },{ c2,Positions({}) },{ d4,Positions({ d5 }) },{ f2,Positions({ f3,f4 }) },{ g2,Positions({ g3,g4 }) },{ h2,Positions({ h3,h4 }) } } },
-          { Type::knight,{ { c3,Positions({ a4,d5,e4,b1 }) },{ g1,Positions({ f3,h3 }) } } },
-          { Type::bishop,{ { b5,Positions({ a6,c6,c4,d3,a4 }) },{ d2,Positions({ e3,f4,g5,h6,e1 }) } } },
-          { Type::rook,{ { d1,Positions({ e1,f1 }) },{ h1,Positions({}) } } },
-          { Type::queen,{ { e2,Positions({ d3,c4,e3,e4,e5,e6,e7,f3,g4,h5,f1,e1 }) } } },
-          { Type::king,{ { c1,Positions({ b1 }) } } }
+          { Type::pawn,{ { a2,{ a3, a4 } },{ b2,{ b3,b4 } },{ c2,{} },{ d4,{ d5 } },{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{ h3,h4 } } } },
+          { Type::knight,{ { c3,{ a4,d5,e4,b1 } },{ g1,{ f3,h3 } } } },
+          { Type::bishop,{ { b5,{ a6,c6,c4,d3,a4 } },{ d2,{ e3,f4,g5,h6,e1 } } } },
+          { Type::rook,{ { d1,{ e1,f1 } },{ h1,{} } } },
+          { Type::queen,{ { e2,{ d3,c4,e3,e4,e5,e6,e7,f3,g4,h5,f1,e1 } } } },
+          { Type::king,{ { c1,{ b1 } } } }
         };
         testpos(white_pieces, machine->GetSet(Set::white), *machine);
       }
@@ -357,21 +357,21 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       BOOST_CHECK(machine->CurrentPlayer() == Set::white);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ b7,Positions({ b6,b5 }) },{ c7,Positions({ c6,c5 }) },{ f7,Positions({ f6, f5 }) },{ g7,Positions({ g5, g6 }) },{ h7,Positions({ h5, h6 }) } } },
-        { Type::knight,{ { b8,Positions({ a6,c6,d7 }) },{ g8,Positions({ h6,f6,e7 }) },{ g1, Positions({e2,f3,h3}) } } },
-        { Type::bishop,{ { c8,Positions({ d7,e6,f5,g4,h3 }) } } },
-        { Type::rook,{ { a8,Positions({}) },{ h8,Positions({}) } } },
-        { Type::queen,{ { d8,Positions({ d7,d6,d5,d4,d3,d2,d1,e7,f6,g5,h4 }) } } },
-        { Type::king,{ { e8,Positions({ d7,e7,f8 /*only mobility*/ }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ b7,{ b6,b5 } },{ c7,{ c6,c5 } },{ f7,{ f6, f5 } },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } },
+        { Type::knight,{ { b8,{ a6,c6,d7 } },{ g8,{ h6,f6,e7 } },{ g1, {e2,f3,h3} } } },
+        { Type::bishop,{ { c8,{ d7,e6,f5,g4,h3 } } } },
+        { Type::rook,{ { a8,{} },{ h8,{} } } },
+        { Type::queen,{ { d8,{ d7,d6,d5,d4,d3,d2,d1,e7,f6,g5,h4 } } } },
+        { Type::king,{ { e8,{ d7,e7,f8 /*only mobility*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ b2,Positions({}) },{ c4,Positions({}) },{ e5, Positions({}) },{ g2,Positions({}) },{ h2,Positions({}) } } },
-        { Type::knight,{ { b1,Positions({}) } } },
-        { Type::bishop,{ { b4,Positions({}) },{ f1,Positions({}) } } },
-        { Type::rook,{ { a1,Positions({}) },{ h1,Positions({ g1 }) } } },
-        { Type::queen,{ { d1,Positions({}) } } },
-        { Type::king,{ { e2,Positions({ e1,e3,f2 }) } } }
+        { Type::pawn,{ { a2,{} },{ b2,{} },{ c4,{} },{ e5, {} },{ g2,{} },{ h2,{} } } },
+        { Type::knight,{ { b1,{} } } },
+        { Type::bishop,{ { b4,{} },{ f1,{} } } },
+        { Type::rook,{ { a1,{} },{ h1,{ g1 } } } },
+        { Type::queen,{ { d1,{} } } },
+        { Type::king,{ { e2,{ e1,e3,f2 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       
@@ -412,18 +412,18 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({a3,a4}) },{ b2,Positions({b3,b4}) },{ c2,Positions({c3,c4}) },{ d5,Positions({e6/*en passant*/})},{ e2,Positions({e3,e4}) },{f2,Positions({f3,f4})},{ g2,Positions({g3,g4}) },{ h2,Positions({h3,h4}) } } }
+        { Type::pawn,{ { a2,{a3,a4} },{ b2,{b3,b4} },{ c2,{c3,c4} },{ d5,{e6/*en passant*/}},{ e2,{e3,e4} },{f2,{f3,f4}},{ g2,{g3,g4} },{ h2,{h3,h4} } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
     } else if (move == 3 && m == "dxe6") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({ a3,a4 }) },{ b2,Positions({ b3,b4 }) },{ c2,Positions({ c3,c4 }) },{ e6,Positions({ e7,f7 }) },{ e2,Positions({ e3,e4 }) },{ f2,Positions({ f3,f4 }) },{ g2,Positions({ g3,g4 }) },{ h2,Positions({ h3,h4 }) } } }
+        { Type::pawn,{ { a2,{ a3,a4 } },{ b2,{ b3,b4 } },{ c2,{ c3,c4 } },{ e6,{ e7,f7 } },{ e2,{ e3,e4 } },{ f2,{ f3,f4 } },{ g2,{ g3,g4 } },{ h2,{ h3,h4 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ b7,Positions({ b6,b5 }) },{ c7,Positions({ c6,c5 }) },{d6,Positions({d5})},{ f7,Positions({ f6, f5, e6 }) },{ g7,Positions({ g5, g6 }) },{ h7,Positions({ h5, h6 }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ b7,{ b6,b5 } },{ c7,{ c6,c5 } },{d6,{d5}},{ f7,{ f6, f5, e6 } },{ g7,{ g5, g6 } },{ h7,{ h5, h6 } } } }
       };
       const auto black = machine->GetSet(Set::black);
       testpos(black_pieces, black, *machine);
@@ -432,18 +432,18 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ b4,Positions({ b3,a3,c3/*en passant*/ }) },{ c7,Positions({ c6,c5 }) },{ d6,Positions({d5}) },{ e6,Positions({ e5 }) },{ g7,Positions({ g6,g5 }) },{ h7,Positions({ h5,h6 }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ b4,{ b3,a3,c3/*en passant*/ } },{ c7,{ c6,c5 } },{ d6,{d5} },{ e6,{ e5 } },{ g7,{ g6,g5 } },{ h7,{ h5,h6 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 6 && m == "bxc3") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ c3,Positions({ b2,c2 }) },{ c7,Positions({ c6,c5 }) },{ d6,Positions({ d5 }) },{ e6,Positions({ e5 }) },{ g7,Positions({ g6,g5 }) },{ h7,Positions({ h5,h6 }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c3,{ b2,c2 } },{ c7,{ c6,c5 } },{ d6,{ d5 } },{ e6,{ e5 } },{ g7,{ g6,g5 } },{ h7,{ h5,h6 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ b2,Positions({ b3,b4,c3 }) },{e2,Positions({e3,e4})},{ f2,Positions({ f3,f4 }) },{ g2,Positions({ g3,g4 }) },{ h2,Positions({}) } } }
+        { Type::pawn,{ { a2,{} },{ b2,{ b3,b4,c3 } },{e2,{e3,e4}},{ f2,{ f3,f4 }},{ g2,{ g3,g4 } },{ h2,{} } } }
       };
       const auto white = machine->GetSet(Set::white);
       testpos(white_pieces, white, *machine);
@@ -452,91 +452,91 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ c7,Positions({ c6,c5 }) },{ d4,Positions({ d3,e3 /*en passant*/ }) },{ e6,Positions({ e5 }) },{ g7,Positions({ g6,g5 }) },{ h7,Positions({ h5,h6 }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c7,{ c6,c5 } },{ d4,{ d3,e3 /*en passant*/ } },{ e6,{ e5 } },{ g7,{ g6,g5 } },{ h7,{ h5,h6 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 10 && m == "f4") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a7,Positions({ a6,a5 }) },{ c7,Positions({ c6,c5 }) },{ d4,Positions({ d3 /*no more en passant*/ }) },{ e6,Positions({ e5 }) },{ g5,Positions({ g4,f4 }) },{ h7,Positions({ h5,h6 }) } } }
+        { Type::pawn,{ { a7,{ a6,a5 } },{ c7,{ c6,c5 } },{ d4,{ d3 /*no more en passant*/ } },{ e6,{ e5 } },{ g5,{ g4,f4 } },{ h7,{ h5,h6 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 11 && m == "h5") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ c4,Positions({ c5 }) },{ e4,Positions({ e5 }) },{ g5,Positions({ g6,h6/*en passant*/ }) },{ g2,Positions({ g3,g4 }) },{ h2,Positions({}) } } }
+        { Type::pawn,{ { a2,{} },{ c4,{ c5 } },{ e4,{ e5 } },{ g5,{ g6,h6/*en passant*/ } },{ g2,{ g3,g4 } },{ h2,{} } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
     } else if (move == 12 && m == "e5") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ c4,Positions({ c5 }) },{ e4,Positions({}) },{ g5,Positions({ g6/*no more en passant*/ }) },{ g2,Positions({ g3,g4 }) },{ h2,Positions({h3,h4}) } } }
+        { Type::pawn,{ { a2,{} },{ c4,{ c5 } },{ e4,{} },{ g5,{ g6/*no more en passant*/ } },{ g2,{ g3,g4 } },{ h2,{h3,h4} } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
     } else if (nm == 14 * 2 + 1 && m == "Qxd3") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
-        { Type::king,{ { e1,Positions({ f2 /*impossible castling*/ }) } } }
+        { Type::king,{ { e1,{ f2 /*impossible castling*/ } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
     } else if (move == 18 && m == "c5") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::king,{ { e8,Positions({ e7 /*impossible castling*/ }) } } }
+        { Type::king,{ { e8,{ e7 /*impossible castling*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 20 && m == "h4") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
-        { Type::king,{ { e1,Positions({ f2,d2,d1 /*impossible castling*/ }) } } }
+        { Type::king,{ { e1,{ f2,d2,d1 /*impossible castling*/ } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
     } else if (move == 23 && m == "Bg4") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::king,{ { e8,Positions({ e7,f8,g8 /*possible castling*/ }) } } }
+        { Type::king,{ { e8,{ e7,f8,g8 /*possible castling*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 24 && m == "Be6") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::king,{ { e8,Positions({ e7,f8 /*no more possible castling*/ }) } } }
+        { Type::king,{ { e8,{ e7,f8 /*no more possible castling*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 27 && m == "Bxh3") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> black_pieces = {
-        { Type::king,{ { e8,Positions({ d8 /*impossible castling*/ }) } } }
+        { Type::king,{ { e8,{ d8 /*impossible castling*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 30 && m == "gxh8=Q") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ e5,Positions({e6}) },{ h2,Positions({}) } } },
-        { Type::knight,{ { a3,Positions({b5,c4,c2,b1}) } } },
-        { Type::bishop,{ { b2,Positions({c3,d4,c1,a1}) } } },
-        { Type::rook,{ { f4,Positions({f5,f6,f7,f8,f3,f2,f1,g4,e4,d4,c4,b4,a4}) } } },
-        { Type::queen,{ { h8,Positions({g8,f8,e8,g7,f6,h7,h6,h5,h4}) } } },
-        { Type::king,{ { e2,Positions({ d3,e3,f3,f2,d2,d1,e1,f1 /*only the mobility*/ }) } } }
+        { Type::pawn,{ { a2,{} },{ e5,{e6} },{ h2,{} } } },
+        { Type::knight,{ { a3,{b5,c4,c2,b1} } } },
+        { Type::bishop,{ { b2,{c3,d4,c1,a1} } } },
+        { Type::rook,{ { f4,{f5,f6,f7,f8,f3,f2,f1,g4,e4,d4,c4,b4,a4} } } },
+        { Type::queen,{ { h8,{g8,f8,e8,g7,f6,h7,h6,h5,h4} } } },
+        { Type::king,{ { e2,{ d3,e3,f3,f2,d2,d1,e1,f1 /*only the mobility*/ } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a4,Positions({}) },{ c6,Positions({}) } } },
-        { Type::knight,{ { a6,Positions({}) },{ g4,Positions({}) } } },
-        { Type::bishop,{ { h4,Positions({}) } } },
-        { Type::rook,{ { h3,Positions({}) } } },
+        { Type::pawn,{ { a4,{} },{ c6,{} } } },
+        { Type::knight,{ { a6,{} },{ g4,{} } } },
+        { Type::bishop,{ { h4,{} } } },
+        { Type::rook,{ { h3,{} } } },
         { Type::queen,{} },
-        { Type::king,{ { e8,Positions({ d7,e7 }) } } }
+        { Type::king,{ { e8,{ d7,e7 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 31 && m == "Rf7") {
@@ -558,42 +558,42 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { a2,Positions({}) },{ h2,Positions({}) } } },
-        { Type::knight,{ { a3,Positions({ b5,c4,c2,b1 }) } } },
+        { Type::pawn,{ { a2,{} },{ h2,{} } } },
+        { Type::knight,{ { a3,{ b5,c4,c2,b1 } } } },
         { Type::bishop,{} },
-        { Type::rook,{ { e7,Positions({ e8,e6,e5,a7,b7,c7,d7,f7,g7,h7 }) } } },
+        { Type::rook,{ { e7,{ e8,e6,e5,a7,b7,c7,d7,f7,g7,h7 } } } },
         { Type::queen,{} },
-        { Type::king,{ { e2,Positions({ d3,e3,f3,f2,d2,d1,e1,f1 /*only the mobility*/ }) } } }
+        { Type::king,{ { e2,{ d3,e3,f3,f2,d2,d1,e1,f1 /*only the mobility*/ } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a4,Positions({}) },{ c6,Positions({}) } } },
-        { Type::knight,{ { b4,Positions({}) } } },
-        { Type::bishop,{ { h4,Positions({e7}) } } },
-        { Type::rook,{ { h3,Positions({}) } } },
+        { Type::pawn,{ { a4,{} },{ c6,{} } } },
+        { Type::knight,{ { b4,{} } } },
+        { Type::bishop,{ { h4,{e7} } } },
+        { Type::rook,{ { h3,{} } } },
         { Type::queen,{} },
-        { Type::king,{ { e5,Positions({ d6,f6,d5,f5,d4,f4 }) } } }
+        { Type::king,{ { e5,{ d6,f6,d5,f5,d4,f4 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 45 && m == "Rh2") {
       BOOST_TEST_MESSAGE(std::to_string(move) + " " + m);
       BOOST_CHECK(machine->CheckStatus() == Status::check);
       const std::map<Type, Moves> white_pieces = {
-        { Type::pawn,{ { h7,Positions({}) } } },
-        { Type::knight,{ { c4,Positions({}) } } },
+        { Type::pawn,{ { h7,{} } } },
+        { Type::knight,{ { c4,{} } } },
         { Type::bishop,{} },
         { Type::rook,{} },
         { Type::queen,{} },
-        { Type::king,{ { e2,Positions({ d3,e3,f3,d1,f1 }) } } }
+        { Type::king,{ { e2,{ d3,e3,f3,d1,f1 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a4,Positions({a3})},{ b4,Positions({b3}) } } },
+        { Type::pawn,{ { a4,{a3}},{ b4,{b3} } } },
         { Type::knight,{} },
-        { Type::bishop,{ { h4,Positions({ g5,f6,e7,d8,g3,f2,e1 }) } } },
-        { Type::rook,{ { h2,Positions({h3,h1,g2,f2,e2}) } } },
+        { Type::bishop,{ { h4,{ g5,f6,e7,d8,g3,f2,e1 } } } },
+        { Type::rook,{ { h2,{h3,h1,g2,f2,e2} } } },
         { Type::queen,{} },
-        { Type::king,{ { f5,Positions({ e6,f6,g6,g5,e4,f4,g4,e5 /*only the mobility*/}) } } }
+        { Type::king,{ { f5,{ e6,f6,g6,g5,e4,f4,g4,e5 /*only the mobility*/} } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 47 && m == "h8=Q") {
@@ -601,20 +601,20 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
       BOOST_CHECK(machine->CheckStatus() == Status::normal);
       const std::map<Type, Moves> white_pieces = {
         { Type::pawn,{} },
-        { Type::knight,{ { c4,Positions({a5,b6,d6,e5,d2,b2,a3}) } } },
+        { Type::knight,{ { c4,{a5,b6,d6,e5,d2,b2,a3} } } },
         { Type::bishop,{} },
         { Type::rook,{} },
-        { Type::queen,{ {h8,Positions({a8,b8,c8,d8,e8,f8,g8,a1,b2,c3,d4,e5,f6,g7,h7,h6,h5,h4})} } },
-        { Type::king,{ { e3,Positions({ d4,e4,f4,d3,f3,d2,e2,f2 /*only the mobility*/}) } } }
+        { Type::queen,{ {h8,{a8,b8,c8,d8,e8,f8,g8,a1,b2,c3,d4,e5,f6,g7,h7,h6,h5,h4}} } },
+        { Type::king,{ { e3,{ d4,e4,f4,d3,f3,d2,e2,f2 /*only the mobility*/} } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
-        { Type::pawn,{ { a4,Positions({ a3 }) },{ b3,Positions({ b2 }) } } },
+        { Type::pawn,{ { a4,{ a3 } },{ b3,{ b2 } } } },
         { Type::knight,{} },
-        { Type::bishop,{ { h4,Positions({ g5,f6,e7,d8,g3,f2,e1 }) } } },
-        { Type::rook,{ { h2,Positions({ h3,h1,a2,b2,c2,d2,e2,f2,g2 }) } } },
+        { Type::bishop,{ { h4,{ g5,f6,e7,d8,g3,f2,e1 } } } },
+        { Type::rook,{ { h2,{ h3,h1,a2,b2,c2,d2,e2,f2,g2 } } } },
         { Type::queen,{} },
-        { Type::king,{ { f5,Positions({ e6,g6,g5,g4 }) } } }
+        { Type::king,{ { f5,{ e6,g6,g5,g4 } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 48 && m == "Qh5") {
@@ -634,8 +634,8 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
         { Type::knight,{} },
         { Type::bishop,{} },
         { Type::rook,{} },
-        { Type::queen,{ { b2,Positions({ a1,c3,d4,e5,f6,g7,h8,a3,c1,b1,b3,b4,b5,b6,b7,b8,a2,c2,d2,e2,f2,g2,h2 }) } } },
-        { Type::king,{ { e3,Positions({ d4,e4,f4,d3,f3,d2,e2,f2 }) } } }
+        { Type::queen,{ { b2,{ a1,c3,d4,e5,f6,g7,h8,a3,c1,b1,b3,b4,b5,b6,b7,b8,a2,c2,d2,e2,f2,g2,h2 } } } },
+        { Type::king,{ { e3,{ d4,e4,f4,d3,f3,d2,e2,f2 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
@@ -643,8 +643,8 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
         { Type::knight,{} },
         { Type::bishop,{} },
         { Type::rook,{} },
-        { Type::queen,{ {a1,Positions({a2,a3,a4,a5,a6,a7,a8,b1,c1,d1,e1,f1,g1,h1,b2})} } },
-        { Type::king,{ { e7,Positions({ d8,e8,f8,d7,f7,d6,e6,f6 /*only the mobility*/ }) } } }
+        { Type::queen,{ {a1,{a2,a3,a4,a5,a6,a7,a8,b1,c1,d1,e1,f1,g1,h1,b2}} } },
+        { Type::king,{ { e7,{ d8,e8,f8,d7,f7,d6,e6,f6 /*only the mobility*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     } else if (move == 56 && m == "Qd4") {
@@ -661,8 +661,8 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
         { Type::knight,{} },
         { Type::bishop,{} },
         { Type::rook,{} },
-        { Type::queen,{ { d6,Positions({ d1,d2,d3,d4,d5,d7,d8,e6,f6,g6,h6,a3,b4,c5,e7,f8,b8,c7,e5,f4,g3,h2 }) } } },
-        { Type::king,{ { c6,Positions({ b7,c7,d7,b6,b5,c5,d5 }) } } }
+        { Type::queen,{ { d6,{ d1,d2,d3,d4,d5,d7,d8,e6,f6,g6,h6,a3,b4,c5,e7,f8,b8,c7,e5,f4,g3,h2 } } } },
+        { Type::king,{ { c6,{ b7,c7,d7,b6,b5,c5,d5 } } } }
       };
       testpos(white_pieces, machine->GetSet(Set::white), *machine);
       const std::map<Type, Moves> black_pieces = {
@@ -671,7 +671,7 @@ Kc7 57.Ke4 Kc6 58.Ke5 Kc7 59.Qd6+ Kb7 60.Kd5 Kc8 61.Kc6 *");
         { Type::bishop,{} },
         { Type::rook,{} },
         { Type::queen,{} },
-        { Type::king,{ { c8,Positions({ /*stalemate*/ }) } } }
+        { Type::king,{ { c8,{ /*stalemate*/ } } } }
       };
       testpos(black_pieces, machine->GetSet(Set::black), *machine);
     }

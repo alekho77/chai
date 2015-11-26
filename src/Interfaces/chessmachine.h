@@ -2,7 +2,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/container/static_vector.hpp>
-#include <boost/container/flat_set.hpp>
 #include <string>
 
 #ifdef CHESSMACHINE_EXPORTS
@@ -37,14 +36,12 @@ namespace Chai {
       bool operator < (const Position& other) const { return file < other.file || (file == other.file && rank < other.rank); }
       bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
     };
-
-    typedef boost::container::flat_set<Position> Positions;
+    typedef boost::container::static_vector<Position, 27> PieceMoves;
 
     struct Piece {
       Type type;
       Position position;
     };
-
     typedef boost::container::static_vector<Piece, 16> Pieces;
 
     class IMachine {
@@ -56,7 +53,7 @@ namespace Chai {
 
       virtual Set CurrentPlayer() const = 0;
       virtual Pieces GetSet(Set set) const = 0;
-      virtual Positions CheckMoves(Position from) const = 0;
+      virtual PieceMoves CheckMoves(Position from) const = 0; // Sorted vector of piece moves;
       virtual Status CheckStatus() const = 0;
       virtual std::string LastMoveNotation() const = 0;
 

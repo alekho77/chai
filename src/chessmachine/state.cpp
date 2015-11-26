@@ -23,10 +23,10 @@ namespace Chai {
     {
       assert(pieces.at(move.from).set == state.activeSet);
       assert(pieces.at(move.from).type == move.type);
-      assert(pieces.at(move.from).moves.find(move.to) != pieces.at(move.from).moves.end());
+      assert(std::binary_search(pieces.at(move.from).moves.begin(), pieces.at(move.from).moves.end(), move.to));
       
       pieces.erase(move.from);
-      pieces[move.to] = PieceState({ state.activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, Positions() });
+      pieces[move.to] = PieceState({ state.activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, PieceMoves() });
       
       if (move.type == Type::king) {
         const char kingrank = state.activeSet == Set::white ? '1' : '8';
@@ -40,7 +40,7 @@ namespace Chai {
             assert(pieces.at(rookpos1).set == state.activeSet);
             assert(pieces.at(rookpos1).type == Type::rook);
             pieces.erase(rookpos1);
-            pieces[rookpos2] = PieceState({ state.activeSet, Type::rook, true, Positions() });
+            pieces[rookpos2] = PieceState({ state.activeSet, Type::rook, true, PieceMoves() });
           }
           else if (move.to == kingpos3) {
             Position rookpos1 = { 'a', kingrank };
@@ -48,7 +48,7 @@ namespace Chai {
             assert(pieces.at(rookpos1).set == state.activeSet);
             assert(pieces.at(rookpos1).type == Type::rook);
             pieces.erase(rookpos1);
-            pieces[rookpos2] = PieceState({ state.activeSet, Type::rook, true, Positions() });
+            pieces[rookpos2] = PieceState({ state.activeSet, Type::rook, true, PieceMoves() });
           }
         }
       } else if (move.type == Type::pawn) {
@@ -57,12 +57,12 @@ namespace Chai {
         }
       }
       
-      evalMoves(lastMove); // It is the heaviest operation! More than 90%!!!
+      evalMoves(lastMove);
     }
 
     void ChessState::evalMoves(boost::optional<Move> xmove)
     {
-      Positions xmoves; // working with that type takes around 11% 
+      SetMoves xmoves;
       for (auto& piece : pieces) {
         if (piece.second.set != activeSet) {
           piece.second.moves = pieceMoves(pieces, piece.first, {});
@@ -71,11 +71,11 @@ namespace Chai {
       }
       for (auto& piece : pieces) {
         if (piece.second.set == activeSet) {
-          Positions probmoves = pieceMoves(pieces, piece.first, xmove, xmoves);
+          PieceMoves probmoves = pieceMoves(pieces, piece.first, xmove, xmoves);
           piece.second.moves = probmoves;
           for (auto m : probmoves) {
             PieceStates testpieces = pieces;
-            testpieces[m] = PieceState({ piece.second.set, piece.second.type, true, Positions() });
+            testpieces[m] = PieceState({ piece.second.set, piece.second.type, true, PieceMoves() });
             testpieces.erase(piece.first);
             if (piece.second.type == Type::pawn) {
               if (abs(piece.first.file - m.file) == 1 && pieces.find(m) == pieces.end()) {
@@ -85,9 +85,11 @@ namespace Chai {
             Position king = std::find_if(testpieces.begin(), testpieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
             for (auto p : testpieces) {
               if (p.second.set != activeSet) {
-                Positions moves = pieceMoves(testpieces, p.first, {});
-                if (moves.find(king) != moves.end()) {
-                  piece.second.moves.erase(m);
+                PieceMoves moves = pieceMoves(testpieces, p.first, {});
+                if (std::binary_search(moves.begin(), moves.end(), king)) {
+                  auto im = std::lower_bound(piece.second.moves.begin(), piece.second.moves.end(), m);
+                  assert(*im == m);
+                  piece.second.moves.erase(im);
                   break;
                 }
               }
@@ -97,8 +99,7 @@ namespace Chai {
       }
     }
 
-    // It takes more than 50%!
-    Positions ChessState::pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const Positions& xmoves)
+    PieceMoves ChessState::pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
@@ -106,7 +107,7 @@ namespace Chai {
       auto merge = [](const std::vector<MoveVector>& a, const std::vector<MoveVector>& b) { std::vector<MoveVector> t(a); t.insert(t.end(), b.begin(), b.end()); return t; };
       static const std::vector<MoveVector> any_moves = merge(straight_moves, diagonal_moves);
 
-      Positions moves;
+      PieceMoves moves;
       const PieceState& piece = pieces.at(pos);
       switch (piece.type) {
        case Type::pawn:
@@ -158,38 +159,38 @@ namespace Chai {
         if (!piece.moved && pos == Position({ 'e', kingrank })) {
           // O-O
           if ( testPath(pieces, xmoves, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Position({ 'h',kingrank }), piece.set)) ) {
-            moves.insert(Position({'g', kingrank}));
+            moves.push_back(Position({'g', kingrank}));
           }
           // O-O-O
           if ( testPath(pieces, xmoves, { { 'd', kingrank },{ 'c', kingrank },{ 'b', kingrank } }) && testPiece(pieces, ROOK(Position({ 'a', kingrank }), piece.set)) ) {
-            moves.insert(Position({ 'c', kingrank }));
+            moves.push_back(Position({ 'c', kingrank }));
           }
         }
         break;
       }
+      std::sort(moves.begin(), moves.end());
       return moves;
     }
 
-    bool ChessState::addMoveIf(const PieceStates& pieces, Positions& moves, const Position& pos, Set set, bool capture)
+    bool ChessState::addMoveIf(const PieceStates& pieces, PieceMoves& moves, const Position& pos, Set set, bool capture)
     {
-      // moves.insert(pos)  takes around 25%!!!
       if (pos.isValid()) {
-        if (pieces.find(pos) == pieces.end()) {
+        if (pieces.find(pos) == pieces.end()) { // it takes more than 25%
           if (!capture) {
-            moves.insert(pos);
+            moves.push_back(pos);
             return true;
           }
         } else if (set != Set::unknown && set != pieces.at(pos).set) {
-          moves.insert(pos); // capture
+          moves.push_back(pos); // capture
         }
       }
       return false;
     }
 
-    bool ChessState::testPath(const PieceStates& pieces, const Positions& attack, const std::vector<Position>& path)
+    bool ChessState::testPath(const PieceStates& pieces, const SetMoves& xmoves, const PiecePath& path)
     {
       for (auto p : path) {
-        if (pieces.find(p) != pieces.end() || attack.find(p) != attack.end()) {
+        if (pieces.find(p) != pieces.end() || xmoves.find(p) != xmoves.end()) {
           return false;
         }
       }

@@ -155,8 +155,7 @@ void Chessboard::drawChessMoves(QPainter& painter)
     const qreal scalel = 0.5;
     const qreal adjxl = startCell.width() * (1 - scalel) / 2;
     const qreal adjyl = startCell.height() * (1 - scalel) / 2;
-    const Positions pos = chessMachine->CheckMoves(dragPos != BADPOS ? dragPos : hotPos);
-    for (auto p : pos) {
+    for (auto p : chessMachine->CheckMoves(dragPos != BADPOS ? dragPos : hotPos)) {
       QRectF rec;
       rec.setX(startCell.left() + startCell.width() * (p.file - 'a'));
       rec.setY(startCell.top() + startCell.height() * (8 - (p.rank - '0')));
@@ -200,8 +199,8 @@ void Chessboard::updateCursor()
 {
   using namespace Chai::Chess;
   if (dragPos != BADPOS) {
-    const Positions pos = chessMachine->CheckMoves(dragPos);
-    setCursor(pos.find(hotPos) != pos.end() ? Qt::ClosedHandCursor : Qt::ForbiddenCursor);
+    const PieceMoves pos = chessMachine->CheckMoves(dragPos);
+    setCursor(std::binary_search(pos.begin(), pos.end(), hotPos) ? Qt::ClosedHandCursor : Qt::ForbiddenCursor);
   }
   else
   {
@@ -286,8 +285,8 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
   using namespace Chai::Chess;
   if (dragPos != BADPOS && !event->buttons().testFlag(Qt::LeftButton))
   {
-    const Positions pos = chessMachine->CheckMoves(dragPos);
-    if (pos.find(hotPos) != pos.end()) {
+    const PieceMoves pos = chessMachine->CheckMoves(dragPos);
+    if (std::binary_search(pos.begin(), pos.end(), hotPos)) {
       using namespace Chai::Chess;
       auto piece = chessPieces.at(dragPos);
       Type promotion = Type::bad;

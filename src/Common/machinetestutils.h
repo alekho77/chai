@@ -19,7 +19,7 @@ namespace Chess {
 //  Type promotion;
 //};
 
-typedef std::map< Position, Positions > Moves;
+typedef std::map< Position, PieceMoves > Moves;
 
 template <class T>
 bool contains(const T& list, Type type) {
@@ -47,7 +47,11 @@ bool exactly(const T& list, Position pos, Type type) {
 
 template <class T>
 bool equal(const T& list1, const T& list2) {
-  return list1 == list2;
+  T tmp1 = list1;
+  T tmp2 = list2;
+  std::sort(tmp1.begin(), tmp1.end());
+  std::sort(tmp2.begin(), tmp2.end());
+  return tmp1 == tmp2;
 }
 
 inline std::vector<std::string> split(const std::string& game) {
