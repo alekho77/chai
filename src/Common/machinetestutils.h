@@ -72,7 +72,7 @@ inline std::vector<std::string> split(const std::string& game) {
 }
 
 inline std::string toStr(const Position& p) {
-  return p.isValid() ? std::string(&(p.file), &(p.file) + 1) + std::string(&(p.rank), &(p.rank) + 1) : std::string("");
+  return p.isValid() ? std::string(1, p.file()) + std::string(1, p.rank()) : std::string("");
 }
 
 inline void testpos(const std::map<Type, Moves>& position, const Pieces& pieces, const IMachine& machine) {

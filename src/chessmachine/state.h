@@ -46,9 +46,7 @@ namespace Chai {
 
     struct PieceStates
     {
-      typedef boost::container::flat_map< Position, PieceState > pieces_map;
-      
-      pieces_map pieces;
+      boost::container::flat_map< Position, PieceState > pieces;
 
       const PieceState& operator[] (const Position& pos) const {
         return pieces.at(pos);
@@ -81,12 +79,10 @@ namespace Chai {
       char df, dr;
     };
     inline Position operator + (const Position& pos, const MoveVector& vec) {
-      return Position({ pos.file + vec.df, pos.rank + vec.dr });
+      return Position({ pos.file() + vec.df, pos.rank() + vec.dr });
     }
-    inline Position& operator += (Position& pos, const MoveVector& vec) {
-      pos.file += vec.df;
-      pos.rank += vec.dr;
-      return pos;
+    inline void operator += (Position& pos, const MoveVector& vec) {
+      pos = { pos.file() + vec.df, pos.rank() + vec.dr };
     }
 
     class ChessState

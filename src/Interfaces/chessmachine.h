@@ -20,7 +20,7 @@
 #define CHESSRANK(R) CHESSPOS(a##R); CHESSPOS(b##R); CHESSPOS(c##R); CHESSPOS(d##R); CHESSPOS(e##R); CHESSPOS(f##R); CHESSPOS(g##R); CHESSPOS(h##R)
 #define CHESSBOARD CHESSRANK(1); CHESSRANK(2); CHESSRANK(3); CHESSRANK(4); CHESSRANK(5); CHESSRANK(6); CHESSRANK(7); CHESSRANK(8)
 
-#define BADPOS Chai::Chess::Position({0,0})
+#define BADPOS Chai::Chess::Position()
 
 namespace Chai {
   namespace Chess {
@@ -28,13 +28,22 @@ namespace Chai {
     enum class Type : int { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 1000 };
     enum class Status : int { invalid, normal, check, checkmate, stalemate };
 
-    struct Position {
-      char file; // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
-      char rank; // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
-      bool operator == (const Position& other) const { return file == other.file && rank == other.rank; }
-      bool operator != (const Position& other) const { return file != other.file || rank != other.rank; }
-      bool operator < (const Position& other) const { return file < other.file || (file == other.file && rank < other.rank); }
-      bool isValid() const { return file >= 'a' && file <= 'h' && rank >= '1' && rank <= '8'; }
+    class Position {
+    public:
+      Position() : pos(0xff) {}
+      template <typename T> explicit Position(T p) : pos(static_cast<unsigned char>(p)) {}
+      Position(char f, char r) : pos( (f - 'a') | ((r - '1') << 4) ) {}
+      
+      int x() const { return pos & 0x0f; }
+      int y() const { return (pos >> 4) & 0x0f; }
+      char file() const { return 'a' + x(); } // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
+      char rank() const { return '1' + y(); } // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
+      bool operator == (const Position& other) const { return pos == other.pos; }
+      bool operator != (const Position& other) const { return pos != other.pos; }
+      bool operator < (const Position& other) const { return pos < other.pos; }
+      bool isValid() const { return (pos & 0x77) == pos; }
+    private:
+      unsigned char pos;
     };
     typedef boost::container::static_vector<Position, 27> PieceMoves;
 

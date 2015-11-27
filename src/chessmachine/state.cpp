@@ -57,8 +57,8 @@ namespace Chai {
           }
         }
       } else if (move.type == Type::pawn) {
-        if (abs(move.from.file - move.to.file) == 1 && !pieces.test(move.to)) {
-          newpieces.erase({ move.to.file, move.from.rank }); // En passant
+        if (abs(move.from.file() - move.to.file()) == 1 && !pieces.test(move.to)) {
+          newpieces.erase({ move.to.file(), move.from.rank() }); // En passant
         }
       }
 
@@ -83,8 +83,8 @@ namespace Chai {
             testpieces.set(m, { piece.second.set, piece.second.type, true, {} });
             testpieces.erase(piece.first);
             if (piece.second.type == Type::pawn) {
-              if (abs(piece.first.file - m.file) == 1 && !pieces.test(m)) {
-                testpieces.erase({ m.file, piece.first.rank }); // En passant
+              if (abs(piece.first.file() - m.file()) == 1 && !pieces.test(m)) {
+                testpieces.erase({ m.file(), piece.first.rank() }); // En passant
               }
             }
             Position king = std::find_if(testpieces.pieces.begin(), testpieces.pieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
@@ -117,22 +117,22 @@ namespace Chai {
       switch (piece.type) {
        case Type::pawn:
         if (piece.set == Set::white) {
-          if (addMoveIf(pieces, moves, { pos.file, pos.rank + 1 }) && !piece.moved && pos.rank == '2') {
-            addMoveIf(pieces, moves, { pos.file, pos.rank + 2 });
+          if (addMoveIf(pieces, moves, { pos.file(), pos.rank() + 1 }) && !piece.moved && pos.rank() == '2') {
+            addMoveIf(pieces, moves, { pos.file(), pos.rank() + 2 });
           }
-          addMoveIf(pieces, moves, { pos.file - 1, pos.rank + 1 }, piece.set, true);
-          addMoveIf(pieces, moves, { pos.file + 1, pos.rank + 1 }, piece.set, true);
-          if (xmove && xmove->type == Type::pawn && pos.rank == '5' && (xmove->from.rank - xmove->to.rank) == 2 && abs(xmove->to.file - pos.file) == 1) {
-            addMoveIf(pieces, moves, { xmove->to.file, pos.rank + 1 }); // 'En passant'
+          addMoveIf(pieces, moves, { pos.file() - 1, pos.rank() + 1 }, piece.set, true);
+          addMoveIf(pieces, moves, { pos.file() + 1, pos.rank() + 1 }, piece.set, true);
+          if (xmove && xmove->type == Type::pawn && pos.rank() == '5' && (xmove->from.rank() - xmove->to.rank()) == 2 && abs(xmove->to.file() - pos.file()) == 1) {
+            addMoveIf(pieces, moves, { xmove->to.file(), pos.rank() + 1 }); // 'En passant'
           }
         } else { // black
-          if (addMoveIf(pieces, moves, { pos.file, pos.rank - 1 }) && !piece.moved && pos.rank == '7') {
-            addMoveIf(pieces, moves, { pos.file, pos.rank - 2 });
+          if (addMoveIf(pieces, moves, { pos.file(), pos.rank() - 1 }) && !piece.moved && pos.rank() == '7') {
+            addMoveIf(pieces, moves, { pos.file(), pos.rank() - 2 });
           }
-          addMoveIf(pieces, moves, { pos.file - 1, pos.rank - 1 }, piece.set, true);
-          addMoveIf(pieces, moves, { pos.file + 1, pos.rank - 1 }, piece.set, true);
-          if (xmove && xmove->type == Type::pawn && pos.rank == '4' && (xmove->to.rank - xmove->from.rank) == 2 && abs(xmove->to.file - pos.file) == 1) {
-            addMoveIf(pieces, moves, { xmove->to.file, pos.rank - 1 }); // 'En passant'
+          addMoveIf(pieces, moves, { pos.file() - 1, pos.rank() - 1 }, piece.set, true);
+          addMoveIf(pieces, moves, { pos.file() + 1, pos.rank() - 1 }, piece.set, true);
+          if (xmove && xmove->type == Type::pawn && pos.rank() == '4' && (xmove->to.rank() - xmove->from.rank()) == 2 && abs(xmove->to.file() - pos.file()) == 1) {
+            addMoveIf(pieces, moves, { xmove->to.file(), pos.rank() - 1 }); // 'En passant'
           }
         }
         break;

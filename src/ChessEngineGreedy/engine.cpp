@@ -115,7 +115,7 @@ Moves GreedyEngine::EmunMoves(const IMachine& position) const
   Moves moves;
   for (const auto& piece : position.GetSet(position.CurrentPlayer())) {
     for (const auto& move : position.CheckMoves(piece.position)) {
-      if (piece.type == Type::pawn && (move.rank == '1' || move.rank == '8')) {
+      if (piece.type == Type::pawn && (move.rank() == '1' || move.rank() == '8')) {
         for (auto type : { Type::knight, Type::bishop, Type::rook, Type::queen }) {
           moves.push_back({ piece, move, type });
         }
@@ -186,9 +186,9 @@ float GreedyEngine::PositionWeight(Set set, const Piece & piece, const Pieces& p
                                       {  0.006f, 0.012f, 0.018f, 0.024f, 0.024f, 0.018f, 0.012f, 0.006f },
                                       {  0.000f, 0.006f, 0.012f, 0.018f, 0.018f, 0.012f, 0.006f, 0.000f } };
 
-  int x = piece.position.file - 'a';
+  int x = piece.position.x();
   assert(x >= 0 && x < 8);
-  int y = piece.position.rank - '1';
+  int y = piece.position.y();
   assert(y >= 0 && y <8);
   switch (piece.type) {
   case Type::pawn:
@@ -203,9 +203,7 @@ float GreedyEngine::PositionWeight(Set set, const Piece & piece, const Pieces& p
   {
     auto xking = std::find_if(xpieces.begin(), xpieces.end(), [](auto p) { return p.type == Type::king; });
     assert(xking != xpieces.end());
-    int kx = xking->position.file - 'a';
-    int ky = xking->position.rank - '1';
-    return (2 * 8 * 8 - ((x - kx) * (x - kx) + (y - ky) * (y - ky))) / 4000.0f;
+    return (2 * 8 * 8 - ((x - xking->position.x()) * (x - xking->position.x()) + (y - xking->position.y()) * (y - xking->position.y()))) / 4000.0f;
   }
   case Type::king:
   {

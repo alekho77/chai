@@ -61,7 +61,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth) {
     boost::container::static_vector< std::pair<float, std::string>, 100 > moves;
     for (const auto& p : machine.GetSet(machine.CurrentPlayer())) {
       for (const auto& m : machine.CheckMoves(p.position)) {
-        if (p.type == Type::pawn && (m.rank == '1' || m.rank == '8')) {
+        if (p.type == Type::pawn && (m.rank() == '1' || m.rank() == '8')) {
           for (auto pp : { Type::knight, Type::bishop, Type::rook, Type::queen }) {
             if (machine.Move(p.type, p.position, m, pp)) {
               moves.push_back(std::make_pair(-TestSearch(machine, depth - 1).first, std::string(machine.LastMoveNotation())));
@@ -109,13 +109,13 @@ BOOST_AUTO_TEST_CASE( StartTest )
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
-  BOOST_CHECK(engine->EvalPosition(*machine) == 0);
+  BOOST_CHECK_SMALL(engine->EvalPosition(*machine), 0.001f);
   {
     infotest info;
     BOOST_REQUIRE(engine->Start(*machine, 0));
     BOOST_CHECK(info.wait(&*engine, 1000));
     BOOST_CHECK(info.bestmove.empty());
-    BOOST_CHECK(info.bestscore == 0);
+    BOOST_CHECK_SMALL(info.bestscore, 0.001f);
   }
 }
 
