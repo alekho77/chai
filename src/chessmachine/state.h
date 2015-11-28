@@ -65,7 +65,10 @@ namespace Chai {
       public:
         iterator(const board_type& b, const board_type::iterator& i) : board(b), iter(i) {}
         iterator& operator ++ () {
-          for (;iter != board.end() || *iter; ++iter) {}
+          if (iter != board.end()) {
+            for (++iter; iter != board.end() && !*iter; ++iter) {}
+          }
+          assert(iter == board.end() || *iter);
           return *this;
         }
         auto& operator * () const { return *iter; }
@@ -80,7 +83,10 @@ namespace Chai {
       public:
         const_iterator(const board_type& b, const board_type::const_iterator& i) : board(b), iter(i) {}
         const_iterator& operator ++ () {
-          for (;iter != board.cend() || *iter; ++iter) {}
+          if (iter != board.cend()) {
+            for (++iter; iter != board.cend() && !*iter; ++iter) {}
+          }
+          assert(iter == board.end() || *iter);
           return *this;
         }
         const auto& operator * () const { return *iter; }
@@ -92,9 +98,21 @@ namespace Chai {
         board_type::const_iterator iter;
       };
 
-      iterator begin() noexcept { return{ pieces, pieces.begin() }; }
+      iterator begin() noexcept {
+        iterator iter = { pieces, pieces.begin() };
+        if (iter != end() && !*iter) {
+          ++iter;
+        }
+        return iter;
+      }
       iterator end() noexcept { return{ pieces, pieces.end() }; }
-      const_iterator begin() const noexcept { return{ pieces, pieces.cbegin() }; }
+      const_iterator begin() const noexcept {
+        const_iterator iter = { pieces, pieces.cbegin() };
+        if (iter != end() && !*iter) {
+          ++iter;
+        }
+        return iter;
+      }
       const_iterator end() const noexcept { return{ pieces, pieces.cend() }; }
 
       const PieceState& operator[] (const Position& pos) const {

@@ -78,7 +78,7 @@ namespace Chai {
         if (piece->second.set == activeSet) {
           PieceMoves probmoves = pieceMoves(pieces, piece->first, xmove, xmoves);
           piece->second.moves = probmoves;
-          for (auto m : probmoves) {
+          for (const auto& m : probmoves) {
             Board testpieces = pieces;
             testpieces.set(m, { piece->second.set, piece->second.type, true, {} });
             testpieces.erase(piece->first);
@@ -87,7 +87,7 @@ namespace Chai {
                 testpieces.erase({ m.file(), piece->first.rank() }); // En passant
               }
             }
-            for (auto p : testpieces) {
+            for (const auto& p : testpieces) {
               if (p->second.set != activeSet) {
                 PieceMoves moves = pieceMoves(testpieces, p->first, {});
                 if (std::binary_search(moves.begin(), moves.end(), testpieces.king(activeSet))) {
