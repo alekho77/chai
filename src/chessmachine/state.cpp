@@ -31,8 +31,7 @@ namespace Chai {
       assert(pieces[move.from].isMove(move.to));
 
       Board newpieces = pieces;
-      newpieces.erase(move.from);
-      newpieces.set(move.to, { activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, {} });
+      newpieces.move(move.from, move.to, move.promotion);
 
       if (move.type == Type::king) {
         const char kingrank = activeSet == Set::white ? '1' : '8';
@@ -45,15 +44,13 @@ namespace Chai {
             Position rookpos2 = { 'f', kingrank };
             assert(newpieces[rookpos1].set == activeSet);
             assert(newpieces[rookpos1].type == Type::rook);
-            newpieces.erase(rookpos1);
-            newpieces.set(rookpos2, { activeSet, Type::rook, true, {} });
+            newpieces.move(rookpos1, rookpos2);
           } else if (move.to == kingpos3) {
             Position rookpos1 = { 'a', kingrank };
             Position rookpos2 = { 'd', kingrank };
             assert(newpieces[rookpos1].set == activeSet);
             assert(newpieces[rookpos1].type == Type::rook);
-            newpieces.erase(rookpos1);
-            newpieces.set(rookpos2, { activeSet, Type::rook, true, {} });
+            newpieces.move(rookpos1, rookpos2);
           }
         }
       } else if (move.type == Type::pawn) {
@@ -80,8 +77,7 @@ namespace Chai {
           piece->second.moves = probmoves;
           for (const auto& m : probmoves) {
             Board testpieces = pieces;
-            testpieces.set(m, { piece->second.set, piece->second.type, true, {} });
-            testpieces.erase(piece->first);
+            testpieces.move(piece->first, m);
             if (piece->second.type == Type::pawn) {
               if (abs(piece->first.file() - m.file()) == 1 && !pieces.test(m)) {
                 testpieces.erase({ m.file(), piece->first.rank() }); // En passant

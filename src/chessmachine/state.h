@@ -29,6 +29,14 @@ namespace Chai {
     typedef boost::container::flat_set<Position> SetMoves;
     typedef boost::container::small_vector<Position, 3> PiecePath;
 
+    struct Move
+    {
+      Type type;
+      Position from;
+      Position to;
+      Type promotion;
+    };
+
     struct PieceState
     {
       Set set;
@@ -118,6 +126,21 @@ namespace Chai {
       const PieceState& operator[] (const Position& pos) const {
         return pieces[pos.pos()]->second;
       }
+      boost::optional<PieceState> get(const Position& pos) const {
+        const auto& p = pieces[pos.pos()];
+        return p ? p->second : boost::optional<PieceState>();
+      }
+      bool test(const Position& pos) const {
+        return !!pieces[pos.pos()];
+      }
+      Position king(Set set) const { return set == Set::white ? whiteKing : blackKing; }
+      void move(Position from, Position to, Type promotion = Type::bad) {
+        auto piece = get(from);
+        if (piece) {
+          erase(from);
+          set(to, { piece->set, promotion == Type::bad ? piece->type : promotion, true, {} });
+        }
+      }
       void erase(const Position& pos) {
         if (pieces[pos.pos()] && pieces[pos.pos()]->second.type == Type::king) {
           if (pieces[pos.pos()]->second.set == Set::white) {
@@ -129,6 +152,8 @@ namespace Chai {
         }
         pieces[pos.pos()].reset();
       }
+
+    private:
       void set(const Position& pos, const PieceState& state) {
         pieces[pos.pos()] = std::make_pair(pos, state);
         if (state.type == Type::king) {
@@ -140,27 +165,9 @@ namespace Chai {
           }
         }
       }
-      boost::optional<PieceState> get(const Position& pos) const {
-        const auto& p = pieces[pos.pos()];
-        return p ? p->second : boost::optional<PieceState>();
-      }
-      bool test(const Position& pos) const {
-        return !!pieces[pos.pos()];
-      }
-      Position king(Set set) const { return set == Set::white ? whiteKing : blackKing; }
-
-    private:
       Position whiteKing;
       Position blackKing;
       board_type pieces;
-    };
-    
-    struct Move
-    {
-      Type type;
-      Position from;
-      Position to;
-      Type promotion;
     };
 
     struct MoveVector
