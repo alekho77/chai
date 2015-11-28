@@ -6,6 +6,84 @@ namespace Chai {
 
     CHESSBOARD;
 
+    Board::Board(std::initializer_list< std::pair<Position, PieceState> > il) {
+      for (const auto& p : il) {
+        pieces[p.first.pos()] = p;
+        if (p.second.type == Type::king) {
+          if (p.second.set == Set::white) {
+            whiteKing = p.first;
+          }
+          else {
+            blackKing = p.first;
+          }
+        }
+      }
+    }
+
+    Board::iterator Board::begin() noexcept {
+      iterator iter = { pieces, pieces.begin() };
+      if (iter != end() && !*iter) {
+        ++iter;
+      }
+      return iter;
+    }
+
+    Board::const_iterator Board::begin() const noexcept {
+      const_iterator iter = { pieces, pieces.cbegin() };
+      if (iter != end() && !*iter) {
+        ++iter;
+      }
+      return iter;
+    }
+
+    void Board::move(Position from, Position to, Type promotion) {
+      auto piece = get(from);
+      if (piece) {
+        erase(from);
+        set(to, { piece->set, promotion == Type::bad ? piece->type : promotion, true,{} });
+      }
+    }
+
+    void Board::erase(const Position & pos) {
+      if (pieces[pos.pos()] && pieces[pos.pos()]->second.type == Type::king) {
+        if (pieces[pos.pos()]->second.set == Set::white) {
+          whiteKing = BADPOS;
+        }
+        else {
+          blackKing = BADPOS;
+        }
+      }
+      pieces[pos.pos()].reset();
+    }
+
+    void Board::set(const Position & pos, const PieceState & state) {
+      pieces[pos.pos()] = std::make_pair(pos, state);
+      if (state.type == Type::king) {
+        if (state.set == Set::white) {
+          whiteKing = pos;
+        }
+        else {
+          blackKing = pos;
+        }
+      }
+    }
+
+    Board::iterator& Board::iterator::operator ++ () {
+      if (iter != board.end()) {
+        for (++iter; iter != board.end() && !*iter; ++iter) {}
+      }
+      assert(iter == board.end() || *iter);
+      return *this;
+    }
+
+    Board::const_iterator& Board::const_iterator::operator ++ () {
+      if (iter != board.cend()) {
+        for (++iter; iter != board.cend() && !*iter; ++iter) {}
+      }
+      assert(iter == board.end() || *iter);
+      return *this;
+    }
+
     ChessState::ChessState()
       : pieces({  WPAWN(a2),   WPAWN(b2),   WPAWN(c2),  WPAWN(d2), WPAWN(e2),   WPAWN(f2),   WPAWN(g2), WPAWN(h2),
                   WROOK(a1), WKNIGHT(b1), WBISHOP(c1), WQUEEN(d1), WKING(e1), WBISHOP(f1), WKNIGHT(g1), WROOK(h1),

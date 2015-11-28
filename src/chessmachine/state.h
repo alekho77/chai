@@ -26,7 +26,6 @@
 namespace Chai {
   namespace Chess {
 
-    typedef boost::container::flat_set<Position> SetMoves;
     typedef boost::container::small_vector<Position, 3> PiecePath;
 
     struct Move
@@ -44,41 +43,20 @@ namespace Chai {
       bool moved;
       PieceMoves moves;
 
-      bool operator == (const PieceState& that) const {
-        return set == that.set && type == that.type && moved == that.moved;
-      }
-      bool isMove(const Position& to) const {
-        return std::binary_search(moves.begin(), moves.end(), to);
-      }
+      bool operator == (const PieceState& that) const { return set == that.set && type == that.type && moved == that.moved; }
+      bool isMove(const Position& to) const { return std::binary_search(moves.begin(), moves.end(), to); }
     };
 
     class Board
     {
       typedef std::array<boost::optional< std::pair<Position, PieceState> >, 64> board_type;
     public:
-      Board(std::initializer_list< std::pair<Position, PieceState> > il) {
-        for (const auto& p : il) {
-          pieces[p.first.pos()] = p;
-          if (p.second.type == Type::king) {
-            if (p.second.set == Set::white) {
-              whiteKing = p.first;
-            } else {
-              blackKing = p.first;
-            }
-          }
-        }
-      }
+      Board(std::initializer_list< std::pair<Position, PieceState> > il);
 
       class iterator : public std::iterator_traits<board_type::iterator> {
       public:
         iterator(const board_type& b, const board_type::iterator& i) : board(b), iter(i) {}
-        iterator& operator ++ () {
-          if (iter != board.end()) {
-            for (++iter; iter != board.end() && !*iter; ++iter) {}
-          }
-          assert(iter == board.end() || *iter);
-          return *this;
-        }
+        iterator& operator ++ ();
         auto& operator * () const { return *iter; }
         bool operator == (const iterator& other) const { return iter == other.iter; }
         bool operator != (const iterator& other) const { return iter != other.iter; }
@@ -90,13 +68,7 @@ namespace Chai {
       class const_iterator : public std::iterator_traits<board_type::const_iterator> {
       public:
         const_iterator(const board_type& b, const board_type::const_iterator& i) : board(b), iter(i) {}
-        const_iterator& operator ++ () {
-          if (iter != board.cend()) {
-            for (++iter; iter != board.cend() && !*iter; ++iter) {}
-          }
-          assert(iter == board.end() || *iter);
-          return *this;
-        }
+        const_iterator& operator ++ ();
         const auto& operator * () const { return *iter; }
         bool operator == (const const_iterator& other) const { return iter == other.iter; }
         bool operator != (const const_iterator& other) const { return iter != other.iter; }
@@ -106,65 +78,24 @@ namespace Chai {
         board_type::const_iterator iter;
       };
 
-      iterator begin() noexcept {
-        iterator iter = { pieces, pieces.begin() };
-        if (iter != end() && !*iter) {
-          ++iter;
-        }
-        return iter;
-      }
+      iterator begin() noexcept;
       iterator end() noexcept { return{ pieces, pieces.end() }; }
-      const_iterator begin() const noexcept {
-        const_iterator iter = { pieces, pieces.cbegin() };
-        if (iter != end() && !*iter) {
-          ++iter;
-        }
-        return iter;
-      }
+      const_iterator begin() const noexcept;
       const_iterator end() const noexcept { return{ pieces, pieces.cend() }; }
 
-      const PieceState& operator[] (const Position& pos) const {
-        return pieces[pos.pos()]->second;
-      }
+      const PieceState& operator[] (const Position& pos) const { return pieces[pos.pos()]->second; }
       boost::optional<PieceState> get(const Position& pos) const {
         const auto& p = pieces[pos.pos()];
         return p ? p->second : boost::optional<PieceState>();
       }
-      bool test(const Position& pos) const {
-        return !!pieces[pos.pos()];
-      }
+      bool test(const Position& pos) const { return !!pieces[pos.pos()]; }
       Position king(Set set) const { return set == Set::white ? whiteKing : blackKing; }
-      void move(Position from, Position to, Type promotion = Type::bad) {
-        auto piece = get(from);
-        if (piece) {
-          erase(from);
-          set(to, { piece->set, promotion == Type::bad ? piece->type : promotion, true, {} });
-        }
-      }
-      void erase(const Position& pos) {
-        if (pieces[pos.pos()] && pieces[pos.pos()]->second.type == Type::king) {
-          if (pieces[pos.pos()]->second.set == Set::white) {
-            whiteKing = BADPOS;
-          }
-          else {
-            blackKing = BADPOS;
-          }
-        }
-        pieces[pos.pos()].reset();
-      }
+      void move(Position from, Position to, Type promotion = Type::bad);
+      void erase(const Position& pos);
 
     private:
-      void set(const Position& pos, const PieceState& state) {
-        pieces[pos.pos()] = std::make_pair(pos, state);
-        if (state.type == Type::king) {
-          if (state.set == Set::white) {
-            whiteKing = pos;
-          }
-          else {
-            blackKing = pos;
-          }
-        }
-      }
+      void set(const Position& pos, const PieceState& state);
+
       Position whiteKing;
       Position blackKing;
       board_type pieces;
@@ -183,6 +114,7 @@ namespace Chai {
 
     class ChessState
     {
+      typedef boost::container::flat_set<Position> SetMoves;
     public:
       ChessState();
       
