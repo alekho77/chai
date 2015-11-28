@@ -30,20 +30,21 @@ namespace Chai {
 
     class Position {
     public:
-      Position() : pos(0xff) {}
-      template <typename T> explicit Position(T p) : pos(static_cast<unsigned char>(p)) {}
-      Position(char f, char r) : pos( (f - 'a') | ((r - '1') << 4) ) {}
+      Position() : data(0xff) {}
+      template <typename T> explicit Position(T p) : data(static_cast<unsigned char>(p)) {}
+      Position(char f, char r) : data( (f - 'a') | ((r - '1') << 4) ) {}
       
-      int x() const { return pos & 0x0f; }
-      int y() const { return (pos >> 4) & 0x0f; }
+      int x() const { return data & 0x0f; }
+      int y() const { return (data >> 4) & 0x0f; }
       char file() const { return 'a' + x(); } // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
       char rank() const { return '1' + y(); } // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
-      bool operator == (const Position& other) const { return pos == other.pos; }
-      bool operator != (const Position& other) const { return pos != other.pos; }
-      bool operator < (const Position& other) const { return pos < other.pos; }
-      bool isValid() const { return (pos & 0x77) == pos; }
+      bool operator == (const Position& other) const { return data == other.data; }
+      bool operator != (const Position& other) const { return data != other.data; }
+      bool operator < (const Position& other) const { return data < other.data; }
+      bool isValid() const { return (data & 0x77) == data; }
+      int pos() const { return (y() << 3) + x(); }
     private:
-      unsigned char pos;
+      unsigned char data;
     };
     typedef boost::container::static_vector<Position, 27> PieceMoves;
 

@@ -7,16 +7,16 @@ namespace Chai {
     CHESSBOARD;
 
     ChessState::ChessState()
-      : pieces({ {  WPAWN(a2),   WPAWN(b2),   WPAWN(c2),  WPAWN(d2), WPAWN(e2),   WPAWN(f2),   WPAWN(g2), WPAWN(h2),
-                    WROOK(a1), WKNIGHT(b1), WBISHOP(c1), WQUEEN(d1), WKING(e1), WBISHOP(f1), WKNIGHT(g1), WROOK(h1),
-                    BPAWN(a7),   BPAWN(b7),   BPAWN(c7),  BPAWN(d7), BPAWN(e7),   BPAWN(f7),   BPAWN(g7), BPAWN(h7),
-                    BROOK(a8), BKNIGHT(b8), BBISHOP(c8), BQUEEN(d8), BKING(e8), BBISHOP(f8), BKNIGHT(g8), BROOK(h8) } })
+      : pieces({  WPAWN(a2),   WPAWN(b2),   WPAWN(c2),  WPAWN(d2), WPAWN(e2),   WPAWN(f2),   WPAWN(g2), WPAWN(h2),
+                  WROOK(a1), WKNIGHT(b1), WBISHOP(c1), WQUEEN(d1), WKING(e1), WBISHOP(f1), WKNIGHT(g1), WROOK(h1),
+                  BPAWN(a7),   BPAWN(b7),   BPAWN(c7),  BPAWN(d7), BPAWN(e7),   BPAWN(f7),   BPAWN(g7), BPAWN(h7),
+                  BROOK(a8), BKNIGHT(b8), BBISHOP(c8), BQUEEN(d8), BKING(e8), BBISHOP(f8), BKNIGHT(g8), BROOK(h8) } )
       , activeSet(Set::white)
     {
       evalMoves({});
     }
 
-    ChessState::ChessState(Set set, const Move& move, const PieceStates& pieces)
+    ChessState::ChessState(Set set, const Move& move, const Board& pieces)
       : pieces(pieces)
       , lastMove(move)
       , activeSet(set)
@@ -30,7 +30,7 @@ namespace Chai {
       assert(pieces[move.from].type == move.type);
       assert(pieces[move.from].isMove(move.to));
 
-      PieceStates newpieces = pieces;
+      Board newpieces = pieces;
       newpieces.erase(move.from);
       newpieces.set(move.to, { activeSet, move.promotion == Type::bad ? move.type : move.promotion, true, {} });
 
@@ -68,33 +68,32 @@ namespace Chai {
     void ChessState::evalMoves(boost::optional<Move> xmove)
     {
       SetMoves xmoves;
-      for (auto& piece : pieces.pieces) {
-        if (piece.second.set != activeSet) {
-          piece.second.moves = pieceMoves(pieces, piece.first, {});
-          xmoves.insert(piece.second.moves.begin(), piece.second.moves.end());
+      for (auto& piece : pieces) {
+        if (piece->second.set != activeSet) {
+          piece->second.moves = pieceMoves(pieces, piece->first, {});
+          xmoves.insert(piece->second.moves.begin(), piece->second.moves.end());
         }
       }
-      for (auto& piece : pieces.pieces) {
-        if (piece.second.set == activeSet) {
-          PieceMoves probmoves = pieceMoves(pieces, piece.first, xmove, xmoves);
-          piece.second.moves = probmoves;
+      for (auto& piece : pieces) {
+        if (piece->second.set == activeSet) {
+          PieceMoves probmoves = pieceMoves(pieces, piece->first, xmove, xmoves);
+          piece->second.moves = probmoves;
           for (auto m : probmoves) {
-            PieceStates testpieces = pieces;
-            testpieces.set(m, { piece.second.set, piece.second.type, true, {} });
-            testpieces.erase(piece.first);
-            if (piece.second.type == Type::pawn) {
-              if (abs(piece.first.file() - m.file()) == 1 && !pieces.test(m)) {
-                testpieces.erase({ m.file(), piece.first.rank() }); // En passant
+            Board testpieces = pieces;
+            testpieces.set(m, { piece->second.set, piece->second.type, true, {} });
+            testpieces.erase(piece->first);
+            if (piece->second.type == Type::pawn) {
+              if (abs(piece->first.file() - m.file()) == 1 && !pieces.test(m)) {
+                testpieces.erase({ m.file(), piece->first.rank() }); // En passant
               }
             }
-            Position king = std::find_if(testpieces.pieces.begin(), testpieces.pieces.end(), [&](const auto& p) { return p.second.set == activeSet && p.second.type == Type::king; })->first;
-            for (auto p : testpieces.pieces) {
-              if (p.second.set != activeSet) {
-                PieceMoves moves = pieceMoves(testpieces, p.first, {});
-                if (std::binary_search(moves.begin(), moves.end(), king)) {
-                  auto im = std::lower_bound(piece.second.moves.begin(), piece.second.moves.end(), m);
+            for (auto p : testpieces) {
+              if (p->second.set != activeSet) {
+                PieceMoves moves = pieceMoves(testpieces, p->first, {});
+                if (std::binary_search(moves.begin(), moves.end(), testpieces.king(activeSet))) {
+                  auto im = std::lower_bound(piece->second.moves.begin(), piece->second.moves.end(), m);
                   assert(*im == m);
-                  piece.second.moves.erase(im);
+                  piece->second.moves.erase(im);
                   break;
                 }
               }
@@ -104,7 +103,7 @@ namespace Chai {
       }
     }
 
-    PieceMoves ChessState::pieceMoves(const PieceStates& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves)
+    PieceMoves ChessState::pieceMoves(const Board& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };
@@ -177,10 +176,10 @@ namespace Chai {
       return moves;
     }
 
-    bool ChessState::addMoveIf(const PieceStates& pieces, PieceMoves& moves, const Position& pos, Set set, bool capture)
+    bool ChessState::addMoveIf(const Board& pieces, PieceMoves& moves, const Position& pos, Set set, bool capture)
     {
       if (pos.isValid()) {
-        if (!pieces.test(pos)) { // it takes more than 25%
+        if (!pieces.test(pos)) {
           if (!capture) {
             moves.push_back(pos);
             return true;
@@ -192,7 +191,7 @@ namespace Chai {
       return false;
     }
 
-    bool ChessState::testPath(const PieceStates& pieces, const SetMoves& xmoves, const PiecePath& path)
+    bool ChessState::testPath(const Board& pieces, const SetMoves& xmoves, const PiecePath& path)
     {
       for (auto p : path) {
         if (pieces.test(p) || xmoves.find(p) != xmoves.end()) {
@@ -202,7 +201,7 @@ namespace Chai {
       return true;
     }
 
-    bool ChessState::testPiece(const PieceStates& pieces, const std::pair<Position, PieceState>& piece)
+    bool ChessState::testPiece(const Board& pieces, const std::pair<Position, PieceState>& piece)
     {
       auto p = pieces.get(piece.first);
       return p && *p == piece.second;

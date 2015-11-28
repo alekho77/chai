@@ -78,17 +78,17 @@ namespace Chai {
 
           if (!from.isValid()) {
             const ChessState& laststate = states.back();
-            for (const auto& p : laststate.pieces.pieces) {
-              if (p.second.set == laststate.activeSet && p.second.type == type && p.second.isMove(to)) {
+            for (const auto& p : laststate.pieces) {
+              if (p->second.set == laststate.activeSet && p->second.type == type && p->second.isMove(to)) {
                 if (from == BADPOS) {
-                  from = p.first;
+                  from = p->first;
                 } else if (from.x() == 0x0f) {
-                  if (from.rank() == p.first.rank()) {
-                    from = { p.first.file(), from.rank() };
+                  if (from.rank() == p->first.rank()) {
+                    from = { p->first.file(), from.rank() };
                   }
                 } else { // from.y == 0x0f
-                  if (from.file() == p.first.file()) {
-                    from = { from.file(), p.first.rank() };
+                  if (from.file() == p->first.file()) {
+                    from = { from.file(), p->first.rank() };
                   }
                 }
               }
@@ -126,9 +126,9 @@ namespace Chai {
       Pieces pieces;
       if (!states.empty()) {
         const ChessState& laststate = states.back();
-        for (auto p : laststate.pieces.pieces) {
-          if (p.second.set == set) {
-            pieces.push_back({ p.second.type, p.first });
+        for (const auto& p : laststate.pieces) {
+          if (p->second.set == set) {
+            pieces.push_back({ p->second.type, p->first });
           }
         }
       }
@@ -151,9 +151,9 @@ namespace Chai {
     {
       if (!states.empty()) {
         const ChessState& laststate = states.back();
-        Position king = std::find_if(laststate.pieces.pieces.begin(), laststate.pieces.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.type == Type::king; })->first;
-        size_t checkcount = std::count_if(laststate.pieces.pieces.begin(), laststate.pieces.pieces.end(), [&](const auto& p) { return p.second.set != laststate.activeSet && std::binary_search(p.second.moves.begin(), p.second.moves.end(), king); });
-        bool canmove = std::any_of(laststate.pieces.pieces.begin(), laststate.pieces.pieces.end(), [&](const auto& p) { return p.second.set == laststate.activeSet && p.second.moves.size() > 0; });
+        Position king = laststate.pieces.king(laststate.activeSet);
+        size_t checkcount = std::count_if(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p->second.set != laststate.activeSet && std::binary_search(p->second.moves.begin(), p->second.moves.end(), king); });
+        bool canmove = std::any_of(laststate.pieces.begin(), laststate.pieces.end(), [&](const auto& p) { return p->second.set == laststate.activeSet && p->second.moves.size() > 0; });
         if (checkcount > 0) {
           if (!canmove) {
             return Status::checkmate;
@@ -191,27 +191,27 @@ namespace Chai {
             if (currentstate.lastMove->from.file() != currentstate.lastMove->to.file()) {
               lastmove = currentstate.lastMove->from.file();
             }
-          } else if (std::count_if(prevstate.pieces.pieces.begin(), prevstate.pieces.pieces.end(),
-                      [&](auto p) {
-                        return p.second.set == prevstate.activeSet
-                          && p.second.type == currentstate.lastMove->type
-                          && std::binary_search(p.second.moves.begin(), p.second.moves.end(), currentstate.lastMove->to); 
+          } else if (std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
+                      [&](const auto& p) {
+                        return p->second.set == prevstate.activeSet
+                          && p->second.type == currentstate.lastMove->type
+                          && std::binary_search(p->second.moves.begin(), p->second.moves.end(), currentstate.lastMove->to); 
                       }) > 1) {
             // More than one piece could make this move.
-            size_t files = std::count_if(prevstate.pieces.pieces.begin(), prevstate.pieces.pieces.end(),
-                            [&](auto p) {
-                              return p.second.set == prevstate.activeSet
-                                && p.second.type == currentstate.lastMove->type
-                                && p.first.file() == currentstate.lastMove->from.file()
-                                && std::binary_search(p.second.moves.begin(), p.second.moves.end(), currentstate.lastMove->to);
+            size_t files = std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
+                            [&](const auto& p) {
+                              return p->second.set == prevstate.activeSet
+                                && p->second.type == currentstate.lastMove->type
+                                && p->first.file() == currentstate.lastMove->from.file()
+                                && std::binary_search(p->second.moves.begin(), p->second.moves.end(), currentstate.lastMove->to);
                             });
             assert(files >= 1);
-            size_t ranks = std::count_if(prevstate.pieces.pieces.begin(), prevstate.pieces.pieces.end(),
-                            [&](auto p) {
-                            return p.second.set == prevstate.activeSet
-                              && p.second.type == currentstate.lastMove->type
-                              && p.first.rank() == currentstate.lastMove->from.rank()
-                              && std::binary_search(p.second.moves.begin(), p.second.moves.end(), currentstate.lastMove->to);
+            size_t ranks = std::count_if(prevstate.pieces.begin(), prevstate.pieces.end(),
+                            [&](const auto& p) {
+                            return p->second.set == prevstate.activeSet
+                              && p->second.type == currentstate.lastMove->type
+                              && p->first.rank() == currentstate.lastMove->from.rank()
+                              && std::binary_search(p->second.moves.begin(), p->second.moves.end(), currentstate.lastMove->to);
                             });
             assert(ranks >= 1);
             if (files > 1) {

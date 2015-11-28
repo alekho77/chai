@@ -13,15 +13,16 @@
 #include <windows.h>
 
 #include <list>
-//#include <vector>
 #include <algorithm>
 #include <assert.h>
 #include <stdlib.h>
+#include <initializer_list>
+#include <array>
 
 #define BOOST_ALL_DYN_LINK
 #include <boost/regex.hpp>
 #include <boost/optional.hpp>
-#include <boost/container/flat_map.hpp>
+//#include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 
