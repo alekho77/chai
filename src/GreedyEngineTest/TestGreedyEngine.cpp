@@ -58,7 +58,7 @@ struct Move {
 };
 
 /* Classic NegaMax searching */
-std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& nodes, const float alpha = inff, float betta = -inff) {
+std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& nodes, float alpha = -inff, const float betta = inff) {
   if (depth > 0) {
     if (machine.CheckStatus() == Status::checkmate) {
       ++nodes;
@@ -81,17 +81,17 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& n
         }
         for (const auto& mm : moves) {
           if (machine.Move(mm.piece.type, mm.piece.position, mm.to, mm.promotion)) {
-            float score = -TestSearch(machine, depth - 1, nodes).first;
+            float score = -TestSearch(machine, depth - 1, nodes, -betta, -alpha).first;
             if (!bestmove || score > bestmove->first) {
               bestmove = { score, machine.LastMoveNotation() };
-              //if (score >= alpha) {
-              //  machine.Undo();
-              //  return *bestmove;
-              //}
+              if (score > alpha) {
+                alpha = score;
+              }
+              if (score >= betta) {
+                machine.Undo();
+                return *bestmove;
+              }
             }
-            //if (-score > betta) {
-            //  betta = -score;
-            //}
             machine.Undo();
           }
           else {
@@ -185,26 +185,24 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
     { "Nxd4", 0.057f, 43 },{ "dxe5", 2.997f, 22 },{ "Rxd2", 0.046f, 44 },{ "Bh3", 3.037f, 20 },{ "Qxe1", 6.056f, 52 },{ "Kd1", 2.984f, 1 },{ "Rxd2", 0.063f, 52 },
     { "Bh3", 2.034f, 24 },{ "Qxd2", 1.066f, 49 },{ "Kc1", 0.994f, 3 },{ "Qxe2", 8.064f, 55 },{ "Kxd2", 2.976f, 3 },{ "Qxe2", 6.077f, 48 },{ "Qd3", 2.987f, 3 },
     { "Qxe2", 6.060f, 54 },{ "Rb2", 2.984f, 1 },{ "Qxe2", 6.058f, 50 },{ "Qg4", 3.044f, 21 },{ "Qxh3", 0.029f, 4 },{ "Qd3", 3.001f, 28 },{ "Bxb2", 2.044f, 47 },
-    { "Kb1", 2.998f, 1 },{ "Bxb2", 2.011f, 48 },{ "Rxd1", 12.054f, 1 },{ "Rxd1", inff, 30 }
+    { "Kb1", 2.998f, 1 },{ "Bxb2", 2.011f, 48 },{ "Rxd1", 12.054f, 1 },{ "Rxd1", inff, 19 }
   },
   {
-    { "e4", 0.000f, 400 },{ "e5", -0.024f, 600 },{ "Nc3", -0.002f, 835 },{ "Nc6", -0.023f, 895 },{ "d4", -1.005f, 830 },{ "exf4", 0.977f, 891 },{ "fxe5", -0.016f, 1181 },
-    { "exf4", -0.039f, 1241 },{ "Nxd5", -0.035f, 1359 },{ "Qh4", -0.989f, 1272 },{ "bxc3", -0.038f, 1172 },{ "Qh4", -0.997f, 967 },{ "Ke2", -0.019f, 92 },
-    { "Nc6", -0.983f, 758 },{ "Nf3", -2.050f, 130 },{ "Bxf3", -0.992f, 644 },{ "d4", -2.055f, 714 },{ "Bxf3", -0.992f, 1031 },{ "Kd2", -2.041f, 981 },{ "Bxf3", -0.991f, 910 },
-    { "gxf3", -0.057f, 186 },{ "Kb8", -1.000f, 908 },{ "dxe5", -0.046f, 964 },{ "Qc4", -3.005f, 846 },{ "Bh3", -0.031f, 974 },{ "Qc4", -2.984f, 1140 },{ "Kd1", -0.063f, 52 },
-    { "Qxc3", -2.034f, 1133 },{ "Bh3", 1.973f, 1121 },{ "Qxf3", -0.994f, 1372 },{ "Kc1", -3.991f, 166 },{ "Qxh1", 2.987f, 1309 },{ "Kxd2", -6.077f, 162 },
-    { "Qxh1", 1.004f, 1366 },{ "Kc1", -6.060f, 157 },{ "Qxh1", 1.001f, 1441 },{ "Rb2", -6.058f, 50 },{ "Qxh1", 1.950f, 1021 },{ "Qg4", 2.981f, 896 },{ "Qxh3", -0.031f, 104 },
-    { "Qb5", -2.044f, 1325 },{ "Bxb2", -0.997f, 1202 },{ "Kb1", -2.011f, 48 },{ "Bxb2", -1.020f, 1510 },{ "Rxd1", -inff, 30 },{ "Rxd1", inff, 1198 }
-  },
+    { "e4", 0.000f, 165 },{ "e5", -0.024f, 213 },{ "Nc3", -0.002f, 183 },{ "Nc6", -0.023f, 252 },{ "d4", -1.005f, 167 },{ "exf4", 0.977f, 85 },{ "fxe5", -0.016f, 216 },
+    { "exf4", -0.039f, 159 },{ "Nxd5", -0.035f, 268 },{ "Qh4", -0.989f, 216 },{ "bxc3", -0.038f, 253 },{ "Qh4", -0.997f, 294 },{ "Ke2", -0.019f, 49 },{ "Nc6", -0.983f, 210 },
+    { "Nf3", -2.050f, 44 },{ "Bxf3", -0.992f, 58 },{ "d4", -2.055f, 203 },{ "Bxf3", -0.992f, 84 },{ "Kd2", -2.041f, 198 },{ "Bxf3", -0.991f, 103 },{ "gxf3", -0.057f, 137 },
+    { "Kb8", -1.000f, 455 },{ "dxe5", -0.046f, 335 },{ "Qc4", -3.005f, 257 },{ "Bh3", -0.031f, 158 },{ "Qc4", -2.984f, 125 },{ "Kd1", -0.063f, 52 },{ "Qxc3", -2.034f, 110 },
+    { "Bh3", 1.973f, 77 },{ "Qxf3", -0.994f, 146 },{ "Kc1", -3.991f, 60 },{ "Qxh1", 2.987f, 86 },{ "Kxd2", -6.077f, 108 },{ "Qxh1", 1.004f, 119 },{ "Kc1", -6.060f, 64 },
+    { "Qxh1", 1.001f, 94 },{ "Rb2", -6.058f, 50 },{ "Qxh1", 1.950f, 71 },{ "Qg4", 2.981f, 40 },{ "Qxh3", -0.031f, 26 },{ "Qb5", -2.044f, 272 },{ "Bxb2", -0.997f, 68 },
+    { "Kb1", -2.011f, 48 },{ "Bxb2", -1.020f, 473 },{ "Rxd1", -inff, 19 },{ "Rxd1", inff, 405 } },
   {
-    { "d4", 0.026f, 8902 },{ "d5", 0.010f, 13160 },{ "Qh5", 1.040f, 24825 },{ "Qh4", 1.020f, 26521 },{ "Qf3", 1.080f, 26037 },{ "Bb4", 1.036f, 26479 },{ "fxe5", 2.056f, 38683 },
-    { "Nxd5", 0.035f, 46513 },{ "Bb5", 3.027f, 43800 },{ "Qh4", 2.034f, 51053 },{ "dxc3", 1.014f, 32485 },{ "Qd5", 0.033f, 36059 },{ "g3", 0.999f, 1921 },
-    { "Bg4", 2.050f, 33682 },{ "Nf3", 0.992f, 2499 },{ "Nc6", 2.055f, 26994 },{ "d4", 0.992f, 12993 },{ "Be7", 2.042f, 47495 },{ "Qd3", 1.005f, 22713 },{ "Ba3", 2.050f, 40703 },
-    { "gxf3", 1.000f, 4152 },{ "Rd5", 0.051f, 37347 },{ "dxe5", 3.005f, 21491 },{ "Qc4", 0.035f, 34511 },{ "Be1", 2.995f, 20987 },{ "Qc4", 0.063f, 52804 },
-    { "Kd1", 2.034f, 1133 },{ "Qe6", 0.030f, 52961 },{ "Bh3", 2.003f, 28390 },{ "Rxd2", 5.080f, 62289 },{ "Be2", 1.999f, 4643 },{ "Rxd2", 6.077f, 63008 },{ "Kxd2", -1.004f, 4505 },
-    { "Rd8", 6.060f, 58788 },{ "Kc1", -1.001f, 4071 },{ "Ba3", 6.058f, 68511 },{ "Rb2", -1.950f, 1021 },{ "Bxb2", 8.032f, 45163 },{ "Qg4", 3.993f, 21437 },{ "Qxh3", 5.028f, 4400 },
-    { "Qb5", 0.997f, 35027 },{ "Bxb2", 5.023f, 51176 },{ "Kb1", 1.020f, 1510 },{ "Qd1", inff, 65394 },{ "Rxd1", -inff, 1198 },{ "Rxd1", inff, 31522 }
-  }
+    { "d4", 0.026f, 2037 },{ "d5", 0.010f, 1461 },{ "Qh5", 1.040f, 3617 },{ "Qh4", 1.020f, 2874 },{ "Qf3", 1.080f, 3952 },{ "Bb4", 1.036f, 3369 },{ "fxe5", 2.056f, 3733 },
+    { "Nxd5", 0.035f, 4168 },{ "Bb5", 3.027f, 2409 },{ "Qh4", 2.034f, 5703 },{ "dxc3", 1.014f, 3668 },{ "Qd5", 0.033f, 9116 },{ "g3", 0.999f, 404 },{ "Bg4", 2.050f, 3419 },
+    { "Nf3", 0.992f, 94 },{ "Nc6", 2.055f, 5785 },{ "d4", 0.992f, 518 },{ "Be7", 2.042f, 8931 },{ "Qd3", 1.005f, 650 },{ "Ba3", 2.050f, 11541 },{ "gxf3", 1.000f, 1111 },
+    { "Rd5", 0.051f, 12251 },{ "dxe5", 3.005f, 5421 },{ "Qc4", 0.035f, 8308 },{ "Be1", 2.995f, 870 },{ "Qc4", 0.063f, 9248 },{ "Kd1", 2.034f, 110 },{ "Qe6", 0.030f, 11955 },
+    { "Bh3", 2.003f, 405 },{ "Rxd2", 5.080f, 3875 },{ "Be2", 1.999f, 861 },{ "Rxd2", 6.077f, 10823 },{ "Kxd2", -1.004f, 241 },{ "Rd8", 6.060f, 8073 },{ "Kc1", -1.001f, 383 },
+    { "Ba3", 6.058f, 7298 },{ "Rb2", -1.950f, 71 },{ "Bxb2", 8.032f, 2358 },{ "Qg4", 3.993f, 180 },{ "Qxh3", 5.028f, 795 },{ "Qb5", 0.997f, 338 },{ "Bxb2", 5.023f, 5470 },
+    { "Kb1", 1.020f, 473 },{ "Qd1", inff, 79 },{ "Rxd1", -inff, 405 },{ "Rxd1", inff, 4213 } }
   };
 
   size_t nm = 0;
@@ -221,7 +219,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
       BOOST_CHECK_SMALL(info.bestscore - s0.second, 0.001f);
       BOOST_CHECK_SMALL(engine->EvalPosition(*machine) - s0.second, 0.001f);
     }
-    //int depth = 1;
+    //int depth = 2;
     for (int depth = 1; depth <= max_depth_testing; depth++)
     {
       BOOST_TEST_MESSAGE("Search at '" + m + "'(" + std::to_string(nm / 2 + 1) + ") with " + std::to_string(depth) + " moves in depth");

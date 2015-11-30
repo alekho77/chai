@@ -80,7 +80,7 @@ void GreedyEngine::BestScore(float score) {
 void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth) {
   std::string bestmove;
   size_t searched_nodes = 0;
-  float bestscore = Search(*machine, maxdepth, searched_nodes, &bestmove);
+  float bestscore = Search(*machine, maxdepth, searched_nodes, -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), &bestmove);
   service.post(boost::bind(&GreedyEngine::NodesSearched, this, searched_nodes));
   service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
   service.post(boost::bind(&GreedyEngine::BestMove, this, bestmove));
@@ -88,19 +88,20 @@ void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth) 
   stopped = true;
 }
 
-float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, std::string *bestmove) {
+float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float alpha, const float betta, std::string *bestmove) {
   if (depth > 0 && machine.CheckStatus() != Status::checkmate && machine.CheckStatus() != Status::stalemate) {
     Moves moves = EmunMoves(machine);
     assert(!moves.empty());
-    boost::optional<float> maxscore;
+    bool first_move = true;
     for (auto move : moves) {
-      if (stopped) {
+      if (stopped || alpha >= betta) {
         break;
       }
       if (machine.Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
-        float score = - Search(machine, depth - 1, nodes);
-        if (!maxscore || score > *maxscore) {
-          maxscore = score;
+        float score = - Search(machine, depth - 1, nodes, -betta, -alpha);
+        if (first_move || score > alpha) {
+          first_move = false;
+          alpha = score;
           if (bestmove) {
             *bestmove = machine.LastMoveNotation();
             service.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
@@ -111,7 +112,7 @@ float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, std::str
         assert(!"Can't make move!");
       }
     }
-    return *maxscore;
+    return alpha;
   }
   ++nodes;
   return EvalPosition(machine);

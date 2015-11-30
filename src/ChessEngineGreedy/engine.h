@@ -30,7 +30,7 @@ private:
   void BestScore(float score) override;
 
   void ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth);
-  float Search(IMachine& machine, int depth, size_t& nodes, std::string *bestmove = nullptr);
+  float Search(IMachine& machine, int depth, size_t& nodes, float alpha, const float betta, std::string *bestmove = nullptr);
   Moves EmunMoves(const IMachine& position) const;
   
   float EvalSide(const IMachine& position, Set set, const Pieces& white, const Pieces& black) const;
