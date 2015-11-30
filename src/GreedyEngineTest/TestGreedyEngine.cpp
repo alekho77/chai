@@ -58,7 +58,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth) {
     if (machine.CheckStatus() == Status::stalemate) {
       return std::make_pair(0.0f, std::string());
     }
-    boost::container::static_vector< std::pair<float, std::string>, 100 > moves;
+    boost::container::small_vector< std::pair<float, std::string>, 50 > moves;
     for (const auto& p : machine.GetSet(machine.CurrentPlayer())) {
       for (const auto& m : machine.CheckMoves(p.position)) {
         if (p.type == Type::pawn && (m.rank() == '1' || m.rank() == '8')) {
