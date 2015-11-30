@@ -92,7 +92,7 @@ float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float al
   if (depth > 0 && machine.CheckStatus() != Status::checkmate && machine.CheckStatus() != Status::stalemate) {
     Moves moves = EmunMoves(machine);
     assert(!moves.empty());
-    bool first_move = true;
+    bool first_move = !!bestmove;
     for (auto move : moves) {
       if (stopped || alpha >= betta) {
         break;
