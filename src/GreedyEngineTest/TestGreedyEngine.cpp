@@ -58,12 +58,14 @@ struct Move {
 };
 
 /* Classic NegaMax searching */
-std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t* nodes = nullptr, const float alpha = inff, float betta = -inff) {
+std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& nodes, const float alpha = inff, float betta = -inff) {
   if (depth > 0) {
     if (machine.CheckStatus() == Status::checkmate) {
-      return std::make_pair(-std::numeric_limits<float>::infinity(), std::string());
+      ++nodes;
+      return std::make_pair(-inff, std::string());
     }
     if (machine.CheckStatus() == Status::stalemate) {
+      ++nodes;
       return std::make_pair(0.0f, std::string());
     }
     boost::optional< std::pair<float, std::string> > bestmove;
@@ -101,9 +103,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t* n
     assert(bestmove);
     return *bestmove;
   }
-  if (nodes) {
-    ++(*nodes);
-  }
+  ++nodes;
   boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
   return std::make_pair(engine->EvalPosition(machine), std::string());
 }
@@ -194,16 +194,16 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
     { "gxf3", -0.057f, 186 },{ "Kb8", -1.000f, 908 },{ "dxe5", -0.046f, 964 },{ "Qc4", -3.005f, 846 },{ "Bh3", -0.031f, 974 },{ "Qc4", -2.984f, 1140 },{ "Kd1", -0.063f, 52 },
     { "Qxc3", -2.034f, 1133 },{ "Bh3", 1.973f, 1121 },{ "Qxf3", -0.994f, 1372 },{ "Kc1", -3.991f, 166 },{ "Qxh1", 2.987f, 1309 },{ "Kxd2", -6.077f, 162 },
     { "Qxh1", 1.004f, 1366 },{ "Kc1", -6.060f, 157 },{ "Qxh1", 1.001f, 1441 },{ "Rb2", -6.058f, 50 },{ "Qxh1", 1.950f, 1021 },{ "Qg4", 2.981f, 896 },{ "Qxh3", -0.031f, 104 },
-    { "Qb5", -2.044f, 1325 },{ "Bxb2", -0.997f, 1202 },{ "Kb1", -2.011f, 48 },{ "Bxb2", -1.020f, 1510 },{ "Rxd1", -inff, 30 },{ "Rxd1", inff, 1197 }
+    { "Qb5", -2.044f, 1325 },{ "Bxb2", -0.997f, 1202 },{ "Kb1", -2.011f, 48 },{ "Bxb2", -1.020f, 1510 },{ "Rxd1", -inff, 30 },{ "Rxd1", inff, 1198 }
   },
   {
     { "d4", 0.026f, 8902 },{ "d5", 0.010f, 13160 },{ "Qh5", 1.040f, 24825 },{ "Qh4", 1.020f, 26521 },{ "Qf3", 1.080f, 26037 },{ "Bb4", 1.036f, 26479 },{ "fxe5", 2.056f, 38683 },
-    { "Nxd5", 0.035f, 46513 },{ "Bb5", 3.027f, 43800 },{ "Qh4", 2.034f, 51053 },{ "dxc3", 1.014f, 32484 },{ "Qd5", 0.033f, 36059 },{ "g3", 0.999f, 1921 },
+    { "Nxd5", 0.035f, 46513 },{ "Bb5", 3.027f, 43800 },{ "Qh4", 2.034f, 51053 },{ "dxc3", 1.014f, 32485 },{ "Qd5", 0.033f, 36059 },{ "g3", 0.999f, 1921 },
     { "Bg4", 2.050f, 33682 },{ "Nf3", 0.992f, 2499 },{ "Nc6", 2.055f, 26994 },{ "d4", 0.992f, 12993 },{ "Be7", 2.042f, 47495 },{ "Qd3", 1.005f, 22713 },{ "Ba3", 2.050f, 40703 },
-    { "gxf3", 1.000f, 4152 },{ "Rd5", 0.051f, 37347 },{ "dxe5", 3.005f, 21491 },{ "Qc4", 0.035f, 34511 },{ "Be1", 2.995f, 20973 },{ "Qc4", 0.063f, 52804 },
-    { "Kd1", 2.034f, 1133 },{ "Qe6", 0.030f, 52961 },{ "Bh3", 2.003f, 28384 },{ "Rxd2", 5.080f, 62289 },{ "Be2", 1.999f, 4643 },{ "Rxd2", 6.077f, 63008 },{ "Kxd2", -1.004f, 4505 },
-    { "Rd8", 6.060f, 58788 },{ "Kc1", -1.001f, 4071 },{ "Ba3", 6.058f, 68511 },{ "Rb2", -1.950f, 1021 },{ "Bxb2", 8.032f, 45163 },{ "Qg4", 3.993f, 21416 },{ "Qxh3", 5.028f, 4400 },
-    { "Qb5", 0.997f, 35003 },{ "Bxb2", 5.023f, 51141 },{ "Kb1", 1.020f, 1510 },{ "Qd1", inff, 65356 },{ "Rxd1", -inff, 1197 },{ "Rxd1", inff, 31483 }
+    { "gxf3", 1.000f, 4152 },{ "Rd5", 0.051f, 37347 },{ "dxe5", 3.005f, 21491 },{ "Qc4", 0.035f, 34511 },{ "Be1", 2.995f, 20987 },{ "Qc4", 0.063f, 52804 },
+    { "Kd1", 2.034f, 1133 },{ "Qe6", 0.030f, 52961 },{ "Bh3", 2.003f, 28390 },{ "Rxd2", 5.080f, 62289 },{ "Be2", 1.999f, 4643 },{ "Rxd2", 6.077f, 63008 },{ "Kxd2", -1.004f, 4505 },
+    { "Rd8", 6.060f, 58788 },{ "Kc1", -1.001f, 4071 },{ "Ba3", 6.058f, 68511 },{ "Rb2", -1.950f, 1021 },{ "Bxb2", 8.032f, 45163 },{ "Qg4", 3.993f, 21437 },{ "Qxh3", 5.028f, 4400 },
+    { "Qb5", 0.997f, 35027 },{ "Bxb2", 5.023f, 51176 },{ "Kb1", 1.020f, 1510 },{ "Qd1", inff, 65394 },{ "Rxd1", -inff, 1198 },{ "Rxd1", inff, 31522 }
   }
   };
 
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
       BOOST_CHECK_SMALL(info.bestscore - s0.second, 0.001f);
       BOOST_CHECK_SMALL(engine->EvalPosition(*machine) - s0.second, 0.001f);
     }
-    //int depth = 3;
+    //int depth = 1;
     for (int depth = 1; depth <= max_depth_testing; depth++)
     {
       BOOST_TEST_MESSAGE("Search at '" + m + "'(" + std::to_string(nm / 2 + 1) + ") with " + std::to_string(depth) + " moves in depth");
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
         bestmove = std::make_pair(scoresn[depth - 1][nm].get<1>(), scoresn[depth - 1][nm].get<0>());
       } else {
         searched_nodes = 0;
-        bestmove = TestSearch(*machine, depth, &searched_nodes);
+        bestmove = TestSearch(*machine, depth, searched_nodes);
       }
       //char str[32];
       //sprintf_s(str, "%.3f", bestmove.first);
@@ -246,6 +246,7 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
         BOOST_CHECK_SMALL(info2.bestscore - bestmove.first, 0.001f);
       }
       BOOST_CHECK(info2.bestmove == bestmove.second);
+      BOOST_CHECK(info2.nodes == searched_nodes);
     }
     BOOST_REQUIRE_MESSAGE(machine->Move(m.c_str()), "Can't make move " + m);
     BOOST_CHECK_MESSAGE(machine->LastMoveNotation() == m, "Can't take move " + m);
