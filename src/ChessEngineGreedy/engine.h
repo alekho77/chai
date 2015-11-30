@@ -23,7 +23,6 @@ public:
   float EvalPosition(const IMachine& position) const override;
 
 private:
-  void SearchDepth(int depth) override;
   void NodesSearched(size_t nodes) override;
   void NodesPerSecond(int nps) override;
   void ReadyOk() override;

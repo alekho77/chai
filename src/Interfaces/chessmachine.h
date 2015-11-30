@@ -75,7 +75,6 @@ namespace Chai {
     class IInfoCall {
     public:
       // Messages sent during the search
-      virtual void SearchDepth(int depth) = 0;
       virtual void NodesSearched(size_t nodes) = 0;
       virtual void NodesPerSecond(int nps) = 0;
 

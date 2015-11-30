@@ -47,9 +47,6 @@ float GreedyEngine::EvalPosition(const IMachine & position) const
   return EvalSide(position, set, pieces, xpieces) - EvalSide(position, xset, xpieces, pieces);
 }
 
-void GreedyEngine::SearchDepth(int depth) {
-}
-
 void GreedyEngine::NodesSearched(size_t nodes) {
 }
 

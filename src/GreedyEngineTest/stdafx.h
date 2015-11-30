@@ -14,7 +14,9 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
+#include <boost/optional.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include "chessmachine.h"
 #include "machinetestutils.h"
