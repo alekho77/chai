@@ -16,7 +16,7 @@
 #define CHESSENGINEGREEDY_API __declspec(dllimport)
 #endif
 
-#define CHESSPOS(name) const Position (##name) = { (#name)[0], (#name)[1] }
+#define CHESSPOS(name) const Chai::Chess::Position (##name) = { (#name)[0], (#name)[1] }
 #define CHESSRANK(R) CHESSPOS(a##R); CHESSPOS(b##R); CHESSPOS(c##R); CHESSPOS(d##R); CHESSPOS(e##R); CHESSPOS(f##R); CHESSPOS(g##R); CHESSPOS(h##R)
 #define CHESSBOARD CHESSRANK(1); CHESSRANK(2); CHESSRANK(3); CHESSRANK(4); CHESSRANK(5); CHESSRANK(6); CHESSRANK(7); CHESSRANK(8)
 
@@ -24,9 +24,9 @@
 
 namespace Chai {
   namespace Chess {
-    enum class Set : int { unknown, white, black };
-    enum class Type : int { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 1000 };
-    enum class Status : int { invalid, normal, check, checkmate, stalemate };
+    enum class Set : char { unknown, white, black };
+    enum class Type : char { bad = 0, pawn = 1, knight = 3, bishop = 4, rook = 5, queen = 9, king = 100 };
+    enum class Status : char { invalid, normal, check, checkmate, stalemate };
 
     class Position {
     public:
