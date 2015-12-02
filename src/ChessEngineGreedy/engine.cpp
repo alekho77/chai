@@ -130,7 +130,7 @@ Moves GreedyEngine::EmunMoves(const IMachine& position) const
 {
   Moves moves;
   for (const auto& piece : position.GetSet(position.CurrentPlayer())) {
-    for (const auto& move : position.CheckMoves(piece.position)) {
+    for (const auto& move : position.EnumMoves(piece.position)) {
       if (piece.type == Type::pawn && (move.rank() == '1' || move.rank() == '8')) {
         for (auto type : { Type::knight, Type::bishop, Type::rook, Type::queen }) {
           moves.push_back({ piece, move, type });
@@ -146,7 +146,7 @@ Moves GreedyEngine::EmunMoves(const IMachine& position) const
 float GreedyEngine::EvalSide(const IMachine & position, Set set, const Pieces& pieces, const Pieces& xpieces) const {
   float score = 0;
   for (const auto& piece : pieces) {
-    score += PieceWeight(piece.type) + PositionWeight(set, piece, pieces, xpieces) + 0.001f * position.CheckMoves(piece.position).size();
+    score += PieceWeight(piece.type) + PositionWeight(set, piece, pieces, xpieces) + 0.001f * position.EnumMoves(piece.position).size();
   }
   return score;
 }

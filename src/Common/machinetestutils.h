@@ -81,7 +81,7 @@ inline void testpos(const std::map<Type, Moves>& position, const Pieces& pieces,
     BOOST_CHECK_MESSAGE(p.second.size() == count(pieces, p.first), "The number of pieces " + name.at(p.first) + " does not match");
     for (const auto& m : p.second) {
       BOOST_CHECK_MESSAGE(exactly(pieces, m.first, p.first), "The piece " + name.at(p.first) + " was not found at the position \"" + toStr(m.first) + "\"");
-      BOOST_CHECK_MESSAGE(equal(machine.CheckMoves(m.first), m.second), "Moves list does not match for piece " + name.at(p.first) + " at the position \"" + toStr(m.first) + "\"");
+      BOOST_CHECK_MESSAGE(equal(machine.EnumMoves(m.first), m.second), "Moves list does not match for piece " + name.at(p.first) + " at the position \"" + toStr(m.first) + "\"");
     }
   }
 }

@@ -16,7 +16,7 @@ namespace Chai {
 
       Set CurrentPlayer() const override { return states.empty() ? Set::unknown : states.back().activeSet; }
       Pieces GetSet(Set set) const override;
-      PieceMoves CheckMoves(Position from) const override;
+      PieceMoves EnumMoves(Position from) const override;
       Status CheckStatus() const override;
       std::string LastMoveNotation() const override;
 

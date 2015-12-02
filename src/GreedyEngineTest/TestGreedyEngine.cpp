@@ -78,7 +78,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& n
       xpos.insert(xp.position);
     }
     for (const auto& p : machine.GetSet(machine.CurrentPlayer())) {
-      for (const auto& m : machine.CheckMoves(p.position)) {
+      for (const auto& m : machine.EnumMoves(p.position)) {
         boost::container::small_vector<Move, 4> moves;
         if (p.type == Type::pawn && (m.rank() == '1' || m.rank() == '8')) {
           for (auto pp : { Type::knight, Type::bishop, Type::rook, Type::queen }) {

@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
   BOOST_REQUIRE(machine->GetSet(Set::white).empty());
   BOOST_REQUIRE(machine->GetSet(Set::black).empty());
 
-  BOOST_CHECK(machine->CheckMoves(d4).empty());
+  BOOST_CHECK(machine->EnumMoves(d4).empty());
 
   BOOST_CHECK(machine->CheckStatus() == Status::invalid);
   BOOST_CHECK(machine->CurrentPlayer() == Set::unknown);

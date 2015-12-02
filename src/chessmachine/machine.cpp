@@ -135,7 +135,7 @@ namespace Chai {
       return pieces;
     }
 
-    PieceMoves ChessMachine::CheckMoves(Position from) const
+    PieceMoves ChessMachine::EnumMoves(Position from) const
     {
       if (!states.empty()) {
         const ChessState& laststate = states.back();
