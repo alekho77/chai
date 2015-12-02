@@ -89,19 +89,27 @@ void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth) 
 }
 
 float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float alpha, const float betta, std::string *bestmove) {
-  if (depth > 0 && machine.CheckStatus() != Status::checkmate && machine.CheckStatus() != Status::stalemate) {
+  Status status = machine.CheckStatus();
+  if (depth > 0 && status != Status::checkmate && status != Status::stalemate) {
     Moves moves = EmunMoves(machine);
     assert(!moves.empty());
     bool first_move = !!bestmove;
+    boost::container::flat_set<Position> xpos;
+    for (const auto& xp : machine.GetSet(machine.CurrentPlayer() == Set::white ? Set::black : Set::white)) {
+      xpos.insert(xp.position);
+    }
     for (auto move : moves) {
       if (stopped || alpha >= betta) {
         break;
       }
       if (machine.Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
-        float score = - Search(machine, depth - 1, nodes, -betta, -alpha);
+        bool forcing = depth == 1 && (machine.CheckStatus() == Status::check || xpos.find(move.to) != xpos.end()); // todo: en passat
+        float score = - Search(machine, forcing ? depth : depth - 1, nodes, -betta, -alpha);
         if (first_move || score > alpha) {
           first_move = false;
-          alpha = score;
+          if (score > alpha) {
+            alpha = score;
+          }
           if (bestmove) {
             *bestmove = machine.LastMoveNotation();
             service.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
