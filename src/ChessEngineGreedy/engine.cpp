@@ -12,7 +12,7 @@ namespace Chess {
 GreedyEngine::GreedyEngine() : callBack(nullptr), stopped(true) {
 }
 
-bool GreedyEngine::Start(const IMachine& position, int depth, int timeout) {
+bool GreedyEngine::Start(const IMachine& position, int depth) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
     stopped = false;
     thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.Clone(), depth));

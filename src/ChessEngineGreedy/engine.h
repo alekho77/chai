@@ -17,7 +17,7 @@ public:
   GreedyEngine();
   //virtual ~GreedyEngine();
 
-  bool Start(const IMachine& position, int depth, int timeout) override;
+  bool Start(const IMachine& position, int depth) override;
   void Stop() override;
   void ProcessInfo(IInfoCall* cb) override;
   float EvalPosition(const IMachine& position) const override;

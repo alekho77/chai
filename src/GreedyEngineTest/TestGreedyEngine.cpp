@@ -30,6 +30,10 @@ public:
     service.stop();
     thread.join();
     deadline = true;
+    if (!readyok) {
+      engine->Stop();
+      return false;
+    }
     return readyok;
   }
 

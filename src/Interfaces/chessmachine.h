@@ -91,12 +91,8 @@ namespace Chai {
         
         depth = 0 - evaluate only the current position of the current player, without further analyze moves.
         depth > 0 - evaluate the current position of the current player and further analyze half-moves (plies) in depth.
-        depth < 0 - it's not used, see timeout
-
-        timeout > 0 - limit of the estimated time in ms.
-        timeout <= 0 - it's not used, you can stop the calculation by using the Stop command.
       */
-      virtual bool Start(const IMachine& position, int depth, int timeout = 0) = 0;
+      virtual bool Start(const IMachine& position, int depth) = 0;
       virtual void Stop() = 0;
       virtual void ProcessInfo(IInfoCall* cb) = 0;
       virtual float EvalPosition(const IMachine& position) const = 0; // Evaluation of the current position for current player.
