@@ -15,6 +15,7 @@ Chessboard::Chessboard(QWidget *parent)
   , hotPos(BADPOS)
   , dragPos(BADPOS)
   , moveCount(0)
+  , engineTimer(0)
 {
   ui.setupUi(this);
   
@@ -38,11 +39,19 @@ void Chessboard::newGame(QString engine)
   }
   if (chessEngine) {
     emit currentScore(chessEngine->EvalPosition(*chessMachine));
+    if (chessEngine->Start(*chessMachine, 1)) {
+      engineTimer = startTimer(300);
+    }
   }
+  emit currentPlayer(chessMachine->CurrentPlayer() == Set::white);
 }
 
 void Chessboard::stopGame()
 {
+  if (engineTimer) {
+    killTimer(engineTimer);
+    engineTimer = 0;
+  }
   chessEngine.reset();
 }
 
@@ -326,7 +335,11 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
         updateChessPieces();
         if (chessEngine) {
           emit currentScore(chessEngine->EvalPosition(*chessMachine));
+          if (chessEngine->Start(*chessMachine, 1)) {
+            //engineTimer = startTimer(300);
+          }
         }
+        emit currentPlayer(chessMachine->CurrentPlayer() == Set::white);
       }
     }
     dragPos = BADPOS;
@@ -334,4 +347,11 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
     updateCursor();
   }
   QWidget::mouseReleaseEvent(event);
+}
+
+void Chessboard::timerEvent(QTimerEvent * event)
+{
+  if (event->timerId() == engineTimer && chessEngine) {
+    chessEngine->ProcessInfo(this);
+  }
 }

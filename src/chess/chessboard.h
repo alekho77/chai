@@ -12,7 +12,7 @@
 typedef std::map< Chai::Chess::Position, std::pair<Chai::Chess::Set, Chai::Chess::Type> > ChessPieces;
 typedef QMap< Chai::Chess::Type, QSharedPointer<QImage> > ChessPieceImages;
 
-class Chessboard : public QWidget
+class Chessboard : public QWidget, protected Chai::Chess::IInfoCall
 {
   Q_OBJECT
 
@@ -31,10 +31,21 @@ protected:
   void mouseMoveEvent(QMouseEvent * event) override;
   void mousePressEvent(QMouseEvent * event) override;
   void mouseReleaseEvent(QMouseEvent * event) override;
+  void timerEvent(QTimerEvent * event) override;
+
+  // Messages sent during the search
+  void NodesSearched(size_t nodes) override;
+  void NodesPerSecond(int nps) override {}
+
+  // Messages sent after the search
+  void ReadyOk() override;
+  void BestMove(std::string notation) override;
+  void BestScore(float score) override; // in pawns
 
 signals:
   void updateLog(QString str);
   void currentScore(float score);
+  void currentPlayer(bool white);
 
 private:
   void createChessboard(int size);
@@ -68,6 +79,8 @@ private:
 
   boost::shared_ptr<Chai::Chess::IMachine> chessMachine;
   boost::shared_ptr<Chai::Chess::IEngine>  chessEngine;
+
+  int engineTimer;
 };
 
 #endif // CHESSBOARD_H

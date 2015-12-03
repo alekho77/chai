@@ -38,6 +38,11 @@ void chess::setCurrentScore(float score)
   ui.lineEditCurScore->setText(QString().setNum(score, 'f', 3));
 }
 
+void chess::setCurrentPlayer(bool white)
+{
+  ui.lineEditCurrentPlayer->setText(white ? "White" : "Black");
+}
+
 void chess::resizeEvent(QResizeEvent * event)
 {
   ui.widgetChessboard->setMaximumWidth(ui.centralWidget->height());

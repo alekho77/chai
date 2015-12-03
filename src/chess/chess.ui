@@ -330,6 +330,12 @@
                 <property name="suffix">
                  <string> plies</string>
                 </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="value">
+                 <number>3</number>
+                </property>
                </widget>
               </item>
               <item>
@@ -483,6 +489,7 @@
     <signal>updateLog(QString)</signal>
     <signal>moveMade()</signal>
     <signal>currentScore(float)</signal>
+    <signal>currentPlayer(bool)</signal>
     <slot>newGame(QString)</slot>
     <slot>stopGame()</slot>
    </slots>
@@ -684,6 +691,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>currentPlayer(bool)</signal>
+   <receiver>chessClass</receiver>
+   <slot>setCurrentPlayer(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>59</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>newGame()</slot>
@@ -692,5 +715,6 @@
   <slot>onLogChanged()</slot>
   <slot>onMove()</slot>
   <slot>setCurrentScore(float)</slot>
+  <slot>setCurrentPlayer(bool)</slot>
  </slots>
 </ui>
