@@ -13,18 +13,18 @@ chess::~chess()
 
 void chess::newGame()
 {
-  //ui.groupBoxOptions->setEnabled(false);
+  ui.comboBoxGame->setEnabled(false);
   ui.pushButtonStopGame->setEnabled(true);
+  ui.frameEngine->setEnabled(ui.comboBoxGame->currentIndex() > 0);
   ui.widgetChessboard->setEnabled(true);
-  ui.lineEditCurScore->clear();
-  ui.lineEditBestScore->clear();
   ui.widgetChessboard->newGame(ui.comboBoxGame->currentText());
 }
 
 void chess::stopGame()
 {
-  //ui.groupBoxOptions->setEnabled(true);
+  ui.comboBoxGame->setEnabled(true);
   ui.pushButtonStopGame->setEnabled(false);
+  ui.frameEngine->setEnabled(false);
   ui.widgetChessboard->setEnabled(false);
 }
 
