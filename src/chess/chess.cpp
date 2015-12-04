@@ -34,6 +34,11 @@ void chess::onLogChanged()
   ui.textEditLog->ensureCursorVisible();
 }
 
+void chess::onReadyOk(bool ok)
+{
+  ui.pushButtonAbort->setText(ok ? "Eval" : "Abort");
+}
+
 void chess::resizeEvent(QResizeEvent * event)
 {
   ui.widgetChessboard->setMaximumWidth(ui.centralWidget->height());

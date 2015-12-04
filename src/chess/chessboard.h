@@ -24,6 +24,7 @@ public slots:
   void newGame(QString engine);
   void stopGame();
   void setDepth(int depth);
+  void abortEval();
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -37,7 +38,6 @@ protected:
   // Messages sent during the search
   void NodesSearched(size_t nodes) override;
   void NodesPerSecond(int nps) override {}
-
   // Messages sent after the search
   void ReadyOk() override;
   void BestMove(std::string notation) override;

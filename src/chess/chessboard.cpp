@@ -55,6 +55,17 @@ void Chessboard::setDepth(int depth)
   maxDepth = depth;
 }
 
+void Chessboard::abortEval()
+{
+  if (engineTimer) {
+    if (chessEngine) {
+      chessEngine->Stop();
+    }
+  } else {
+    afterMove();
+  }
+}
+
 void Chessboard::createChessboard(int size)
 {
   const int cellsize = size / 10;

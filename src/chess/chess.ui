@@ -502,6 +502,7 @@
     <slot>newGame(QString)</slot>
     <slot>stopGame()</slot>
     <slot>setDepth(int)</slot>
+    <slot>abortEval()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -832,22 +833,6 @@
   <connection>
    <sender>widgetChessboard</sender>
    <signal>readyOk(bool)</signal>
-   <receiver>pushButtonAbort</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>376</x>
-     <y>351</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>559</x>
-     <y>174</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>widgetChessboard</sender>
-   <signal>readyOk(bool)</signal>
    <receiver>pushButtonMakeMove</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -861,11 +846,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButtonAbort</sender>
+   <signal>clicked()</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>abortEval()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>571</x>
+     <y>167</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>347</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>readyOk(bool)</signal>
+   <receiver>chessClass</receiver>
+   <slot>onReadyOk(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-4</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>newGame()</slot>
   <slot>stopGame()</slot>
   <slot>appendLog(QString)</slot>
   <slot>onLogChanged()</slot>
+  <slot>onReadyOk(bool)</slot>
  </slots>
 </ui>
