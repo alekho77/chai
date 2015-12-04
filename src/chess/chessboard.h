@@ -23,6 +23,7 @@ public:
 public slots:
   void newGame(QString engine);
   void stopGame();
+  void setDepth(int depth);
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -44,8 +45,12 @@ protected:
 
 signals:
   void updateLog(QString str);
-  void currentScore(float score);
-  void currentPlayer(bool white);
+  void currentPlayer(QString player);
+  void currentScore(QString score);
+  void bestMove(QString move);
+  void bestScore(QString score);
+  void nodesSearched(QString nodes);
+  void readyOk(bool);
 
 private:
   void createChessboard(int size);
@@ -61,6 +66,7 @@ private:
       && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());
   }
   void updateCursor();
+  void afterMove();
 
   Ui::chessboardClass ui;
   
@@ -81,6 +87,7 @@ private:
   boost::shared_ptr<Chai::Chess::IEngine>  chessEngine;
 
   int engineTimer;
+  int maxDepth;
 };
 
 #endif // CHESSBOARD_H

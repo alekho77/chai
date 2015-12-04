@@ -9,12 +9,12 @@ boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine()
 namespace Chai {
 namespace Chess {
 
-GreedyEngine::GreedyEngine() : callBack(nullptr), stopped(true) {
+GreedyEngine::GreedyEngine() : callBack(nullptr), aborted(false) {
 }
 
 bool GreedyEngine::Start(const IMachine& position, int depth) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
-    stopped = false;
+    aborted = false;
     thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.Clone(), depth));
     return true;
   }
@@ -22,7 +22,8 @@ bool GreedyEngine::Start(const IMachine& position, int depth) {
 }
 
 void GreedyEngine::Stop() {
-  stopped = true;
+  aborted = true;
+  thread.join();
 }
 
 void GreedyEngine::ProcessInfo(IInfoCall* cb) {
@@ -85,7 +86,6 @@ void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth) 
   service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
   service.post(boost::bind(&GreedyEngine::BestMove, this, bestmove));
   service.post(boost::bind(&GreedyEngine::ReadyOk, this));
-  stopped = true;
 }
 
 float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float alpha, const float betta, std::string *bestmove) {
@@ -99,7 +99,7 @@ float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float al
       xpos.insert(xp.position);
     }
     for (auto move : moves) {
-      if (stopped || alpha >= betta) {
+      if (aborted || alpha >= betta) {
         break;
       }
       if (machine.Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
@@ -113,6 +113,8 @@ float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float al
           if (bestmove) {
             *bestmove = machine.LastMoveNotation();
             service.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
+            service.post(boost::bind(&GreedyEngine::BestScore, this, score));
+            service.post(boost::bind(&GreedyEngine::BestMove, this, *bestmove));
           }
         }
         machine.Undo();

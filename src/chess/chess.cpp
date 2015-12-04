@@ -4,6 +4,7 @@ chess::chess(QWidget *parent)
   : QMainWindow(parent)
 {
   ui.setupUi(this);
+  emit ui.spinBoxGreedyDepth->valueChanged(ui.spinBoxGreedyDepth->value());
 }
 
 chess::~chess()
@@ -31,16 +32,6 @@ void chess::stopGame()
 void chess::onLogChanged()
 {
   ui.textEditLog->ensureCursorVisible();
-}
-
-void chess::setCurrentScore(float score)
-{
-  ui.lineEditCurScore->setText(QString().setNum(score, 'f', 3));
-}
-
-void chess::setCurrentPlayer(bool white)
-{
-  ui.lineEditCurrentPlayer->setText(white ? "White" : "Black");
 }
 
 void chess::resizeEvent(QResizeEvent * event)

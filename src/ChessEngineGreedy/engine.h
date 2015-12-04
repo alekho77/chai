@@ -40,7 +40,7 @@ private:
   boost::asio::io_service service;
   boost::thread thread;
   IInfoCall* callBack;
-  volatile bool stopped;
+  volatile bool aborted;
 };
 
 }

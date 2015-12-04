@@ -195,6 +195,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
              <property name="readOnly">
               <bool>true</bool>
              </property>
@@ -334,7 +337,7 @@
                  <number>1</number>
                 </property>
                 <property name="value">
-                 <number>3</number>
+                 <number>1</number>
                 </property>
                </widget>
               </item>
@@ -391,6 +394,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
                 </property>
                 <property name="readOnly">
                  <bool>true</bool>
@@ -487,11 +493,15 @@
    <container>1</container>
    <slots>
     <signal>updateLog(QString)</signal>
-    <signal>moveMade()</signal>
-    <signal>currentScore(float)</signal>
-    <signal>currentPlayer(bool)</signal>
+    <signal>bestMove(QString)</signal>
+    <signal>bestScore(QString)</signal>
+    <signal>nodesSearched(QString)</signal>
+    <signal>currentPlayer(QString)</signal>
+    <signal>currentScore(QString)</signal>
+    <signal>readyOk(bool)</signal>
     <slot>newGame(QString)</slot>
     <slot>stopGame()</slot>
+    <slot>setDepth(int)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -707,14 +717,155 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>spinBoxGreedyDepth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>setDepth(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>477</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>162</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>madeMove(bool,float)</signal>
+   <receiver>chessClass</receiver>
+   <slot>onMove(bool,float)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>39</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-2</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>bestScore(QString)</signal>
+   <receiver>lineEditBestScore</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>108</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>nodesSearched(QString)</signal>
+   <receiver>lineEditSearchedNodes</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>346</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>currentPlayer(QString)</signal>
+   <receiver>lineEditCurrentPlayer</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>528</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>currentScore(QString)</signal>
+   <receiver>lineEditCurScore</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>514</x>
+     <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>bestMove(QString)</signal>
+   <receiver>lineEditBestMove</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>317</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>486</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>readyOk(bool)</signal>
+   <receiver>pushButtonAbort</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>376</x>
+     <y>351</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>559</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>widgetChessboard</sender>
+   <signal>readyOk(bool)</signal>
+   <receiver>pushButtonMakeMove</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>378</x>
+     <y>325</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>177</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>newGame()</slot>
   <slot>stopGame()</slot>
   <slot>appendLog(QString)</slot>
   <slot>onLogChanged()</slot>
-  <slot>onMove()</slot>
-  <slot>setCurrentScore(float)</slot>
-  <slot>setCurrentPlayer(bool)</slot>
  </slots>
 </ui>

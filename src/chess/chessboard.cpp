@@ -16,6 +16,7 @@ Chessboard::Chessboard(QWidget *parent)
   , dragPos(BADPOS)
   , moveCount(0)
   , engineTimer(0)
+  , maxDepth(0)
 {
   ui.setupUi(this);
   
@@ -37,13 +38,7 @@ void Chessboard::newGame(QString engine)
   if (engine == "Greedy") {
     chessEngine = CreateGreedyEngine();
   }
-  if (chessEngine) {
-    emit currentScore(chessEngine->EvalPosition(*chessMachine));
-    if (chessEngine->Start(*chessMachine, 1)) {
-      engineTimer = startTimer(300);
-    }
-  }
-  emit currentPlayer(chessMachine->CurrentPlayer() == Set::white);
+  afterMove();
 }
 
 void Chessboard::stopGame()
@@ -53,6 +48,11 @@ void Chessboard::stopGame()
     engineTimer = 0;
   }
   chessEngine.reset();
+}
+
+void Chessboard::setDepth(int depth)
+{
+  maxDepth = depth;
 }
 
 void Chessboard::createChessboard(int size)
@@ -228,6 +228,27 @@ void Chessboard::updateCursor()
   }
 }
 
+void Chessboard::afterMove()
+{
+  using namespace Chai::Chess;
+  emit currentPlayer(chessMachine->CurrentPlayer() == Set::white ? "White" : "Black");
+  if (chessEngine) {
+    emit currentScore(QString().setNum(chessEngine->EvalPosition(*chessMachine), 'f', 3));
+    emit nodesSearched("...");
+    emit bestScore("...");
+    emit bestMove("...");
+    emit readyOk(false);
+    if (chessEngine->Start(*chessMachine, maxDepth)) {
+      engineTimer = startTimer(300);
+    }
+  } else {
+    emit currentScore("n/a");
+    emit nodesSearched("n/a");
+    emit bestScore("n/a");
+    emit bestMove("n/a");
+  }
+}
+
 void Chessboard::resizeEvent(QResizeEvent * event)
 {
   QWidget::resizeEvent(event);
@@ -333,13 +354,7 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
         }
         emit updateLog(notation);
         updateChessPieces();
-        if (chessEngine) {
-          emit currentScore(chessEngine->EvalPosition(*chessMachine));
-          if (chessEngine->Start(*chessMachine, 1)) {
-            //engineTimer = startTimer(300);
-          }
-        }
-        emit currentPlayer(chessMachine->CurrentPlayer() == Set::white);
+        afterMove();
       }
     }
     dragPos = BADPOS;
@@ -353,5 +368,30 @@ void Chessboard::timerEvent(QTimerEvent * event)
 {
   if (event->timerId() == engineTimer && chessEngine) {
     chessEngine->ProcessInfo(this);
+    QApplication::beep();
   }
+}
+
+void Chessboard::NodesSearched(size_t nodes)
+{
+  emit nodesSearched(QString().setNum(nodes));
+}
+
+void Chessboard::ReadyOk()
+{
+  if (engineTimer) {
+    killTimer(engineTimer);
+    engineTimer = 0;
+  }
+  emit readyOk(true);
+}
+
+void Chessboard::BestMove(std::string notation)
+{
+  emit bestMove(QString::fromStdString(notation));
+}
+
+void Chessboard::BestScore(float score)
+{
+  emit bestScore(QString().setNum(score, 'f', 3));
 }
