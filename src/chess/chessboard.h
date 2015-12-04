@@ -25,6 +25,7 @@ public slots:
   void stopGame();
   void setDepth(int depth);
   void abortEval();
+  void makeMove(QString move);
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -66,7 +67,7 @@ private:
       && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());
   }
   void updateCursor();
-  void afterMove();
+  void afterMove(bool init = false);
 
   Ui::chessboardClass ui;
   

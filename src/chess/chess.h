@@ -17,6 +17,7 @@ public slots:
   void stopGame();
   void onLogChanged();
   void onReadyOk(bool ok);
+  void makeMove();
 
 protected:
   void resizeEvent(QResizeEvent * event) override;

@@ -110,10 +110,10 @@ float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float al
           if (score > alpha) {
             alpha = score;
           }
+          service.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
+          service.post(boost::bind(&GreedyEngine::BestScore, this, score));
           if (bestmove) {
             *bestmove = machine.LastMoveNotation();
-            service.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
-            service.post(boost::bind(&GreedyEngine::BestScore, this, score));
             service.post(boost::bind(&GreedyEngine::BestMove, this, *bestmove));
           }
         }

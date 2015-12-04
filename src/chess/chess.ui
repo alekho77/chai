@@ -503,6 +503,7 @@
     <slot>stopGame()</slot>
     <slot>setDepth(int)</slot>
     <slot>abortEval()</slot>
+    <slot>makeMove(QString)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -878,6 +879,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButtonMakeMove</sender>
+   <signal>clicked()</signal>
+   <receiver>chessClass</receiver>
+   <slot>makeMove()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>658</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>677</x>
+     <y>171</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>newGame()</slot>
@@ -885,5 +902,6 @@
   <slot>appendLog(QString)</slot>
   <slot>onLogChanged()</slot>
   <slot>onReadyOk(bool)</slot>
+  <slot>makeMove()</slot>
  </slots>
 </ui>

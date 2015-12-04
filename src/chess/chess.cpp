@@ -39,6 +39,11 @@ void chess::onReadyOk(bool ok)
   ui.pushButtonAbort->setText(ok ? "Eval" : "Abort");
 }
 
+void chess::makeMove()
+{
+  ui.widgetChessboard->makeMove(ui.lineEditBestMove->text());
+}
+
 void chess::resizeEvent(QResizeEvent * event)
 {
   ui.widgetChessboard->setMaximumWidth(ui.centralWidget->height());

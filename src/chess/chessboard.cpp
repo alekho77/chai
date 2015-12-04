@@ -38,7 +38,7 @@ void Chessboard::newGame(QString engine)
   if (engine == "Greedy") {
     chessEngine = CreateGreedyEngine();
   }
-  afterMove();
+  afterMove(true);
 }
 
 void Chessboard::stopGame()
@@ -63,6 +63,16 @@ void Chessboard::abortEval()
     }
   } else {
     afterMove();
+  }
+}
+
+void Chessboard::makeMove(QString move)
+{
+  if (chessMachine->Move(move.toStdString())) {
+    afterMove();
+    dragPos = BADPOS;
+    repaint();
+    updateCursor();
   }
 }
 
@@ -239,9 +249,34 @@ void Chessboard::updateCursor()
   }
 }
 
-void Chessboard::afterMove()
+void Chessboard::afterMove(bool init)
 {
   using namespace Chai::Chess;
+  
+  if (!init) {
+    QString notation = QString::fromStdString(chessMachine->LastMoveNotation());
+    switch (chessMachine->CheckStatus())
+    {
+    case Status::check: notation += "+"; break;
+    case Status::checkmate: notation += "#"; break;
+    case Status::stalemate: notation += "="; break;
+    }
+    if (chessMachine->CurrentPlayer() == Set::black) {
+      const int c = (notation.length() < 8 ? 8 - notation.length() : 0) + 1;
+      notation = (moveCount < 10 ? "&nbsp;" : "") + QString::number(moveCount) + "." + notation;
+      for (int i = 0; i < c; i++) {
+        notation += "&nbsp;";
+      }
+    }
+    notation = "<code>" + notation + "</code>";
+    if (chessMachine->CurrentPlayer() == Set::white) {
+      notation += QString("<br />");
+      moveCount++;
+    }
+    emit updateLog(notation);
+    updateChessPieces();
+  }
+
   emit currentPlayer(chessMachine->CurrentPlayer() == Set::white ? "White" : "Black");
   if (chessEngine) {
     emit currentScore(QString().setNum(chessEngine->EvalPosition(*chessMachine), 'f', 3));
@@ -333,38 +368,14 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
       Type promotion = Type::bad;
       Position from = dragPos;
       Position to = hotPos;
-      if (piece.second == Type::pawn && ((piece.first == Set::white && to.rank() == '8') || (piece.first == Set::black && to.rank() == '1')))
-      {
+      if (piece.second == Type::pawn && ((piece.first == Set::white && to.rank() == '8') || (piece.first == Set::black && to.rank() == '1'))) {
         PromotionDlg dlg(chessMachine->CurrentPlayer(), this);
         int result = dlg.exec();
-        if (result != QDialog::Rejected)
-        {
+        if (result != QDialog::Rejected) {
           promotion = static_cast<Type>(result);
         }
       }
-      if (chessMachine->Move(piece.second, from, to, promotion))
-      {
-        QString notation = QString::fromStdString(chessMachine->LastMoveNotation());
-        switch (chessMachine->CheckStatus())
-        {
-        case Status::check: notation += "+"; break;
-        case Status::checkmate: notation += "#"; break;
-        case Status::stalemate: notation += "="; break;
-        }
-        if (piece.first == Set::white) {
-          const int c = (notation.length() < 8 ? 8 - notation.length() : 0) + 1;
-          notation = (moveCount < 10 ? "&nbsp;" : "") + QString::number(moveCount) + "." + notation;
-          for (int i = 0; i < c; i++) {
-            notation += "&nbsp;";
-          }
-        }
-        notation = "<code>" + notation + "</code>";
-        if (piece.first == Set::black) {
-          notation += QString("<br />");
-          moveCount++;
-        }
-        emit updateLog(notation);
-        updateChessPieces();
+      if (chessMachine->Move(piece.second, from, to, promotion)) {
         afterMove();
       }
     }
@@ -379,7 +390,7 @@ void Chessboard::timerEvent(QTimerEvent * event)
 {
   if (event->timerId() == engineTimer && chessEngine) {
     chessEngine->ProcessInfo(this);
-    QApplication::beep();
+    //QApplication::beep();
   }
 }
 
