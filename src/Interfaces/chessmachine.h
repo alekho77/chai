@@ -32,19 +32,19 @@ namespace Chai {
     public:
       Position() : data(0xff) {}
       template <typename T> explicit Position(T p) : data(static_cast<unsigned char>(p)) {}
-      Position(char f, char r) : data( (f - 'a') | ((r - '1') << 4) ) {}
+      Position(char f, char r) : data( ((f - 'a') << 4) | (r - '1') ) {}
       
-      inline int x() const { return data & 0x0f; }
-      inline int y() const { return (data >> 4) & 0x0f; }
+      inline int x() const { return (data >> 4) & 0x0f; }
+      inline int y() const { return data & 0x0f; }
       inline char file() const { return 'a' + x(); } // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
       inline char rank() const { return '1' + y(); } // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
       inline bool operator == (const Position& other) const { return data == other.data; }
       inline bool operator != (const Position& other) const { return data != other.data; }
       inline bool operator < (const Position& other) const { return data < other.data; }
       inline bool isValid() const { return (data & 0x77) == data; }
-      inline int pos() const { return (y() << 3) + x(); }
+      inline int pos() const { return (x() << 3) + y(); }
     private:
-      unsigned char data;
+      unsigned char data; // ICCF numeric notation encode in BCD 
     };
     typedef boost::container::static_vector<Position, 27> PieceMoves;
 
