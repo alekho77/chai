@@ -17,6 +17,7 @@ Chessboard::Chessboard(QWidget *parent)
   , moveCount(0)
   , engineTimer(0)
   , maxDepth(0)
+  , boardLayout(BlackTop)
 {
   ui.setupUi(this);
   
@@ -74,6 +75,14 @@ void Chessboard::makeMove(QString move)
     repaint();
     updateCursor();
   }
+}
+
+void Chessboard::rotateBoard()
+{
+  boardLayout = boardLayout == BlackTop ? WhiteTop : BlackTop;
+  dragPos = BADPOS;
+  repaint();
+  updateCursor();
 }
 
 void Chessboard::createChessboard(int size)
@@ -140,9 +149,17 @@ void Chessboard::drawChessboardLabels(QPainter& painter)
     const QRect rrect = fm.tightBoundingRect(QString(pos.rank()));
     const QRect frect = fm.tightBoundingRect(QString(pos.file()));
     painter.setPen(hotPos.rank() == pos.rank() ? Qt::white : cellLight);
-    painter.drawText((bandsize - rrect.width()) / 2 - rrect.left(), startCell.top() + (i + 1) * startCell.height() - (startCell.height() - rrect.height()) / 2, QString(pos.rank()));
+    if (boardLayout == BlackTop) {
+      painter.drawText((bandsize - rrect.width()) / 2 - rrect.left(), startCell.top() + (i + 1) * startCell.height() - (startCell.height() - rrect.height()) / 2, QString(pos.rank()));
+    } else {
+      painter.drawText((bandsize - rrect.width()) / 2 - rrect.left(), startCell.top() + (8 - i) * startCell.height() - (startCell.height() - rrect.height()) / 2, QString(pos.rank()));
+    }
     painter.setPen(hotPos.file() == pos.file() ? Qt::white : cellLight);
-    painter.drawText(startCell.left() + i * startCell.width() + (startCell.width() - frect.width()) / 2 - frect.left(), imgBoard->height() - (bandsize - frect.height()) / 2, QString(pos.file()));
+    if (boardLayout == BlackTop) {
+      painter.drawText(startCell.left() + i * startCell.width() + (startCell.width() - frect.width()) / 2 - frect.left(), imgBoard->height() - (bandsize - frect.height()) / 2, QString(pos.file()));
+    } else {
+      painter.drawText(startCell.left() + (7 - i) * startCell.width() + (startCell.width() - frect.width()) / 2 - frect.left(), imgBoard->height() - (bandsize - frect.height()) / 2, QString(pos.file()));
+    }
   }
   painter.restore();
 }
@@ -157,8 +174,14 @@ void Chessboard::drawChesspieces(QPainter& painter)
       const QImage& img = p.first == hotPos ?
         (p.second.first == Set::white ? *(hotWhiteImages[p.second.second]) : *(hotBlackImages[p.second.second])) :
         (p.second.first == Set::white ? *(whiteImages[p.second.second]) : *(blackImages[p.second.second]));
-      const int x = startCell.left() + startCell.width() * p.first.x();
-      const int y = startCell.top() + startCell.height() * (7 - p.first.y());
+      int x, y;
+      if (boardLayout == BlackTop) {
+        x = startCell.left() + startCell.width() * p.first.x();
+        y = startCell.top() + startCell.height() * (7 - p.first.y());
+      } else {
+        x = startCell.left() + startCell.width() * (7 - p.first.x());
+        y = startCell.top() + startCell.height() * p.first.y();
+      }
       painter.drawImage(x, y, img);
     }
   }
@@ -187,8 +210,13 @@ void Chessboard::drawChessMoves(QPainter& painter)
     const qreal adjyl = startCell.height() * (1 - scalel) / 2;
     for (auto p : chessMachine->EnumMoves(dragPos != BADPOS ? dragPos : hotPos)) {
       QRectF rec;
-      rec.setX(startCell.left() + startCell.width() * p.x());
-      rec.setY(startCell.top() + startCell.height() * (7 - p.y()));
+      if (boardLayout == BlackTop) {
+        rec.setX(startCell.left() + startCell.width() * p.x());
+        rec.setY(startCell.top() + startCell.height() * (7 - p.y()));
+      } else {
+        rec.setX(startCell.left() + startCell.width() * (7 - p.x()));
+        rec.setY(startCell.top() + startCell.height() * p.y());
+      }
       rec.setWidth(startCell.width());
       rec.setHeight(startCell.height());
       if (chessPieces.find(p) != chessPieces.end() || (piece->second.second == Type::pawn && p.file() != piece->first.file()))
@@ -335,7 +363,11 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
       char x = (event->x() - startCell.left()) / startCell.width();
       char y = (event->y() - startCell.top()) / startCell.height();
       Q_ASSERT(x >= 0 && x < 8 && y >= 0 && y < 8);
-      hotPos = {'a' + x, '0' + 8 - y};
+      if (boardLayout == BlackTop) {
+        hotPos = { 'a' + x, '1' + (7 - y) };
+      } else {
+        hotPos = { 'a' + (7 - x), '1' + y };
+      }
     }
     else
     {
