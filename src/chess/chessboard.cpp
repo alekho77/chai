@@ -38,7 +38,7 @@ void Chessboard::newGame(QString engine)
   if (engine == "Greedy") {
     chessEngine = CreateGreedyEngine();
   }
-  afterMove(true);
+  afterMove(false);
 }
 
 void Chessboard::stopGame()
@@ -62,14 +62,14 @@ void Chessboard::abortEval()
       chessEngine->Stop();
     }
   } else {
-    afterMove();
+    afterMove(false);
   }
 }
 
 void Chessboard::makeMove(QString move)
 {
   if (chessMachine->Move(move.toStdString())) {
-    afterMove();
+    afterMove(true);
     dragPos = BADPOS;
     repaint();
     updateCursor();
@@ -249,11 +249,18 @@ void Chessboard::updateCursor()
   }
 }
 
-void Chessboard::afterMove(bool init)
+void Chessboard::afterMove(bool shownot)
 {
   using namespace Chai::Chess;
-  
-  if (!init) {
+
+  if (engineTimer) {
+    if (chessEngine) {
+      chessEngine->Stop();
+      chessEngine->ProcessInfo(this);
+    }
+  }
+
+  if (shownot) {
     QString notation = QString::fromStdString(chessMachine->LastMoveNotation());
     switch (chessMachine->CheckStatus())
     {
@@ -376,7 +383,7 @@ void Chessboard::mouseReleaseEvent(QMouseEvent * event)
         }
       }
       if (chessMachine->Move(piece.second, from, to, promotion)) {
-        afterMove();
+        afterMove(true);
       }
     }
     dragPos = BADPOS;

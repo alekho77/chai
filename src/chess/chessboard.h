@@ -67,7 +67,7 @@ private:
       && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());
   }
   void updateCursor();
-  void afterMove(bool init = false);
+  void afterMove(bool shownot);
 
   Ui::chessboardClass ui;
   
