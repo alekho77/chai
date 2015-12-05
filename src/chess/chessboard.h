@@ -16,6 +16,8 @@ class Chessboard : public QWidget, protected Chai::Chess::IInfoCall
 {
   Q_OBJECT
 
+  enum BoardLayout { BlackTop, WhiteTop };
+
 public:
   Chessboard(QWidget *parent = 0);
   ~Chessboard();
@@ -26,6 +28,8 @@ public slots:
   void setDepth(int depth);
   void abortEval();
   void makeMove(QString move);
+  void rotateBoard();
+  void setAutoRotate(bool rot);
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -67,7 +71,7 @@ private:
       && y >= startCell.top() && y < (startCell.top() + 8 * startCell.height());
   }
   void updateCursor();
-  void afterMove(bool init = false);
+  void afterMove(bool shownot);
 
   Ui::chessboardClass ui;
   
@@ -89,6 +93,8 @@ private:
 
   int engineTimer;
   int maxDepth;
+  BoardLayout boardLayout;
+  bool autoRotate;
 };
 
 #endif // CHESSBOARD_H

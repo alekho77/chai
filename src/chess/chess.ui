@@ -183,7 +183,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Current move by:</string>
+              <string>Current:</string>
              </property>
             </widget>
            </item>
@@ -200,6 +200,19 @@
              </property>
              <property name="readOnly">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxAutoRotate">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Auto</string>
              </property>
             </widget>
            </item>
@@ -504,6 +517,8 @@
     <slot>setDepth(int)</slot>
     <slot>abortEval()</slot>
     <slot>makeMove(QString)</slot>
+    <slot>rotateBoard()</slot>
+    <slot>setAutoRotate(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -634,8 +649,8 @@
      <y>57</y>
     </hint>
     <hint type="destinationlabel">
-     <x>561</x>
-     <y>83</y>
+     <x>539</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>
@@ -892,6 +907,54 @@
     <hint type="destinationlabel">
      <x>677</x>
      <y>171</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonRotate</sender>
+   <signal>clicked()</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>rotateBoard()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>656</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxAutoRotate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonRotate</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>591</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>610</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxAutoRotate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>setAutoRotate(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>574</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>
