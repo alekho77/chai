@@ -29,6 +29,7 @@ public slots:
   void abortEval();
   void makeMove(QString move);
   void rotateBoard();
+  void setAutoRotate(bool rot);
 
 protected:
   void resizeEvent(QResizeEvent * event) override;
@@ -93,6 +94,7 @@ private:
   int engineTimer;
   int maxDepth;
   BoardLayout boardLayout;
+  bool autoRotate;
 };
 
 #endif // CHESSBOARD_H

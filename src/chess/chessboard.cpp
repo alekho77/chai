@@ -18,6 +18,7 @@ Chessboard::Chessboard(QWidget *parent)
   , engineTimer(0)
   , maxDepth(0)
   , boardLayout(BlackTop)
+  , autoRotate(false)
 {
   ui.setupUi(this);
   
@@ -83,6 +84,11 @@ void Chessboard::rotateBoard()
   dragPos = BADPOS;
   repaint();
   updateCursor();
+}
+
+void Chessboard::setAutoRotate(bool rot)
+{
+  autoRotate = rot;
 }
 
 void Chessboard::createChessboard(int size)
@@ -327,6 +333,10 @@ void Chessboard::afterMove(bool shownot)
     emit nodesSearched("n/a");
     emit bestScore("n/a");
     emit bestMove("n/a");
+  }
+
+  if (autoRotate) {
+    boardLayout = chessMachine->CurrentPlayer() == Set::white ? BlackTop : WhiteTop;
   }
 }
 

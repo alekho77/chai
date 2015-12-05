@@ -518,6 +518,7 @@
     <slot>abortEval()</slot>
     <slot>makeMove(QString)</slot>
     <slot>rotateBoard()</slot>
+    <slot>setAutoRotate(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -932,12 +933,28 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>567</x>
-     <y>87</y>
+     <x>591</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>610</x>
-     <y>88</y>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxAutoRotate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>widgetChessboard</receiver>
+   <slot>setAutoRotate(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>574</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>
