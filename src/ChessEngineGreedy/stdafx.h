@@ -25,5 +25,8 @@
 #include <boost/optional.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/container/flat_set.hpp>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include "chessmachine.h"

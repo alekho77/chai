@@ -15,7 +15,7 @@ GreedyEngine::GreedyEngine() : callBack(nullptr), aborted(false) {
 bool GreedyEngine::Start(const IMachine& position, int depth) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
     aborted = false;
-    thread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.Clone(), depth));
+    mainthread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.Clone(), depth));
     return true;
   }
   return false;
@@ -23,13 +23,13 @@ bool GreedyEngine::Start(const IMachine& position, int depth) {
 
 void GreedyEngine::Stop() {
   aborted = true;
-  thread.join();
+  mainthread.join();
 }
 
 void GreedyEngine::ProcessInfo(IInfoCall* cb) {
   callBack = cb;
-  service.poll();
-  service.reset();
+  cbservice.poll();
+  cbservice.reset();
   callBack = nullptr;
 }
 
@@ -79,16 +79,28 @@ void GreedyEngine::BestScore(float score) {
 }
 
 void GreedyEngine::ThreadFun(boost::shared_ptr<IMachine> machine, int maxdepth) {
+  taskservice.reset();
+  boost::asio::io_service::work work(taskservice);
+  
+  boost::thread_group threadpool;
+  for (int i = 0; i < maxthreads; ++i) {
+    threadpool.create_thread(boost::bind(&boost::asio::io_service::run, &taskservice));
+  }
+  
   std::string bestmove;
   size_t searched_nodes = 0;
   float bestscore = Search(*machine, maxdepth, searched_nodes, -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), &bestmove);
-  service.post(boost::bind(&GreedyEngine::NodesSearched, this, searched_nodes));
-  service.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
-  service.post(boost::bind(&GreedyEngine::BestMove, this, bestmove));
-  service.post(boost::bind(&GreedyEngine::ReadyOk, this));
+  
+  taskservice.stop();
+  threadpool.join_all();
+  
+  cbservice.post(boost::bind(&GreedyEngine::NodesSearched, this, searched_nodes));
+  cbservice.post(boost::bind(&GreedyEngine::BestScore, this, bestscore));
+  cbservice.post(boost::bind(&GreedyEngine::BestMove, this, bestmove));
+  cbservice.post(boost::bind(&GreedyEngine::ReadyOk, this));
 }
 
-float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float alpha, const float betta, std::string *bestmove) {
+float GreedyEngine::Search(const IMachine& machine, int depth, size_t& nodes, float alpha, const float betta, std::string *bestmove) {
   Status status = machine.CheckStatus();
   if (depth > 0 && status != Status::checkmate && status != Status::stalemate) {
     Moves moves = EmunMoves(machine);
@@ -98,28 +110,42 @@ float GreedyEngine::Search(IMachine& machine, int depth, size_t& nodes, float al
     for (const auto& xp : machine.GetSet(machine.CurrentPlayer() == Set::white ? Set::black : Set::white)) {
       xpos.insert(xp.position);
     }
-    for (auto move : moves) {
-      if (aborted || alpha >= betta) {
-        break;
-      }
-      if (machine.Move(move.piece.type, move.piece.position, move.to, move.promotion)) {
-        bool forcing = depth == 1 && (machine.CheckStatus() == Status::check || xpos.find(move.to) != xpos.end()); // todo: en passat
-        float score = - Search(machine, forcing ? depth : depth - 1, nodes, -betta, -alpha);
-        if (first_move || score > alpha) {
-          first_move = false;
-          if (score > alpha) {
-            alpha = score;
-          }
-          service.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
-          service.post(boost::bind(&GreedyEngine::BestScore, this, score));
-          if (bestmove) {
-            *bestmove = machine.LastMoveNotation();
-            service.post(boost::bind(&GreedyEngine::BestMove, this, *bestmove));
-          }
+    for (auto move = moves.begin(); move != moves.end() && !aborted; ) {
+      boost::container::small_vector< TaskData, 8 > machinepool;
+      {
+        boost::unique_lock<boost::mutex> lock(muttasks);
+        workingtasks = 0;
+        for (int i = 0; i < maxthreads && move != moves.end(); ++i, ++move) {
+          machinepool.push_back(boost::make_tuple(false, machine.Clone(), *move));
+          taskservice.post(boost::bind(&GreedyEngine::TaskFun, this, boost::ref(machinepool.back())));
+          ++workingtasks;
         }
-        machine.Undo();
-      } else {
-        assert(!"Can't make move!");
+        while (workingtasks > 0) {
+          condtasks.wait(lock);
+        }
+      }
+      for (const auto& m : machinepool) {
+        if (aborted || alpha >= betta) {
+          return alpha;
+        }
+        if (m.get<0>()) {
+          bool forcing = depth == 1 && (m.get<1>()->CheckStatus() == Status::check || xpos.find(m.get<2>().to) != xpos.end()); // todo: en passat
+          float score = -Search(*m.get<1>(), forcing ? depth : depth - 1, nodes, -betta, -alpha);
+          if (first_move || score > alpha) {
+            first_move = false;
+            if (score > alpha) {
+              alpha = score;
+            }
+            cbservice.post(boost::bind(&GreedyEngine::NodesSearched, this, nodes));
+            cbservice.post(boost::bind(&GreedyEngine::BestScore, this, score));
+            if (bestmove) {
+              *bestmove = m.get<1>()->LastMoveNotation();
+              cbservice.post(boost::bind(&GreedyEngine::BestMove, this, *bestmove));
+            }
+          }
+        } else {
+          assert(!"Can't make move!");
+        }
       }
     }
     return alpha;
@@ -143,6 +169,16 @@ Moves GreedyEngine::EmunMoves(const IMachine& position) const
     }
   }
   return moves;
+}
+
+void GreedyEngine::TaskFun(TaskData& data)
+{
+  data.get<0>() = data.get<1>()->Move(data.get<2>().piece.type, data.get<2>().piece.position, data.get<2>().to, data.get<2>().promotion);
+  {
+    boost::lock_guard<boost::mutex> lock(muttasks);
+    --workingtasks;
+  }
+  condtasks.notify_one();
 }
 
 float GreedyEngine::EvalSide(const IMachine & position, Set set, const Pieces& pieces, const Pieces& xpieces) const {
