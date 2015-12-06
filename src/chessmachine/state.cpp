@@ -22,7 +22,7 @@ namespace Chai {
 
     Board::iterator Board::begin() noexcept {
       iterator iter = { pieces, pieces.begin() };
-      if (iter != end() && !*iter) {
+      if (iter != end() && !(*iter).second.valid()) {
         ++iter;
       }
       return iter;
@@ -30,30 +30,30 @@ namespace Chai {
 
     Board::const_iterator Board::begin() const noexcept {
       const_iterator iter = { pieces, pieces.cbegin() };
-      if (iter != end() && !*iter) {
+      if (iter != end() && !(*iter).second.valid()) {
         ++iter;
       }
       return iter;
     }
 
     void Board::move(Position from, Position to, Type promotion) {
-      auto piece = get(from);
-      if (piece) {
+      const auto piece = get(from);
+      if (piece.valid()) {
         erase(from);
-        set(to, { piece->set, promotion == Type::bad ? piece->type : promotion, true,{} });
+        set(to, { piece.set, promotion == Type::bad ? piece.type : promotion, true });
       }
     }
 
     void Board::erase(const Position & pos) {
-      if (pieces[pos.pos()] && pieces[pos.pos()]->second.type == Type::king) {
-        if (pieces[pos.pos()]->second.set == Set::white) {
+      const auto& piece = get(pos);
+      if (piece.type == Type::king) {
+        if (piece.set == Set::white) {
           whiteKing = BADPOS;
-        }
-        else {
+        } else {
           blackKing = BADPOS;
         }
       }
-      pieces[pos.pos()].reset();
+      pieces[pos.pos()] = std::make_pair(BADPOS, PieceState());
     }
 
     void Board::set(const Position & pos, const PieceState & state) {
@@ -70,17 +70,17 @@ namespace Chai {
 
     Board::iterator& Board::iterator::operator ++ () {
       if (iter != board.end()) {
-        for (++iter; iter != board.end() && !*iter; ++iter) {}
+        for (++iter; iter != board.end() && (*iter).second.type == Type::bad; ++iter) {}
       }
-      assert(iter == board.end() || *iter);
+      assert(iter == board.end() || (*iter).second.type != Type::bad);
       return *this;
     }
 
     Board::const_iterator& Board::const_iterator::operator ++ () {
       if (iter != board.cend()) {
-        for (++iter; iter != board.cend() && !*iter; ++iter) {}
+        for (++iter; iter != board.cend() && (*iter).second.type == Type::bad; ++iter) {}
       }
-      assert(iter == board.end() || *iter);
+      assert(iter == board.end() || (*iter).second.type != Type::bad);
       return *this;
     }
 
@@ -144,30 +144,30 @@ namespace Chai {
     {
       SetMoves xmoves;
       for (auto& piece : pieces) {
-        if (piece->second.set != activeSet) {
-          piece->second.moves = pieceMoves(pieces, piece->first, {});
-          xmoves.insert(piece->second.moves.begin(), piece->second.moves.end());
+        if (piece.second.set != activeSet) {
+          piece.second.moves = pieceMoves(pieces, piece.first, {});
+          xmoves.insert(piece.second.moves.begin(), piece.second.moves.end());
         }
       }
       for (auto& piece : pieces) {
-        if (piece->second.set == activeSet) {
-          PieceMoves probmoves = pieceMoves(pieces, piece->first, xmove, xmoves);
-          piece->second.moves = probmoves;
+        if (piece.second.set == activeSet) {
+          PieceMoves probmoves = pieceMoves(pieces, piece.first, xmove, xmoves);
+          piece.second.moves = probmoves;
           for (const auto& m : probmoves) {
             Board testpieces = pieces;
-            testpieces.move(piece->first, m);
-            if (piece->second.type == Type::pawn) {
-              if (abs(piece->first.file() - m.file()) == 1 && !pieces.test(m)) {
-                testpieces.erase({ m.file(), piece->first.rank() }); // En passant
+            testpieces.move(piece.first, m);
+            if (piece.second.type == Type::pawn) {
+              if (abs(piece.first.file() - m.file()) == 1 && !pieces.test(m)) {
+                testpieces.erase({ m.file(), piece.first.rank() }); // En passant
               }
             }
             for (const auto& p : testpieces) {
-              if (p->second.set != activeSet) {
-                PieceMoves moves = pieceMoves(testpieces, p->first, {});
+              if (p.second.set != activeSet) {
+                PieceMoves moves = pieceMoves(testpieces, p.first, {});
                 if (std::binary_search(moves.begin(), moves.end(), testpieces.king(activeSet))) {
-                  auto im = std::lower_bound(piece->second.moves.begin(), piece->second.moves.end(), m);
+                  auto im = std::lower_bound(piece.second.moves.begin(), piece.second.moves.end(), m);
                   assert(*im == m);
-                  piece->second.moves.erase(im);
+                  piece.second.moves.erase(im);
                   break;
                 }
               }
@@ -277,8 +277,8 @@ namespace Chai {
 
     bool ChessState::testPiece(const Board& pieces, const std::pair<Position, PieceState>& piece)
     {
-      auto p = pieces.get(piece.first);
-      return p && *p == piece.second;
+      const auto& p = pieces[piece.first];
+      return p.valid() && p == piece.second;
     }
 
   }

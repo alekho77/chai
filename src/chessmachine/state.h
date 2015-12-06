@@ -1,6 +1,6 @@
 #pragma once
 
-#define PIECE(p,s,t) std::make_pair(p, PieceState({ s, t, false, {} }))
+#define PIECE(p,s,t) std::make_pair(p, PieceState(s, t))
 
 #define PAWN(p,s)   PIECE(p, s, Type::pawn)
 #define KNIGHT(p,s) PIECE(p, s, Type::knight)
@@ -38,6 +38,9 @@ namespace Chai {
 
     struct PieceState
     {
+      PieceState() : set(Set::unknown), type(Type::bad), moved(false) {}
+      PieceState(Set s, Type t) : set(s), type(t), moved(false) {}
+      PieceState(Set s, Type t, bool m) : set(s), type(t), moved(m) {}
       Set set;
       Type type;
       bool moved;
@@ -45,11 +48,12 @@ namespace Chai {
 
       bool operator == (const PieceState& that) const { return set == that.set && type == that.type && moved == that.moved; }
       bool isMove(const Position& to) const { return std::binary_search(moves.begin(), moves.end(), to); }
+      bool valid() const { return type != Type::bad; }
     };
 
     class Board
     {
-      typedef std::array<boost::optional< std::pair<Position, PieceState> >, 64> board_type;
+      typedef std::array< std::pair<Position, PieceState>, 64> board_type;
     public:
       Board(std::initializer_list< std::pair<Position, PieceState> > il);
 
@@ -83,17 +87,14 @@ namespace Chai {
       const_iterator begin() const noexcept;
       const_iterator end() const noexcept { return{ pieces, pieces.cend() }; }
 
-      const PieceState& operator[] (const Position& pos) const { return pieces[pos.pos()]->second; }
-      boost::optional<PieceState> get(const Position& pos) const {
-        const auto& p = pieces[pos.pos()];
-        return p ? p->second : boost::optional<PieceState>();
-      }
-      bool test(const Position& pos) const { return !!pieces[pos.pos()]; }
+      const PieceState& operator[] (const Position& pos) const { return get(pos); }
+      bool test(const Position& pos) const { return get(pos).valid(); }
       Position king(Set set) const { return set == Set::white ? whiteKing : blackKing; }
       void move(Position from, Position to, Type promotion = Type::bad);
       void erase(const Position& pos);
 
     private:
+      const PieceState& get(const Position& pos) const { return pieces[pos.pos()].second; }
       void set(const Position& pos, const PieceState& state);
 
       Position whiteKing;
