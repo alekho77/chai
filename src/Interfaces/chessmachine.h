@@ -67,7 +67,7 @@ namespace Chai {
       virtual Status CheckStatus() const = 0;
       virtual std::string LastMoveNotation() const = 0;
 
-      virtual boost::shared_ptr<IMachine> Clone() const = 0;
+      virtual boost::shared_ptr<IMachine> SlightClone() const = 0;
       
       virtual ~IMachine() {}
     };

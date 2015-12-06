@@ -12,8 +12,10 @@ namespace Chai {
 
     }
 
-    ChessMachine::ChessMachine(const ChessMachine& other) : states(other.states) {
-
+    ChessMachine::ChessMachine(const ChessMachine& other) {
+      if (!other.states.empty()) {
+        states.push_back(other.states.back());
+      }
     }
 
     void ChessMachine::Start() {
@@ -239,7 +241,7 @@ namespace Chai {
       return lastmove;
     }
 
-    boost::shared_ptr<IMachine> ChessMachine::Clone() const
+    boost::shared_ptr<IMachine> ChessMachine::SlightClone() const
     {
       return boost::shared_ptr<IMachine>(new ChessMachine(*this));
     }

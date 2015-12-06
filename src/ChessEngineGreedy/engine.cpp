@@ -15,7 +15,7 @@ GreedyEngine::GreedyEngine() : callBack(nullptr), aborted(false) {
 bool GreedyEngine::Start(const IMachine& position, int depth) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
     aborted = false;
-    mainthread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.Clone(), depth));
+    mainthread = boost::thread(boost::bind(&GreedyEngine::ThreadFun, this, position.SlightClone(), depth));
     return true;
   }
   return false;
@@ -116,7 +116,7 @@ float GreedyEngine::Search(const IMachine& machine, int depth, size_t& nodes, fl
         boost::unique_lock<boost::mutex> lock(muttasks);
         workingtasks = 0;
         for (int i = 0; i < maxthreads && move != moves.end(); ++i, ++move) {
-          machinepool.push_back(boost::make_tuple(false, machine.Clone(), *move));
+          machinepool.push_back(boost::make_tuple(false, machine.SlightClone(), *move));
           taskservice.post(boost::bind(&GreedyEngine::TaskFun, this, boost::ref(machinepool.back())));
           ++workingtasks;
         }
