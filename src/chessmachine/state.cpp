@@ -234,7 +234,7 @@ namespace Chai {
           addMoveIf(pieces, moves, pos + v, piece.set);
         }
         const char kingrank = piece.set == Set::white ? '1' : '8';
-        if (!piece.moved && pos == Position({ 'e', kingrank })) {
+        if (!piece.moved && pos == Position({ 'e', kingrank }) && xmoves.find(pos) == xmoves.end()) {
           // O-O
           if ( testPath(pieces, xmoves, { { 'f', kingrank },{'g', kingrank} }) && testPiece(pieces, ROOK(Position({ 'h',kingrank }), piece.set)) ) {
             moves.push_back(Position({'g', kingrank}));

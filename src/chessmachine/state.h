@@ -26,7 +26,7 @@
 namespace Chai {
   namespace Chess {
 
-    typedef boost::container::small_vector<Position, 3> PiecePath;
+    typedef boost::container::small_vector<Position, 4> PiecePath;
 
     struct Move
     {
