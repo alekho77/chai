@@ -3,6 +3,8 @@
 
 int main(int argc, char *argv[])
 {
+  QCoreApplication::addLibraryPath("platforms");
+
   QApplication a(argc, argv);
   chess w;
   w.show();
