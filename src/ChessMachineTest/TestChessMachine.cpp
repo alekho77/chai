@@ -8,7 +8,7 @@ BOOST_AUTO_TEST_SUITE ( ChessMachineTest )
 
 BOOST_AUTO_TEST_CASE( ConstructorTest )  
 {
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   
   BOOST_REQUIRE(machine->GetSet(Set::white).empty());
@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
 BOOST_AUTO_TEST_CASE( StartTest )
 {
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   BOOST_REQUIRE(d4 == d4);
   BOOST_REQUIRE(a4 < d4);
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( InsidiousBunchTest)
     Szczawno Zdroj, 1950
     Caro-Kann Defence
   */
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE( HamletAmateurTest )
     Vienna 1899
     Defence Pirc-Ufimtsev
   */
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE( DebutSubtletyTest )
     1934
     Caro-Kann Defence
   */
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE( DangerousReidTest )
     Moscow 1935
     Caro-Kann Defence
   */
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE( HaplessQueenTest )
     Hapless QUEEN
     Scandinavian Defense
   */
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
   /*
     HORSE IS BETTER THAN THE QUEEN
   */
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE( HorseBetterQueenTest )
 
 BOOST_AUTO_TEST_CASE( EnPassantTest )
 {
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 

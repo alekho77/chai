@@ -1,23 +1,17 @@
 #pragma once
 
 #include "chessmachine.h"
+
+#include <boost/regex.hpp>
+#include <boost/test/unit_test.hpp>
+
 #include <string>
 #include <algorithm>
 #include <map>
 #include <vector>
-#include <boost/regex.hpp>
-#include <boost/test/unit_test.hpp>
 
 namespace Chai {
 namespace Chess {
-
-//struct Move
-//{
-//  Type type;
-//  Position from;
-//  Position to;
-//  Type promotion;
-//};
 
 typedef std::map< Position, PieceMoves > Moves;
 

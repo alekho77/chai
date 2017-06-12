@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "state.h"
+#include <vector>
 
 namespace Chai {
   namespace Chess {

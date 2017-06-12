@@ -4,18 +4,6 @@
 #include <boost/container/static_vector.hpp>
 #include <string>
 
-#ifdef CHESSMACHINE_EXPORTS
-#define CHESSMACHINE_API __declspec(dllexport)
-#else
-#define CHESSMACHINE_API __declspec(dllimport)
-#endif
-
-#ifdef CHESSENGINEGREEDY_EXPORTS
-#define CHESSENGINEGREEDY_API __declspec(dllexport)
-#else
-#define CHESSENGINEGREEDY_API __declspec(dllimport)
-#endif
-
 #define CHESSPOS(name) const Chai::Chess::Position (##name) = { (#name)[0], (#name)[1] }
 #define CHESSRANK(R) CHESSPOS(a##R); CHESSPOS(b##R); CHESSPOS(c##R); CHESSPOS(d##R); CHESSPOS(e##R); CHESSPOS(f##R); CHESSPOS(g##R); CHESSPOS(h##R)
 #define CHESSBOARD CHESSRANK(1); CHESSRANK(2); CHESSRANK(3); CHESSRANK(4); CHESSRANK(5); CHESSRANK(6); CHESSRANK(7); CHESSRANK(8)
@@ -102,5 +90,4 @@ namespace Chai {
   }
 }
 
-CHESSMACHINE_API boost::shared_ptr<Chai::Chess::IMachine> CreateChessMachine();
-CHESSENGINEGREEDY_API boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine();
+boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine();

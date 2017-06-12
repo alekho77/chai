@@ -1,4 +1,11 @@
 #pragma once
+#include "chessmachine.h"
+
+#include <boost/optional.hpp>
+#include <boost/container/small_vector.hpp>
+#include <boost/container/flat_set.hpp>
+
+#include <array>
 
 #define PIECE(p,s,t) std::make_pair(p, PieceState(s, t))
 

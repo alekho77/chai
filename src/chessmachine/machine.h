@@ -1,6 +1,8 @@
 #pragma once
 #include "state.h"
 
+#include <list>
+
 namespace Chai {
   namespace Chess {
     class ChessMachine : public IMachine
