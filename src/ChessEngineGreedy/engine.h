@@ -4,10 +4,12 @@
 
 #include <SDKDDKVer.h>
 
-#include <boost/tuple/tuple.hpp>
+#pragma warning(push, 0)
 #include <boost/asio.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/thread.hpp>
 #include <boost/container/small_vector.hpp>
+#pragma warning(pop)
 
 namespace Chai {
 namespace Chess {

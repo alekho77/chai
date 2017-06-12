@@ -2,6 +2,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/container/static_vector.hpp>
+
 #include <string>
 
 #define CHESSPOS(name) const Chai::Chess::Position (##name) = { (#name)[0], (#name)[1] }
