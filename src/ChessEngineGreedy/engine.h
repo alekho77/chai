@@ -25,7 +25,7 @@ class GreedyEngine : public IEngine, private IInfoCall
   typedef boost::tuple<bool, boost::shared_ptr<IMachine>, Move> TaskData;
 public:
   GreedyEngine();
-  //virtual ~GreedyEngine();
+  ~GreedyEngine() override;
 
   bool Start(const IMachine& position, int depth) override;
   void Stop() override;

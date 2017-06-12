@@ -34,6 +34,7 @@ Chessboard::Chessboard(QWidget *parent)
 
 Chessboard::~Chessboard()
 {
+  stopGame();
 }
 
 void Chessboard::newGame(QString engine)
