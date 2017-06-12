@@ -1,10 +1,6 @@
-#include "stdafx.h"
 #include "engine.h"
 
-boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine()
-{
-  return boost::shared_ptr<Chai::Chess::IEngine>(new Chai::Chess::GreedyEngine());
-}
+#include <boost/container/flat_set.hpp>
 
 namespace Chai {
 namespace Chess {

@@ -89,5 +89,3 @@ namespace Chai {
     };
   }
 }
-
-boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine();

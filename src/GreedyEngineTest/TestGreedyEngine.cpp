@@ -55,12 +55,6 @@ private:
   volatile bool deadline;
 };
 
-struct Move {
-  Piece piece;
-  Position to;
-  Type promotion;
-};
-
 struct scoped_counter {
   explicit scoped_counter(int& c) : count(c) { ++count; }
   ~scoped_counter() { --count; }
@@ -117,7 +111,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& n
     return *bestmove;
   }
   ++nodes;
-  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
+  boost::shared_ptr<IEngine> engine = boost::make_shared<GreedyEngine>();
   return std::make_pair(engine->EvalPosition(machine), std::string());
 }
 
@@ -126,10 +120,10 @@ BOOST_AUTO_TEST_SUITE( GreedyEngineTest )
 
 BOOST_AUTO_TEST_CASE( ConstructorTest )
 {
-  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
+  boost::shared_ptr<IEngine> engine = boost::make_shared<GreedyEngine>();
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
 
   BOOST_REQUIRE(!engine->Start(*machine, 0));
@@ -138,10 +132,10 @@ BOOST_AUTO_TEST_CASE( ConstructorTest )
 
 BOOST_AUTO_TEST_CASE( StartTest )
 {
-  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
+  boost::shared_ptr<IEngine> engine = boost::make_shared<GreedyEngine>();
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
@@ -160,10 +154,10 @@ BOOST_AUTO_TEST_CASE( GumpSteinitzTest )
   /*
     Gump - Steinitz Vienna, 1859 Vienna Game
   */
-  boost::shared_ptr<IEngine> engine = CreateGreedyEngine();
+  boost::shared_ptr<IEngine> engine = boost::make_shared<GreedyEngine>();
   BOOST_REQUIRE_MESSAGE(engine, "Can't create ChessEngine!");
 
-  boost::shared_ptr<IMachine> machine = CreateChessMachine();
+  boost::shared_ptr<IMachine> machine = boost::make_shared<ChessMachine>();
   BOOST_REQUIRE_MESSAGE(machine, "Can't create ChessMachine!");
   machine->Start();
 
