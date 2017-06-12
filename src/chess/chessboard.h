@@ -1,7 +1,7 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 
-#include "chessmachine.h"
+#include <Interfaces/chessmachine.h>
 
 #include <QWidget>
 #include <QSharedPointer>

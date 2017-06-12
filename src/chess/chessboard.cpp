@@ -1,8 +1,8 @@
 #include "chessboard.h"
 #include "promotiondlg.h"
 
-#include "../chessmachine/machine.h"
-#include "../ChessEngineGreedy/engine.h"
+#include <chessmachine/machine.h>
+#include <ChessEngineGreedy/engine.h>
 
 #include <QPainter>
 #include <QPaintEvent>

@@ -1,5 +1,5 @@
 #pragma once
-#include "chessmachine.h"
+#include <Interfaces/chessmachine.h>
 
 #include <boost/optional.hpp>
 #include <boost/container/small_vector.hpp>
