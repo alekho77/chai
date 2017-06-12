@@ -16,12 +16,6 @@
 #define CHESSENGINEGREEDY_API __declspec(dllimport)
 #endif
 
-#ifdef UCIPROXY_EXPORTS
-#define UCIPROXY_API __declspec(dllexport)
-#else
-#define UCIPROXY_API __declspec(dllimport)
-#endif
-
 #define CHESSPOS(name) const Chai::Chess::Position (##name) = { (#name)[0], (#name)[1] }
 #define CHESSRANK(R) CHESSPOS(a##R); CHESSPOS(b##R); CHESSPOS(c##R); CHESSPOS(d##R); CHESSPOS(e##R); CHESSPOS(f##R); CHESSPOS(g##R); CHESSPOS(h##R)
 #define CHESSBOARD CHESSRANK(1); CHESSRANK(2); CHESSRANK(3); CHESSRANK(4); CHESSRANK(5); CHESSRANK(6); CHESSRANK(7); CHESSRANK(8)
@@ -110,4 +104,3 @@ namespace Chai {
 
 CHESSMACHINE_API boost::shared_ptr<Chai::Chess::IMachine> CreateChessMachine();
 CHESSENGINEGREEDY_API boost::shared_ptr<Chai::Chess::IEngine> CreateGreedyEngine();
-UCIPROXY_API boost::shared_ptr<Chai::Chess::IEngine> ConnectToEngine(const std::string& exefile, const std::string& logfile);

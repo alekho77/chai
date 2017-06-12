@@ -46,8 +46,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GreedyEngineTest", "GreedyE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{1A097800-BABC-46D3-8C77-C58D1AA9317B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UciProxy", "UciProxy\UciProxy.vcxproj", "{B81714BB-E483-472D-991A-789081BDA498}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -112,14 +110,6 @@ Global
 		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x64.Build.0 = Release|x64
 		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x86.ActiveCfg = Release|Win32
 		{6BBE8D66-9234-429B-9010-3F3397FA7350}.Release|x86.Build.0 = Release|Win32
-		{B81714BB-E483-472D-991A-789081BDA498}.Debug|x64.ActiveCfg = Debug|x64
-		{B81714BB-E483-472D-991A-789081BDA498}.Debug|x64.Build.0 = Debug|x64
-		{B81714BB-E483-472D-991A-789081BDA498}.Debug|x86.ActiveCfg = Debug|Win32
-		{B81714BB-E483-472D-991A-789081BDA498}.Debug|x86.Build.0 = Debug|Win32
-		{B81714BB-E483-472D-991A-789081BDA498}.Release|x64.ActiveCfg = Release|x64
-		{B81714BB-E483-472D-991A-789081BDA498}.Release|x64.Build.0 = Release|x64
-		{B81714BB-E483-472D-991A-789081BDA498}.Release|x86.ActiveCfg = Release|Win32
-		{B81714BB-E483-472D-991A-789081BDA498}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
