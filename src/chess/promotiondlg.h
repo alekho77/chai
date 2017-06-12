@@ -1,9 +1,10 @@
 #ifndef PROMOTIONDLG_H
 #define PROMOTIONDLG_H
 
+#include "chessmachine.h"
+
 #include <QDialog>
 #include "ui_promotiondlg.h"
-#include "chessmachine.h"
 
 class PromotionDlg : public QDialog
 {

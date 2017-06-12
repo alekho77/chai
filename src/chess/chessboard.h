@@ -1,13 +1,15 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 
+#include "chessmachine.h"
+
 #include <QWidget>
 #include <QSharedPointer>
 #include <QMap>
 #include <QVector>
-#include <map>
 #include "ui_chessboard.h"
-#include "chessmachine.h"
+
+#include <map>
 
 typedef std::map< Chai::Chess::Position, std::pair<Chai::Chess::Set, Chai::Chess::Type> > ChessPieces;
 typedef QMap< Chai::Chess::Type, QSharedPointer<QImage> > ChessPieceImages;
