@@ -1,5 +1,9 @@
 #include "chessboard.h"
 #include "promotiondlg.h"
+
+#include "../chessmachine/machine.h"
+#include "../ChessEngineGreedy/engine.h"
+
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>
@@ -7,6 +11,8 @@
 #include <QSvgRenderer>
 #include <QSet>
 #include <QPair>
+
+#include <boost/make_shared.hpp>
 
 Chessboard::Chessboard(QWidget *parent)
   : QWidget(parent)
@@ -23,7 +29,7 @@ Chessboard::Chessboard(QWidget *parent)
   ui.setupUi(this);
   
   using namespace Chai::Chess;
-  chessMachine = CreateChessMachine();
+  chessMachine = boost::make_shared<Chai::Chess::ChessMachine>();
 }
 
 Chessboard::~Chessboard()
@@ -38,7 +44,7 @@ void Chessboard::newGame(QString engine)
   repaint();
   moveCount = 1;
   if (engine == "Greedy") {
-    chessEngine = CreateGreedyEngine();
+    chessEngine = boost::make_shared<Chai::Chess::GreedyEngine>();
   }
   afterMove(false);
 }

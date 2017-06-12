@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <memory>
 
-#define BOOST_ALL_DYN_LINK
-
 #include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 #include "machinetestutils.h"
+#include "../chessmachine/machine.h"

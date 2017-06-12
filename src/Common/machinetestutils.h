@@ -1,25 +1,19 @@
 #pragma once
 
 #include "chessmachine.h"
+
+#include <boost/regex.hpp>
+#include <boost/test/unit_test.hpp>
+
 #include <string>
 #include <algorithm>
 #include <map>
 #include <vector>
-#include <boost/regex.hpp>
-#include <boost/test/unit_test.hpp>
 
 namespace Chai {
 namespace Chess {
 
-//struct Move
-//{
-//  Type type;
-//  Position from;
-//  Position to;
-//  Type promotion;
-//};
-
-typedef std::map< Position, PieceMoves > Moves;
+typedef std::map< Position, PieceMoves > TestMoves;
 
 template <class T>
 bool contains(const T& list, Type type) {
@@ -75,7 +69,7 @@ inline std::string toStr(const Position& p) {
   return p.isValid() ? std::string(1, p.file()) + std::string(1, p.rank()) : std::string("");
 }
 
-inline void testpos(const std::map<Type, Moves>& position, const Pieces& pieces, const IMachine& machine) {
+inline void testpos(const std::map<Type, TestMoves>& position, const Pieces& pieces, const IMachine& machine) {
   static const std::map<Type, std::string> name = { { Type::pawn, "p" },{ Type::knight, "N" },{ Type::bishop, "B" },{ Type::rook, "R" },{ Type::queen, "Q" },{ Type::king, "K" } };
   for (const auto& p : position) {
     BOOST_CHECK_MESSAGE(p.second.size() == count(pieces, p.first), "The number of pieces " + name.at(p.first) + " does not match");

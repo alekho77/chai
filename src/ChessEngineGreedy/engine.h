@@ -1,5 +1,14 @@
 #pragma once
 
+#include "chessmachine.h"
+
+#include <SDKDDKVer.h>
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+#include <boost/container/small_vector.hpp>
+
 namespace Chai {
 namespace Chess {
 

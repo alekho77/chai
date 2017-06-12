@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "state.h"
+#include <vector>
 
 namespace Chai {
   namespace Chess {
@@ -94,7 +94,7 @@ namespace Chai {
       evalMoves({});
     }
 
-    ChessState::ChessState(Set set, const Move& move, const Board& pieces)
+    ChessState::ChessState(Set set, const StateMove& move, const Board& pieces)
       : pieces(pieces)
       , lastMove(move)
       , activeSet(set)
@@ -102,7 +102,7 @@ namespace Chai {
       evalMoves(lastMove);
     }
 
-    ChessState ChessState::MakeMove(const Move & move) const
+    ChessState ChessState::MakeMove(const StateMove & move) const
     {
       assert(pieces[move.from].set == activeSet);
       assert(pieces[move.from].type == move.type);
@@ -140,7 +140,7 @@ namespace Chai {
       return { activeSet == Set::white ? Set::black : Set::white, move, newpieces };
     }
 
-    void ChessState::evalMoves(boost::optional<Move> xmove)
+    void ChessState::evalMoves(boost::optional<StateMove> xmove)
     {
       SetMoves xmoves;
       for (auto& piece : pieces) {
@@ -177,7 +177,7 @@ namespace Chai {
       }
     }
 
-    PieceMoves ChessState::pieceMoves(const Board& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves)
+    PieceMoves ChessState::pieceMoves(const Board& pieces, const Position& pos, boost::optional<StateMove> xmove, const SetMoves& xmoves)
     {
       static const std::vector<MoveVector> Lshape_moves = { {-1,+2}, {+1,+2}, {-1,-2}, {+1,-2}, {+2,+1}, {+2,-1}, {-2,+1}, {-2,-1} };
       static const std::vector<MoveVector> diagonal_moves = { { +1,+1 },{ +1,-1 },{ -1,+1 },{ -1,-1 } };

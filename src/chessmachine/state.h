@@ -1,4 +1,11 @@
 #pragma once
+#include "chessmachine.h"
+
+#include <boost/optional.hpp>
+#include <boost/container/small_vector.hpp>
+#include <boost/container/flat_set.hpp>
+
+#include <array>
 
 #define PIECE(p,s,t) std::make_pair(p, PieceState(s, t))
 
@@ -28,7 +35,7 @@ namespace Chai {
 
     typedef boost::container::small_vector<Position, 4> PiecePath;
 
-    struct Move
+    struct StateMove
     {
       Type type;
       Position from;
@@ -119,17 +126,17 @@ namespace Chai {
     public:
       ChessState();
       
-      ChessState MakeMove(const Move& move) const;
+      ChessState MakeMove(const StateMove& move) const;
 
       Set activeSet;
-      boost::optional<Move> lastMove;
+      boost::optional<StateMove> lastMove;
       Board pieces;
 
     private:
-      ChessState(Set set, const Move& move, const Board& pieces);
+      ChessState(Set set, const StateMove& move, const Board& pieces);
 
-      void evalMoves(boost::optional<Move> xmove);
-      static PieceMoves pieceMoves(const Board& pieces, const Position& pos, boost::optional<Move> xmove, const SetMoves& xmoves = SetMoves());
+      void evalMoves(boost::optional<StateMove> xmove);
+      static PieceMoves pieceMoves(const Board& pieces, const Position& pos, boost::optional<StateMove> xmove, const SetMoves& xmoves = SetMoves());
       static bool addMoveIf(const Board& pieces, PieceMoves& moves, const Position& pos, Set set = Set::unknown, bool capture = false);
       static bool testPath(const Board& pieces, const SetMoves& xmoves, const PiecePath& path);
       static bool testPiece(const Board& pieces, const std::pair<Position, PieceState>& piece);
