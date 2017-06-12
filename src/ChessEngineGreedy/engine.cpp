@@ -8,6 +8,10 @@ namespace Chess {
 GreedyEngine::GreedyEngine() : callBack(nullptr), aborted(false) {
 }
 
+GreedyEngine::~GreedyEngine() {
+  Stop();
+}
+
 bool GreedyEngine::Start(const IMachine& position, int depth) {
   if (position.CheckStatus() == Status::normal || position.CheckStatus() == Status::check || (depth == 0 && position.CheckStatus() != Status::invalid)) {
     aborted = false;
