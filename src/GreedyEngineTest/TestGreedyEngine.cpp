@@ -1,4 +1,16 @@
-#include "stdafx.h"
+#define BOOST_TEST_MODULE MyTest
+#include <boost/test/unit_test.hpp>
+
+#include "../ChessEngineGreedy/engine.h"
+#include "../chessmachine/machine.h"
+#include "machinetestutils.h"
+
+#include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
+#include <boost/asio.hpp>
+#include <boost/container/small_vector.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace Chai::Chess;
 
@@ -114,7 +126,6 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& n
   boost::shared_ptr<IEngine> engine = boost::make_shared<GreedyEngine>();
   return std::make_pair(engine->EvalPosition(machine), std::string());
 }
-
 
 BOOST_AUTO_TEST_SUITE( GreedyEngineTest )
 
