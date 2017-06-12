@@ -1,9 +1,9 @@
 #define BOOST_TEST_MODULE MyTest
 #include <boost/test/unit_test.hpp>
 
-#include "../ChessEngineGreedy/engine.h"
-#include "../chessmachine/machine.h"
-#include "machinetestutils.h"
+#include <ChessEngineGreedy/engine.h>
+#include <chessmachine/machine.h>
+#include <Common/machinetestutils.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>

@@ -1,7 +1,7 @@
 #ifndef PROMOTIONDLG_H
 #define PROMOTIONDLG_H
 
-#include "chessmachine.h"
+#include <Interfaces/chessmachine.h>
 
 #include <QDialog>
 #include "ui_promotiondlg.h"
