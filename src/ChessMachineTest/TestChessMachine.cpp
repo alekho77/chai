@@ -1,4 +1,11 @@
-#include "stdafx.h"
+#define BOOST_TEST_MODULE MyTest
+#include <boost/test/unit_test.hpp>
+
+#include "machinetestutils.h"
+#include "../chessmachine/machine.h"
+
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace Chai::Chess;
 
