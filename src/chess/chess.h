@@ -1,8 +1,10 @@
 #ifndef CHESS_H
 #define CHESS_H
 
+#pragma warning(push,0)
 #include <QtWidgets/QMainWindow>
 #include "ui_chess.h"
+#pragma warning(pop)
 
 class chess : public QMainWindow
 {

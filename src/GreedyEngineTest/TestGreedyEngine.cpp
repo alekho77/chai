@@ -1,5 +1,9 @@
 #define BOOST_TEST_MODULE MyTest
+
+#pragma warning(push)
+#pragma warning(disable:4459) // bcs_char_traits.hpp(60): warning C4459: declaration of 'c1' hides global declaration
 #include <boost/test/unit_test.hpp>
+#pragma warning(pop)
 
 #include <ChessEngineGreedy/engine.h>
 #include <chessmachine/machine.h>
@@ -51,7 +55,7 @@ public:
 
 private:
   void NodesSearched(size_t n) override { nodes = n; }
-  void NodesPerSecond(int nps) override {}
+  void NodesPerSecond(int /*nps*/) override {}
 
   void ReadyOk() override { readyok = true; }
   void BestMove(std::string notation) override { bestmove = notation; }

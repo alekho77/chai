@@ -54,8 +54,10 @@ inline std::vector<std::string> split(const std::string& game) {
   for (auto xit = make_regex_iterator(game, xreg); xit != boost::sregex_iterator(); ++xit) {
     auto& res = *xit;
     assert(res.size() == 4);
-    int nm = std::stoi(res[1].str());
-    assert(nm == (moves.size() / 2 + 1));
+    #ifdef _DEBUG
+      int nm = std::stoi(res[1].str());
+      assert(nm == (moves.size() / 2 + 1));
+    #endif // _DEBUG
     moves.push_back(res[2].str());
     std::string bm = res[3].str();
     if (!bm.empty()) {

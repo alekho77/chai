@@ -2,12 +2,20 @@
 
 #include <Interfaces/chessmachine.h>
 
-#include <SDKDDKVer.h>
-
 #include <boost/tuple/tuple.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
 #include <boost/container/small_vector.hpp>
+
+#include <SDKDDKVer.h>
+#pragma warning(push)
+#pragma warning(disable:4005) // warning C4005: 'BOOST_ASIO_ERROR_CATEGORY_NOEXCEPT': macro redefinition
+#include <boost/asio.hpp>
+#pragma warning(pop)
+
+#pragma warning(push)
+#pragma warning(disable:4100) // future.hpp(410): warning C4100: 'lk': unreferenced formal parameter
+#pragma warning(disable:4459) // bind.hpp(227): warning C4459: declaration of 'a1' hides global declaration
+#include <boost/thread.hpp>
+#pragma warning(pop)
 
 namespace Chai {
 namespace Chess {

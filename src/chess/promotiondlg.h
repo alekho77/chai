@@ -3,8 +3,10 @@
 
 #include <Interfaces/chessmachine.h>
 
+#pragma warning(push,0)
 #include <QDialog>
 #include "ui_promotiondlg.h"
+#pragma warning(pop)
 
 class PromotionDlg : public QDialog
 {

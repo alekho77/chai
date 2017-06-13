@@ -4,6 +4,7 @@
 #include <chessmachine/machine.h>
 #include <ChessEngineGreedy/engine.h>
 
+#pragma warning(push,0)
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>
@@ -11,6 +12,7 @@
 #include <QSvgRenderer>
 #include <QSet>
 #include <QPair>
+#pragma warning(pop)
 
 #include <boost/make_shared.hpp>
 
@@ -353,7 +355,7 @@ void Chessboard::resizeEvent(QResizeEvent * event)
   createChessboard(qMin(event->size().width(), event->size().height()));
 }
 
-void Chessboard::paintEvent(QPaintEvent * event)
+void Chessboard::paintEvent(QPaintEvent * /*event*/)
 {
   QPainter painter(this);
   painter.drawImage(0, 0, *imgBoard);
@@ -377,9 +379,9 @@ void Chessboard::mouseMoveEvent(QMouseEvent * event)
   {
     if (overBoard(event->x(), event->y()))
     {
-      char x = (event->x() - startCell.left()) / startCell.width();
-      char y = (event->y() - startCell.top()) / startCell.height();
-      Q_ASSERT(x >= 0 && x < 8 && y >= 0 && y < 8);
+      char x = static_cast<char>( (event->x() - startCell.left()) / startCell.width() );
+      char y = static_cast<char>( (event->y() - startCell.top()) / startCell.height() );
+      assert(x >= 0 && x < 8 && y >= 0 && y < 8);
       if (boardLayout == BlackTop) {
         hotPos = { 'a' + x, '1' + (7 - y) };
       } else {
