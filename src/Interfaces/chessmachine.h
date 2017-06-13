@@ -25,8 +25,8 @@ namespace Chai {
       
       inline int x() const { return (data >> 4) & 0x0f; }
       inline int y() const { return data & 0x0f; }
-      inline char file() const { return 'a' + x(); } // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
-      inline char rank() const { return '1' + y(); } // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
+      inline char file() const { return static_cast<char>('a' + x()); } // A column of the chessboard. A specific file are named using its position in 'a'–'h'.
+      inline char rank() const { return static_cast<char>('1' + y()); } // A row of the chessboard. In algebraic notation, ranks are numbered '1'–'8' starting from White's side of the board.
       inline bool operator == (const Position& other) const { return data == other.data; }
       inline bool operator != (const Position& other) const { return data != other.data; }
       inline bool operator < (const Position& other) const { return data < other.data; }

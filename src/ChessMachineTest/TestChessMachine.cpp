@@ -1,5 +1,9 @@
 #define BOOST_TEST_MODULE MyTest
+
+#pragma warning(push)
+#pragma warning(disable:4459) // bcs_char_traits.hpp(60): warning C4459: declaration of 'c1' hides global declaration
 #include <boost/test/unit_test.hpp>
+#pragma warning(pop)
 
 #include <Common/machinetestutils.h>
 #include <chessmachine/machine.h>

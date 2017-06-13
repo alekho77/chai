@@ -3,11 +3,13 @@
 
 #include <Interfaces/chessmachine.h>
 
+#pragma warning(push,0)
 #include <QWidget>
 #include <QSharedPointer>
 #include <QMap>
 #include <QVector>
 #include "ui_chessboard.h"
+#pragma warning(pop)
 
 #include <map>
 
@@ -44,7 +46,7 @@ protected:
 
   // Messages sent during the search
   void NodesSearched(size_t nodes) override;
-  void NodesPerSecond(int nps) override {}
+  void NodesPerSecond(int /*nps*/) override {}
   // Messages sent after the search
   void ReadyOk() override;
   void BestMove(std::string notation) override;
