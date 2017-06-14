@@ -1,10 +1,10 @@
 #include "chess.h"
 #include <QtWidgets/QApplication>
+#include <QtPlugin>
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 
 int main(int argc, char *argv[])
 {
-  QCoreApplication::addLibraryPath("platforms");
-
   QApplication a(argc, argv);
   chess w;
   w.show();
