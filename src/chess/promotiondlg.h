@@ -3,7 +3,7 @@
 
 #include <Interfaces/chessmachine.h>
 
-#pragma warning(push,0)
+#pragma warning(push,1)
 #include <QDialog>
 #include "ui_promotiondlg.h"
 #pragma warning(pop)

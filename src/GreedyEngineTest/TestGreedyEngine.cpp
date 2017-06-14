@@ -106,7 +106,7 @@ std::pair<float, std::string> TestSearch(IMachine& machine, int depth, size_t& n
             bool forcing = (depth == 1 && (/*status == Status::check ||*/ machine.CheckStatus() == Status::check || xpos.find(mm.to) != xpos.end())); // TODO: en passant
             float score = -TestSearch(machine, forcing ? depth : depth - 1, nodes, -betta, -alpha).first;
             if (!bestmove || score > bestmove->first) {
-              bestmove = { score, machine.LastMoveNotation() };
+              bestmove = std::pair<float, std::string>({ score, machine.LastMoveNotation() });
               if (score > alpha) {
                 alpha = score;
               }

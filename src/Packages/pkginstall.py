@@ -18,17 +18,17 @@ for m in qtmudules:
             print("Copying %s" % extname)
             shutil.copy(fullname, outdir)
 
-boost_root = "C:/Boost"
-boost_ver = "1.59"
-boost_modules = ["unit_test_framework", "regex", "thread", "system", "date_time", "chrono"]
-for m in boost_modules:
-    name = "boost_" + m + "-" + toolset + "-mt-" + ("gd-" if variant.lower()=="debug" else "") + boost_ver.replace('.', '_')
-    for ext in (["dll"]):
-        extname = name + "." + ext
-        fullname = os.path.join(boost_root, "lib", extname)
-        if not os.path.exists(fullname):
-            sys.exit("Module %s not found" % fullname)
-        if not os.path.exists(os.path.join(outdir, extname)):
-            print("Copying %s" % extname)
-            shutil.copy(fullname, outdir)
+#boost_root = "C:/Boost"
+#boost_ver = "1.59"
+#boost_modules = ["unit_test_framework", "regex", "thread", "system", "date_time", "chrono"]
+#for m in boost_modules:
+#    name = "boost_" + m + "-" + toolset + "-mt-" + ("gd-" if variant.lower()=="debug" else "") + boost_ver.replace('.', '_')
+#    for ext in (["dll"]):
+#        extname = name + "." + ext
+#        fullname = os.path.join(boost_root, "lib", extname)
+#        if not os.path.exists(fullname):
+#            sys.exit("Module %s not found" % fullname)
+#        if not os.path.exists(os.path.join(outdir, extname)):
+#            print("Copying %s" % extname)
+#            shutil.copy(fullname, outdir)
         
