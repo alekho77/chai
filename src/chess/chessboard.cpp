@@ -4,7 +4,7 @@
 #include <chessmachine/machine.h>
 #include <ChessEngineGreedy/engine.h>
 
-#pragma warning(push,0)
+#pragma warning(push,1)
 #include <QPainter>
 #include <QPaintEvent>
 #include <QResizeEvent>

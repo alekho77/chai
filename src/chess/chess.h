@@ -1,7 +1,7 @@
 #ifndef CHESS_H
 #define CHESS_H
 
-#pragma warning(push,0)
+#pragma warning(push,1)
 #include <QtWidgets/QMainWindow>
 #include "ui_chess.h"
 #pragma warning(pop)
