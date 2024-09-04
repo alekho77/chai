@@ -60,7 +60,8 @@ enable_testing()
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Add the subdirectory with the targets
-add_subdirectory(src)
+add_subdirectory(Interfaces)
+#add_subdirectory(src)
 
 add_custom_target(build_and_test
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}
