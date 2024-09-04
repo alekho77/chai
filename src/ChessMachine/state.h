@@ -164,9 +164,9 @@ class ChessState {
 
     ChessState MakeMove(const StateMove& move) const;
 
-    Set activeSet;
-    boost::optional<StateMove> lastMove;
     Board pieces;
+    boost::optional<StateMove> lastMove;
+    Set activeSet;
 
  private:
     ChessState(Set set, const StateMove& move, const Board& pieces);

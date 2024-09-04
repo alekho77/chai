@@ -239,7 +239,7 @@ PieceMoves ChessState::pieceMoves(const Board& pieces, const Position& pos, boos
                     ;
             }
             break;
-        case Type::king:
+        case Type::king: {
             for (MoveVector v : any_moves) {
                 addMoveIf(pieces, moves, pos + v, piece.set);
             }
@@ -256,6 +256,9 @@ PieceMoves ChessState::pieceMoves(const Board& pieces, const Position& pos, boos
                     moves.push_back(Position({'c', kingrank}));
                 }
             }
+        } break;
+        case Type::bad:
+            // TODO
             break;
     }
     std::sort(moves.begin(), moves.end());
