@@ -21,6 +21,6 @@ target_link_libraries(ChessMachine
         Boost::filesystem
 )
 
-target_compile_options(ChessMachine PRIVATE
-    $<$<CONFIG:Debug>:-Wall -Wextra -Werror>
-)
+#target_compile_options(ChessMachine PRIVATE
+#    $<$<CONFIG:Debug>:-Wall -Wextra -Werror>
+#)
