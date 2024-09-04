@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
+
 project(chai LANGUAGES CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -61,7 +62,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Add the subdirectory with the targets
 add_subdirectory(Interfaces)
-#add_subdirectory(src)
+add_subdirectory(src)
 
 add_custom_target(build_and_test
     COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}
